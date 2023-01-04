@@ -4,6 +4,8 @@
 
 5550 swerve code: [https://drive.google.com/drive/folders/1DcgL5wzNB2xEuyDsv4Hjmz-NEp0VTeM_](https://drive.google.com/drive/folders/1DcgL5wzNB2xEuyDsv4Hjmz-NEp0VTeM_?usp=sharing)
 
+WPILib swerve example code: https://github.com/wpilibsuite/allwpilib/tree/main/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/swervebot
+
 ## Swerve odometry: 
 
 https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-odometry.html
