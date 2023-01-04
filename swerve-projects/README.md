@@ -19,3 +19,9 @@ https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/kinemat
 Code to create motor controller objects (copy this into your project): https://github.com/frc2423/2022/blob/main/competition/src/main/java/frc/robot/devices/NeoMotor.java
 
 REVLib library (needed for controlling motors): https://docs.revrobotics.com/sparkmax/software-resources/spark-max-api-information#c++-and-java
+
+## Controls
+
+Acceleration (Slew Rate Limiting): https://docs.wpilib.org/en/stable/docs/software/advanced-controls/filters/slew-rate-limiter.html
+Deadband: https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/MathUtil.html#applyDeadband(double,double)
+Xbox Controller: https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/XboxController.html
