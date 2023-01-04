@@ -23,5 +23,7 @@ REVLib library (needed for controlling motors): https://docs.revrobotics.com/spa
 ## Controls
 
 Acceleration (Slew Rate Limiting): https://docs.wpilib.org/en/stable/docs/software/advanced-controls/filters/slew-rate-limiter.html
+
 Deadband: https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/MathUtil.html#applyDeadband(double,double)
+
 Xbox Controller: https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/XboxController.html
