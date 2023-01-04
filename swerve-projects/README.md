@@ -8,7 +8,7 @@ Swerve odometry:
 
 https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-odometry.html
 
-Swerve Kinematrics:
+Swerve Kinematics:
 
 https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-kinematics.html
 
