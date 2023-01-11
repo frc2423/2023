@@ -1,36 +1,29 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.math.MathUtil;
 
 
-public class NotAdriansController implements Controller {
+public class NotAdriansController { // made with anger 
 
     public XboxController myController = new XboxController(0);
 
-    @Override
-    public double[] getXYValue() {
-        double[] blah = new double[2];
-        return blah;
+    double deadband = 0.23; // >:c
+
+    public double getForward() {
+        return MathUtil.applyDeadband( myController.getLeftY(), deadband); 
     }
 
-    @Override
-    public double[] getAngularValue() {
-        // TODO Auto-generated method stub
-        double[] blah = new double[2];
-        return blah;
+    public double getLeft() { // :C
+        return MathUtil.applyDeadband( myController.getLeftX(), deadband);
+
     }
 
-    @Override
-    public boolean getAButton() {
-        // TODO Auto-generated method stub
-        return false;
+    public double getYaw() { // We do use yaw JACOB :|
+        return MathUtil.applyDeadband( myController.getRightX(), deadband);
+        
     }
-
-    @Override
-    public double[] getDeadband() {
-        // TODO Auto-generated method stub
-        double[] blah = new double[2];
-        return blah;
-    }
+    
+    // public static double applyDeadband​(double value, double deadband)
     
 }
