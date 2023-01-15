@@ -47,23 +47,15 @@ public class PoseEstimation {
           VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
 
 
-  public void updateOdometry(PhotonCamera camera) {
-    // m_poseEstimator.update(
-    //     m_gyro.getRotation2d(),
-    //     new SwerveModulePosition[] {
-    //       m_frontLeft.getPosition(),
-    //       m_frontRight.getPosition(),
-    //       m_backLeft.getPosition(),
-    //       m_backRight.getPosition()
-    //     });
-
-    // Also apply vision measurements. We use 0.3 seconds in the past as an example -- on
-    // a real robot, this must be calculated based either on latency or timestamps.
-    m_poseEstimator.addVisionMeasurement(
-        ExampleGlobalMeasurementSensor.getEstimatedGlobalPose(
-            m_poseEstimator.getEstimatedPosition()),
-        Timer.getFPGATimestamp() - 0.3);
+  public void updateOdometry(PhotonCamera cam) {
+    var res = cam.getLatestResult();
+    if (res.hasTargets()) {
+        var imageCaptureTime = res.getTimestampSeconds();
+        var camToTargetTrans = res.getBestTarget().getBestCameraToTarget();
+        var camPose = Constants.aprilTags.get(3).transformBy(camToTargetTrans.inverse());
+        m_poseEstimator.addVisionMeasurement(
+                camPose.transformBy(Constants.cameraToRobot).toPose2d(), imageCaptureTime);
+    }
   }
 }
     
-}
