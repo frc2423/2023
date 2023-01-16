@@ -16,4 +16,9 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public static int maxanglevelocity = 4; // change later
+  public static int maxangleacceleration = 2; //change later
+  public static int maxdrivevelocity = 4; //change later
+  public static int maxdriveacceleration = 2; //change later
 }
