@@ -19,11 +19,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
+  
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private PhotonCamera camera;
+  public PoseEstimation pose = new PoseEstimation();
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -34,6 +36,7 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+    
   }
 
   /**
@@ -45,7 +48,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {}
-
+  
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
    * autonomous modes using the dashboard. The sendable chooser code works with the Java
@@ -62,7 +65,7 @@ public class Robot extends TimedRobot {
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
   }
-
+  
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
@@ -84,6 +87,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    pose.updateOdometry(camera);
     PhotonPipelineResult result = camera.getLatestResult();
     // result.targets.get(0).getFiducialId();
     PhotonTrackedTarget target;
@@ -100,8 +104,7 @@ public class Robot extends TimedRobot {
   }
   else {
     NtHelper.setBoolean("id2", false);
-  }
-  System.out.print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");  
+  }  
   }
 
   /** This function is called once when the robot is disabled. */
