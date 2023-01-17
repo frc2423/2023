@@ -1,13 +1,4 @@
 {
-  "HALProvider": {
-    "Other Devices": {
-      "AnalogGyro[0]": {
-        "header": {
-          "open": true
-        }
-      }
-    }
-  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
@@ -18,16 +9,6 @@
         "window": {
           "visible": true
         }
-      }
-    }
-  },
-  "NetworkTables": {
-    "transitory": {
-      "SmartDashboard": {
-        "Field": {
-          "open": true
-        },
-        "open": true
       }
     }
   }
