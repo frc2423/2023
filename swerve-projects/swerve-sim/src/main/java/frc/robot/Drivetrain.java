@@ -11,14 +11,19 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.AnalogGyro;
-
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drivetrain {
+  // Constants
   public static final double kMaxSpeed = 2.7; // 3 meters per second
   public static final double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second
+
+  // State from robot logic
+
+  // State coming from external or simulated devices
 
   private final Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
   private final Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
@@ -107,8 +112,13 @@ public class Drivetrain {
     return m_odometry.getPoseMeters();
   }
 
+  private void realPeriodic() {
+
+  }
+
   /** Update our simulation. This should be run every robot loop in simulation. */
-  public void simulationPeriodic() {
+  private void simulationPeriodic() {
+    m_fieldSim.setRobotPose(m_odometry.getPoseMeters());
     // To update our simulation, we set motor voltage inputs, update the
     // simulation, and write the simulated positions and velocities to our
     // simulated encoder and gyro. We negate the right side so that positive
@@ -124,6 +134,10 @@ public class Drivetrain {
   /** Update odometry - this should be run every robot loop. */
   public void periodic() {
     updateOdometry();
-    m_fieldSim.setRobotPose(m_odometry.getPoseMeters());
+    if (RobotBase.isSimulation()) {
+      simulationPeriodic();
+    } else {
+      realPeriodic();
+    }
   }
 }

@@ -55,6 +55,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    getPeriod();
     double elapsed = m_timer.get();
     Trajectory.State reference = m_trajectory.sample(elapsed);
     ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), reference);
@@ -83,10 +84,5 @@ public class Robot extends TimedRobot {
       rot = 0;
     }
     m_drive.drive(xSpeed, ySpeed, rot, false);
-  }
-
-  @Override
-  public void simulationPeriodic() {
-    m_drive.simulationPeriodic();
   }
 }

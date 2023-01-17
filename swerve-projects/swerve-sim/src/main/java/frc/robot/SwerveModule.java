@@ -18,8 +18,15 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 
 public class SwerveModule {
+  // Constants
   private static final double kWheelRadius = 0.0508;
   private static final int kEncoderResolution = 4096;
+
+  // State from robot logic
+
+  // State coming from external or simulated devices
+
+  
 
  /* private static final double kModuleMaxAngularVelocity = Drivetrain.kMaxAngularSpeed;
   private static final double kModuleMaxAngularAcceleration =
@@ -160,5 +167,9 @@ public class SwerveModule {
 
     m_turningEncoderSim.setRate(m_turnSim.getAngularVelocityRadPerSec());
     m_turningEncoderSim.setDistance(m_turningEncoderSim.getDistance() + (m_turnSim.getAngularVelocityRadPerSec() * dtSeconds));
+  }
+
+  public void updateReal() {
+
   }
 }
