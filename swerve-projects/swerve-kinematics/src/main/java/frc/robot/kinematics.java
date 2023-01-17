@@ -10,6 +10,8 @@ public class kinematics {
     // set the robot width and length here so that the swerve modules are appropriately placed on the model
     static double RobotLength = 10;
     static double RobotWidth = 10;
+    static double maxSpeedo = 3; // m/s
+    static double maxAngularSpeedo = 3.141592653589793238462663; // rad/s
     /**
      * Takes in the desired chassis speeds and returns a list of swerve module states to achieve the desired
      * chassis motions
@@ -26,8 +28,9 @@ public class kinematics {
 
         SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(FrontLeft, FrontRight, BackLeft, BackRight);
 
-        ChassisSpeeds speeds = new ChassisSpeeds(forward, left, turn);
+        ChassisSpeeds speeds = new ChassisSpeeds(forward * maxSpeedo, left * maxSpeedo, turn * maxAngularSpeedo);
         SwerveModuleState[] moduleStates = m_kinematics.toSwerveModuleStates(speeds);
+        SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, maxSpeedo);
 
         return moduleStates;
     }

@@ -19,6 +19,14 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  private NotAdriansController driverController;
+
+  private SwerveModule frontLeftJimmy;
+  private SwerveModule frontRightOlga;
+  private SwerveModule backLeftTabitha;
+  private SwerveModule backRightBort;
+
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -28,6 +36,14 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    driverController = new NotAdriansController();
+
+    frontLeftJimmy = new SwerveModule(1, 2); //bum bah dum bahhhh john cena
+    frontRightOlga = new SwerveModule(3, 4);
+    backLeftTabitha = new SwerveModule(5, 6);
+    backRightBort = new SwerveModule(7, 8);
+
   }
 
   /**
@@ -81,7 +97,15 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    var desiredStates = kinematics.getSwerveValues(driverController.getForward(), driverController.getLeft(), driverController.getYaw());
+      frontLeftJimmy.setdesiredstate(desiredStates[0]); 
+      frontRightOlga.setdesiredstate(desiredStates[1]);
+      backLeftTabitha.setdesiredstate(desiredStates[2]);
+      backRightBort.setdesiredstate(desiredStates[3]);
+
+      System.out.println(desiredStates[3]);
+  }
 
   @Override
   public void testInit() {
