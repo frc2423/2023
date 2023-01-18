@@ -83,6 +83,6 @@ public class Robot extends TimedRobot {
     if(Math.abs(m_controller.getRightX()) < 0.2) {
       rot = 0;
     }
-    m_drive.drive(xSpeed, ySpeed, rot, false);
+    m_drive.drive(xSpeed, ySpeed, rot, true);
   }
 }
