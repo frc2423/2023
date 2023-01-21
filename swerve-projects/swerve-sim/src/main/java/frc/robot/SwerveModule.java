@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
@@ -13,20 +12,14 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.RobotBase;
 
 public class SwerveModule {
   // Constants
-  private static final double kWheelRadius = 0.0508;
-  private static final int kEncoderResolution = 4096;
+  private static final double kWheelRadius = Units.inchesToMeters(3); // We know this
+  private static final int kEncoderResolution = 1; //4096;
 
   // State from robot logic
   private double driveMotorVoltage = 0;
@@ -77,10 +70,6 @@ public class SwerveModule {
    *
    * @param driveMotorChannel      PWM output for the drive motor.
    * @param turningMotorChannel    PWM output for the turning motor.
-   * @param driveEncoderChannelA   DIO input for the drive encoder channel A
-   * @param driveEncoderChannelB   DIO input for the drive encoder channel B
-   * @param turningEncoderChannelA DIO input for the turning encoder channel A
-   * @param turningEncoderChannelB DIO input for the turning encoder channel B
    */
   public SwerveModule(int driveid, int turnid) {
     m_driveMotor = new NeoMotor(driveid);

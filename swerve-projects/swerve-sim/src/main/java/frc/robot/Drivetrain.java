@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -25,20 +26,20 @@ public class Drivetrain {
 
   // State coming from external or simulated devices
 
-  private final Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
-  private final Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
-  private final Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
-  private final Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
+  private final Translation2d m_frontLeftLocation = new Translation2d(0.273, 0.33);
+  private final Translation2d m_frontRightLocation = new Translation2d(0.273, -0.33);
+  private final Translation2d m_backLeftLocation = new Translation2d(-0.273, 0.33);
+  private final Translation2d m_backRightLocation = new Translation2d(-0.273, -0.33);
 
-  private final SwerveModule m_frontLeft = new SwerveModule(1, 2);
-  private final SwerveModule m_frontRight = new SwerveModule(3, 4);
-  private final SwerveModule m_backLeft = new SwerveModule(5, 6);
-  private final SwerveModule m_backRight = new SwerveModule(7, 8);
+  private final SwerveModule m_frontLeft = new SwerveModule(17,16);
+  private final SwerveModule m_frontRight = new SwerveModule(3,4);
+  private final SwerveModule m_backLeft = new SwerveModule(19,18);
+  private final SwerveModule m_backRight = new SwerveModule(1, 2);
 
-  private final AnalogGyro m_gyro = new AnalogGyro(0);
+  private final Gyro m_gyro = new Gyro();
 
   private ChassisSpeeds speeds = new ChassisSpeeds();
-  double angle = 0.0;
+  Rotation2d angle = new Rotation2d();
 
   private final SwerveDriveKinematics m_kinematics =
       new SwerveDriveKinematics(m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
@@ -46,7 +47,7 @@ public class Drivetrain {
   private final SwerveDriveOdometry m_odometry =
       new SwerveDriveOdometry(
           m_kinematics,
-          m_gyro.getRotation2d(),
+          angle,
           new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -55,7 +56,7 @@ public class Drivetrain {
           });
 
   // Simulation classes help us simulate our robot
-  private final AnalogGyroSim m_gyroSim = new AnalogGyroSim(m_gyro);
+  // private final AnalogGyroSim m_gyroSim = new AnalogGyroSim();
   private final Field2d m_fieldSim = new Field2d();
 
   /** Subsystem constructor. */
@@ -73,7 +74,7 @@ public class Drivetrain {
    * @param fieldRelative Whether the provided x and y speeds are relative to the field.
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    speeds = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, m_gyro.getRotation2d()) 
+    speeds = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, angle) 
     : new ChassisSpeeds(xSpeed, ySpeed, rot);
     var swerveModuleStates = m_kinematics.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed);
@@ -87,7 +88,7 @@ public class Drivetrain {
   /** Updates the field relative position of the robot. */
   public void updateOdometry() {
     m_odometry.update(
-        m_gyro.getRotation2d(),
+        angle,
         new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
@@ -103,7 +104,7 @@ public class Drivetrain {
     m_backLeft.resetPosition();
     m_backRight.resetPosition();
     m_odometry.resetPosition(
-        m_gyro.getRotation2d(), new SwerveModulePosition[]{m_frontLeft.getPosition(), 
+        angle, new SwerveModulePosition[]{m_frontLeft.getPosition(), 
           m_frontRight.getPosition(), m_backLeft.getPosition(), m_backRight.getPosition()}, pose);
   }
 
@@ -113,7 +114,8 @@ public class Drivetrain {
   }
 
   private void realPeriodic() {
-
+    m_fieldSim.setRobotPose(m_odometry.getPoseMeters());
+    angle = m_gyro.getRotation();
   }
 
   /** Update our simulation. This should be run every robot loop in simulation. */
@@ -123,8 +125,8 @@ public class Drivetrain {
     // simulation, and write the simulated positions and velocities to our
     // simulated encoder and gyro. We negate the right side so that positive
     // voltages make the right side move forward.
-    angle += (speeds.omegaRadiansPerSecond * (180 / Math.PI) * /*dtSeconds*/0.02);
-    m_gyroSim.setAngle(angle);
+    angle = angle.plus(new Rotation2d(-speeds.omegaRadiansPerSecond * /*dtSeconds*/0.02));
+    //m_gyroSim.setAngle(angle);
   }
 
   /** Update odometry - this should be run every robot loop. */
