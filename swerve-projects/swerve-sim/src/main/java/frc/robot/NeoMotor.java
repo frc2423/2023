@@ -133,14 +133,6 @@ public class NeoMotor {
         return kF;
     }
 
-    public void follow(IMotor leader){
-        // if(leader.getClass() == NeoMotor.class) {
-        //     leaderMotor = (NeoMotor)leader;
-        //     this.motor.follow(this.leaderMotor.motor);
-        
-        // }
-    }
-
     public void setFollower(NeoMotor follower) {
         this.followerMotor = follower;
     }

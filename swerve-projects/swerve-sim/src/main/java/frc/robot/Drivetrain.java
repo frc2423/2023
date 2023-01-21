@@ -30,10 +30,10 @@ public class Drivetrain {
   private final Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
   private final Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
 
-  private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0, 1, 2, 3);
-  private final SwerveModule m_frontRight = new SwerveModule(3, 4, 4, 5, 6, 7);
-  private final SwerveModule m_backLeft = new SwerveModule(5, 6, 8, 9, 10, 11);
-  private final SwerveModule m_backRight = new SwerveModule(7, 8, 12, 13, 14, 15);
+  private final SwerveModule m_frontLeft = new SwerveModule(1, 2);
+  private final SwerveModule m_frontRight = new SwerveModule(3, 4);
+  private final SwerveModule m_backLeft = new SwerveModule(5, 6);
+  private final SwerveModule m_backRight = new SwerveModule(7, 8);
 
   private final AnalogGyro m_gyro = new AnalogGyro(0);
 
@@ -123,10 +123,6 @@ public class Drivetrain {
     // simulation, and write the simulated positions and velocities to our
     // simulated encoder and gyro. We negate the right side so that positive
     // voltages make the right side move forward.
-    m_frontLeft.updateSimulation(0.02);
-    m_frontRight.updateSimulation(0.02);
-    m_backLeft.updateSimulation(0.02);
-    m_backRight.updateSimulation(0.02);
     angle += (speeds.omegaRadiansPerSecond * (180 / Math.PI) * /*dtSeconds*/0.02);
     m_gyroSim.setAngle(angle);
   }
@@ -134,6 +130,10 @@ public class Drivetrain {
   /** Update odometry - this should be run every robot loop. */
   public void periodic() {
     updateOdometry();
+    m_frontLeft.update();
+    m_frontRight.update();
+    m_backLeft.update();
+    m_backRight.update();
     if (RobotBase.isSimulation()) {
       simulationPeriodic();
     } else {
