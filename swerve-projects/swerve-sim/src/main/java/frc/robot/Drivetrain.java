@@ -79,10 +79,16 @@ public class Drivetrain {
     var swerveModuleStates = m_kinematics.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed);
 
+    
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_backLeft.setDesiredState(swerveModuleStates[2]);
     m_backRight.setDesiredState(swerveModuleStates[3]);
+
+    NtHelper.setDouble("/robot/blDesiredAngle", swerveModuleStates[2].angle.getDegrees());
+    NtHelper.setDouble("/robot/blDesiredSpeed", swerveModuleStates[2].speedMetersPerSecond);
+    NtHelper.setDouble("/robot/blCurentAngle", m_backLeft.getState().angle.getDegrees());
+    NtHelper.setDouble("/robot/blCurentSpeed", m_backLeft.getState().speedMetersPerSecond);
   }
 
   /** Updates the field relative position of the robot. */
@@ -131,6 +137,7 @@ public class Drivetrain {
 
   /** Update odometry - this should be run every robot loop. */
   public void periodic() {
+    NtHelper.setDouble("/robot/angle", angle.getDegrees());
     updateOdometry();
     m_frontLeft.update();
     m_frontRight.update();

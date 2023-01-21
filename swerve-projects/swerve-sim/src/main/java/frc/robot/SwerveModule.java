@@ -51,7 +51,7 @@ public class SwerveModule {
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final PIDController m_turningPIDController = new PIDController(
-      23,
+      .5,
       0,
       0/*
         * ,
@@ -72,8 +72,8 @@ public class SwerveModule {
    * @param turningMotorChannel    PWM output for the turning motor.
    */
   public SwerveModule(int driveid, int turnid) {
-    m_driveMotor = new NeoMotor(driveid);
-    m_turningMotor = new NeoMotor(turnid);
+    m_driveMotor = new NeoMotor(driveid, false);
+    m_turningMotor = new NeoMotor(turnid, true);
 
     // Set the distance per pulse for the drive encoder. We can simply use the
     // distance traveled for one rotation of the wheel divided by the encoder
@@ -88,6 +88,7 @@ public class SwerveModule {
     // Limit the PID Controller's input range between -pi and pi and set the input
     // to be continuous.
     m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
+    m_turningPIDController.setTolerance(10);
   }
 
   /**
