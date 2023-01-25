@@ -1,0 +1,20 @@
+{
+  "NetworkTables": {
+    "transitory": {
+      "drive": {
+        "FR": {
+          "open": true
+        },
+        "open": true
+      }
+    },
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Field": "Field2d"
+    }
+  },
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)",
+    "serverTeam": "2423"
+  }
+}

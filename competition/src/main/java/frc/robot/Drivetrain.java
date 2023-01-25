@@ -31,10 +31,10 @@ public class Drivetrain {
   private final Translation2d m_backLeftLocation = new Translation2d(-0.273, 0.33);
   private final Translation2d m_backRightLocation = new Translation2d(-0.273, -0.33);
 
-  private final SwerveModule m_frontLeft = new SwerveModule(17,16);
-  private final SwerveModule m_frontRight = new SwerveModule(3,4);
-  private final SwerveModule m_backLeft = new SwerveModule(19,18);
-  private final SwerveModule m_backRight = new SwerveModule(1, 2);
+  private final SwerveModule m_frontLeft = new SwerveModule(17,16, "FL");
+  private final SwerveModule m_frontRight = new SwerveModule(3,4, "FR");
+  private final SwerveModule m_backLeft = new SwerveModule(19,18, "BL");
+  private final SwerveModule m_backRight = new SwerveModule(1, 2, "BR");
 
   private final Gyro m_gyro = new Gyro();
 
@@ -78,13 +78,17 @@ public class Drivetrain {
     : new ChassisSpeeds(xSpeed, ySpeed, rot);
     var swerveModuleStates = m_kinematics.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed);
+   
+    NtHelper.setDouble("/drive/FLdesiredangle", swerveModuleStates[0].angle.getDegrees());
 
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_backLeft.setDesiredState(swerveModuleStates[2]);
     m_backRight.setDesiredState(swerveModuleStates[3]);
+    
+    NtHelper.setDouble("/drive/FLactualangle", m_frontLeft.getPosition().angle.getDegrees());
   }
-
+  
   /** Updates the field relative position of the robot. */
   public void updateOdometry() {
     m_odometry.update(
