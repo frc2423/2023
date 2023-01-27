@@ -1,5 +1,9 @@
 package frc.robot;
 
+/**
+ * This is an interface that gurantees both the AbsoluteEncoder and RelativeEncoder classes use every
+ * function within the interface
+ */
 public interface IEncoder {
 
     double getVelocityConversionFactor();
