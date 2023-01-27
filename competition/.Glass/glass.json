@@ -2,6 +2,15 @@
   "NetworkTables": {
     "transitory": {
       "drive": {
+        "BL": {
+          "open": true
+        },
+        "BR": {
+          "open": true
+        },
+        "FL": {
+          "open": true
+        },
         "FR": {
           "open": true
         },

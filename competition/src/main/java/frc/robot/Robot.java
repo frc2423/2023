@@ -9,6 +9,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -31,7 +32,7 @@ public class Robot extends TimedRobot {
   private final Timer m_timer = new Timer();
   private Trajectory m_trajectory;
 
-  @Override
+  @Override // is society
   public void robotInit() {
     m_trajectory =
         TrajectoryGenerator.generateTrajectory(
@@ -84,5 +85,22 @@ public class Robot extends TimedRobot {
       rot = 0;
     }
     m_drive.drive(xSpeed, ySpeed, rot, false);
+  }
+
+  @Override
+  public void testPeriodic() {
+    double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3 
+    double manualAngle = NtHelper.getDouble("/test/angle", 0);
+    SwerveModuleState bloB = new SwerveModuleState(manualSpeed, Rotation2d.fromDegrees(manualAngle));
+    m_drive.m_frontLeft.setDesiredState(bloB);
+    m_drive.m_frontRight.setDesiredState(bloB);
+    m_drive.m_backLeft.setDesiredState(bloB);
+    m_drive.m_backRight.setDesiredState(bloB);
+  }
+
+  @Override
+  public void testInit() {
+    NtHelper.setDouble("/test/speed", 0);
+    NtHelper.setDouble("/test/angle", 0);
   }
 }
