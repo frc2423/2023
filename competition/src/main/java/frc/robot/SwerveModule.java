@@ -19,13 +19,18 @@ import edu.wpi.first.wpilibj.RobotBase;
 public class SwerveModule {
   // Constants
   private static final double kWheelRadius = Units.inchesToMeters(3); // We know this
-  private static final int kEncoderResolution = 1; //4096;
+  private static final int kEncoderResolution = 1; // 4096;
 
   // State from robot logic
   private double driveMotorVoltage = 0;
   private double turnMotorVoltage = 0;
 
   // State coming from external or simulated devices
+  private double driveEncoderRate = 0;
+  private double driveEncoderDistance = 0;
+  private double turnEncoderRate = 0;
+  private double turnEncoderDistance = 0;
+  private String name;
 
   /*
    * private static final double kModuleMaxAngularVelocity =
@@ -38,20 +43,14 @@ public class SwerveModule {
   private final NeoMotor m_turningMotor;
 
   private final FlywheelSim m_driveSim = new FlywheelSim(DCMotor.getNEO(1), 6.75, 0.025);
-
   private final FlywheelSim m_turnSim = new FlywheelSim(DCMotor.getNEO(1), 150.0 / 7.0, 0.004096955);
-
-  private double driveEncoderRate = 0;
-  private double driveEncoderDistance = 0;
-  private double turnEncoderRate = 0;
-  private double turnEncoderDistance = 0;
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final PIDController m_drivePIDController = new PIDController(1.0, 0, 0);
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final PIDController m_turningPIDController = new PIDController(
-      23,
+      RobotBase.isSimulation() ? 23 : .5, //kp
       0,
       0/*
         * ,
@@ -68,26 +67,29 @@ public class SwerveModule {
    * Constructs a SwerveModule with a drive motor, turning motor, drive encoder
    * and turning encoder.
    *
-   * @param driveMotorChannel      PWM output for the drive motor.
-   * @param turningMotorChannel    PWM output for the turning motor.
+   * @param driveid CAN ID for the drive motor.
+   * @param turnid  CAN ID for the turning motor.
    */
-  public SwerveModule(int driveid, int turnid) {
-    m_driveMotor = new NeoMotor(driveid);
-    m_turningMotor = new NeoMotor(turnid);
+  public SwerveModule(int driveid, int turnid, String name) {
+    this.name = name;
+    m_driveMotor = new NeoMotor(driveid, false);
+    m_turningMotor = new NeoMotor(turnid, true);
 
     // Set the distance per pulse for the drive encoder. We can simply use the
     // distance traveled for one rotation of the wheel divided by the encoder
     // resolution.
     m_driveMotor.setConversionFactor(2 * Math.PI * kWheelRadius);
-    m_turningMotor.setConversionFactor(2 * Math.PI * kEncoderResolution);
 
     // Set the distance (in this case, angle) in radians per pulse for the turning
     // encoder.
     // This is the the angle through an entire rotation (2 * pi) divided by the
     // encoder resolution.
+    m_turningMotor.setConversionFactor(2 * Math.PI * kEncoderResolution);
+
     // Limit the PID Controller's input range between -pi and pi and set the input
     // to be continuous.
     m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
+    m_turningPIDController.setTolerance(.2);
   }
 
   /**
@@ -130,7 +132,12 @@ public class SwerveModule {
     final double turnFeedforward = 0;
     // m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
     driveMotorVoltage = (driveOutput + driveFeedforward);
-    turnMotorVoltage = (turnOutput + turnFeedforward);
+    turnMotorVoltage = (-turnOutput + turnFeedforward);
+    // driveMotorVoltage = 0;
+    // turnMotorVoltage = 0;
+
+    NtHelper.setDouble("/drive/"+name+"/actdistance", turnEncoderDistance);
+    NtHelper.setDouble("/drive/"+name+"/desdistance", state.angle.getRadians());
   }
 
   public void resetPosition() {
@@ -156,6 +163,8 @@ public class SwerveModule {
     // Update real robot inputs
     m_driveMotor.setPercent(driveMotorVoltage / RobotController.getBatteryVoltage());
     m_turningMotor.setPercent((turnMotorVoltage) / RobotController.getBatteryVoltage());
+
+    // Update state from actual devices
     driveEncoderRate = m_driveMotor.getSpeed();
     driveEncoderDistance = m_driveMotor.getDistance();
     turnEncoderRate = m_turningMotor.getSpeed();
