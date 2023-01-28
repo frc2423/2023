@@ -32,17 +32,12 @@ public class Robot extends TimedRobot {
   private final Drivetrain m_drive = new Drivetrain();
   private final RamseteController m_ramsete = new RamseteController();
   private final Timer m_timer = new Timer();
-  private Trajectory m_trajectory;
+  private final Auto m_auto = new Auto();
 
 
   @Override // is society
   public void robotInit() {
-    m_trajectory =
-        TrajectoryGenerator.generateTrajectory(
-            new Pose2d(2, 2, new Rotation2d()),
-            List.of(),
-            new Pose2d(6, 4, new Rotation2d()),
-            new TrajectoryConfig(2, 2));
+   
   }
 
   @Override
@@ -51,19 +46,44 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousInit() {
+  public void autonomousInit() { //tell robot to go
     m_timer.reset();
     m_timer.start();
-    m_drive.resetOdometry(m_trajectory.getInitialPose());
+    m_auto.robotGo();
   }
 
   @Override
-  public void autonomousPeriodic() {
+  public void autonomousPeriodic() { //check for completion, work toward goal
     getPeriod();
     double elapsed = m_timer.get();
-    Trajectory.State reference = m_trajectory.sample(elapsed);
-    ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), reference);
-    m_drive.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, true);
+    //ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose());
+    //m_drive.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, true);
+    NtHelper.setDouble("/drive/distanceX", m_drive.getPose().getX());
+    NtHelper.setDouble("/drive/distanceY", m_drive.getPose().getY());
+    double xSpeed = 0;
+    double ySpeed = 0;
+    double rotSpeed = 0;
+    if (Math.abs(m_drive.getPose().getX() - m_auto.getTarget().getX()) < 0.1){
+      xSpeed = 0;
+    }
+    else{
+      xSpeed = 1;
+    }
+
+    if (Math.abs(m_drive.getPose().getY() - m_auto.getTarget().getY()) < 0.1){
+      ySpeed = 0;
+    }
+    else{
+      ySpeed = 1;
+    }
+
+    if (Math.abs(m_drive.getPose().getRotation().getRadians() - m_auto.getTarget().getRotation().getRadians()) < 0.1){
+      rotSpeed = 0;
+    }
+    else{
+      rotSpeed = 1;
+    }
+    m_drive.drive(xSpeed, ySpeed, rotSpeed, true);
   }
 
   @Override
