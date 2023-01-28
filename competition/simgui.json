@@ -11,5 +11,24 @@
         }
       }
     }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "drive": {
+        "BL": {
+          "open": true
+        },
+        "BR": {
+          "open": true
+        },
+        "FL": {
+          "open": true
+        },
+        "open": true
+      },
+      "robot": {
+        "open": true
+      }
+    }
   }
 }
