@@ -9,6 +9,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -31,7 +32,8 @@ public class Robot extends TimedRobot {
   private final Timer m_timer = new Timer();
   private Trajectory m_trajectory;
 
-  @Override
+
+  @Override // is society
   public void robotInit() {
     m_trajectory =
         TrajectoryGenerator.generateTrajectory(
@@ -59,7 +61,12 @@ public class Robot extends TimedRobot {
     double elapsed = m_timer.get();
     Trajectory.State reference = m_trajectory.sample(elapsed);
     ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), reference);
-    m_drive.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, false);
+    m_drive.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, true);
+  }
+
+  @Override
+  public void teleopInit() {
+    m_drive.resetAngle();
   }
 
   @Override
@@ -67,11 +74,11 @@ public class Robot extends TimedRobot {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
     double xSpeed = -m_xspeedLimiter.calculate(m_controller.getLeftY()) * Drivetrain.kMaxSpeed;
-    if(Math.abs(m_controller.getLeftY()) < 0.2) {
+    if(Math.abs(m_controller.getLeftY()) < 0.1) {
       xSpeed = 0;
     }
-    double ySpeed = -m_yspeedLimiter.calculate(m_controller.getLeftX()) * Drivetrain.kMaxSpeed;
-    if(Math.abs(m_controller.getLeftX()) < 0.2) {
+    double ySpeed = m_yspeedLimiter.calculate(m_controller.getLeftX()) * Drivetrain.kMaxSpeed;
+    if(Math.abs(m_controller.getLeftX()) < 0.1) {
       ySpeed = 0;
     }
 
@@ -79,10 +86,27 @@ public class Robot extends TimedRobot {
     // positive value when we pull to the left (remember, CCW is positive in
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
-    double rot = m_rotLimiter.calculate(m_controller.getRightX()) * Drivetrain.kMaxAngularSpeed;
+    double rot = m_rotLimiter.calculate(-m_controller.getRightX()) * Drivetrain.kMaxAngularSpeed;
     if(Math.abs(m_controller.getRightX()) < 0.2) {
       rot = 0;
     }
-    m_drive.drive(xSpeed, ySpeed, rot, false);
+    m_drive.drive(xSpeed * .5, ySpeed * .5, rot, isSimulation() ? true : true);
+  }
+
+  @Override
+  public void testPeriodic() {
+    double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3 
+    double manualAngle = NtHelper.getDouble("/test/angle", 0);
+    SwerveModuleState bloB = new SwerveModuleState(manualSpeed, Rotation2d.fromDegrees(manualAngle));
+    m_drive.m_frontLeft.setDesiredState(bloB);
+    m_drive.m_frontRight.setDesiredState(bloB);
+    m_drive.m_backLeft.setDesiredState(bloB);
+    m_drive.m_backRight.setDesiredState(bloB);
+  }
+
+  @Override
+  public void testInit() {
+    NtHelper.setDouble("/test/speed", 0);
+    NtHelper.setDouble("/test/angle", 0);
   }
 }

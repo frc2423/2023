@@ -50,7 +50,7 @@ public class SwerveModule {
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final PIDController m_turningPIDController = new PIDController(
-      RobotBase.isSimulation() ? 23 : .5, //kp
+      RobotBase.isSimulation() ? 23 : 1.8, //kp
       0,
       0/*
         * ,
@@ -70,10 +70,11 @@ public class SwerveModule {
    * @param driveid CAN ID for the drive motor.
    * @param turnid  CAN ID for the turning motor.
    */
-  public SwerveModule(int driveid, int turnid, String name) {
+  public SwerveModule(int driveid, int turnid, String name, boolean swerveInvert) {
     this.name = name;
     m_driveMotor = new NeoMotor(driveid, false);
     m_turningMotor = new NeoMotor(turnid, true);
+    m_driveMotor.setInverted(swerveInvert);
 
     // Set the distance per pulse for the drive encoder. We can simply use the
     // distance traveled for one rotation of the wheel divided by the encoder
@@ -138,6 +139,7 @@ public class SwerveModule {
 
     NtHelper.setDouble("/drive/"+name+"/actdistance", turnEncoderDistance);
     NtHelper.setDouble("/drive/"+name+"/desdistance", state.angle.getRadians());
+    
   }
 
   public void resetPosition() {
