@@ -1,0 +1,4 @@
+- Organize code better (constants, sim, real)
+- Update devices to use the ones our robot uses (from code Cameron and Alexandra were writing)
+- Replace Odometry code with PoseEstimation code using PhotonVision
+- add deadband 
