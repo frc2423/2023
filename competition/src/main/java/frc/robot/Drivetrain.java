@@ -81,7 +81,7 @@ public class Drivetrain {
    * @param fieldRelative Whether the provided x and y speeds are relative to the field.
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    speeds = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, angle.times(-1)) 
+    speeds = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, angle.times(RobotBase.isSimulation() ? 1 : -1)) 
     : new ChassisSpeeds(xSpeed, ySpeed, rot);
     
     var swerveModuleStates = m_kinematics.toSwerveModuleStates(speeds);
