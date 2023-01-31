@@ -79,16 +79,18 @@ public class Robot extends TimedRobot {
     double deadband = 0.2;
     double yControllerInput = MathUtil.applyDeadband(m_controller.getLeftY(), deadband);
     double xControllerInput = MathUtil.applyDeadband(m_controller.getLeftX(), deadband);
+
     double xSpeed = -m_xspeedLimiter.calculate(yControllerInput) * Drivetrain.kMaxSpeed;
+  
+    double ySpeed = m_yspeedLimiter.calculate(xControllerInput) * Drivetrain.kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
     // positive value when we pull to the left (remember, CCW is positive in
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
-    double rot = m_rotLimiter.calculate(-m_controller.getRightX()) * Drivetrain.kMaxAngularSpeed;
-    if(Math.abs(m_controller.getRightX()) < 0.2) {
-      rot = 0;
-    }
+    double rotInput = MathUtil.applyDeadband(-m_controller.getRightX(), deadband);
+    double rot = m_rotLimiter.calculate(rotInput) * Drivetrain.kMaxAngularSpeed;
+
     ySpeed *= (isSimulation() ? -.5 : .5);
     m_drive.drive(xSpeed * .5, ySpeed, rot, isSimulation() ? true : true);
   }
