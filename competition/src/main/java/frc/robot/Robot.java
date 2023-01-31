@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.util.NtHelper;
+import edu.wpi.first.math.MathUtil;
 
 import java.util.List;
 
@@ -75,23 +76,21 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
-    double xSpeed = -m_xspeedLimiter.calculate(m_controller.getLeftY()) * Drivetrain.kMaxSpeed;
-    if(Math.abs(m_controller.getLeftY()) < 0.1) {
-      xSpeed = 0;
-    }
-    double ySpeed = m_yspeedLimiter.calculate(m_controller.getLeftX()) * Drivetrain.kMaxSpeed;
-    if(Math.abs(m_controller.getLeftX()) < 0.1) {
-      ySpeed = 0;
-    }
+    double deadband = 0.2;
+    double yControllerInput = MathUtil.applyDeadband(m_controller.getLeftY(), deadband);
+    double xControllerInput = MathUtil.applyDeadband(m_controller.getLeftX(), deadband);
+
+    double xSpeed = -m_xspeedLimiter.calculate(yControllerInput) * Drivetrain.kMaxSpeed;
+  
+    double ySpeed = m_yspeedLimiter.calculate(xControllerInput) * Drivetrain.kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
     // positive value when we pull to the left (remember, CCW is positive in
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
-    double rot = m_rotLimiter.calculate(-m_controller.getRightX()) * Drivetrain.kMaxAngularSpeed;
-    if(Math.abs(m_controller.getRightX()) < 0.2) {
-      rot = 0;
-    }
+    double rotInput = MathUtil.applyDeadband(-m_controller.getRightX(), deadband);
+    double rot = m_rotLimiter.calculate(rotInput) * Drivetrain.kMaxAngularSpeed;
+
     ySpeed *= (isSimulation() ? -.5 : .5);
     m_drive.drive(xSpeed * .5, ySpeed, rot, isSimulation() ? true : true);
   }
