@@ -92,8 +92,8 @@ public class Robot extends TimedRobot {
     if(Math.abs(m_controller.getRightX()) < 0.2) {
       rot = 0;
     }
-    ySpeed *= (isSimulation() ? -.5 : .5);
-    m_drive.drive(xSpeed * .5, ySpeed, rot, isSimulation() ? true : true);
+    ySpeed *= (isSimulation() ? -.5 : 0.75);
+    m_drive.drive(xSpeed * 0.75, ySpeed, rot, isSimulation() ? true : true);
   }
 
   @Override
