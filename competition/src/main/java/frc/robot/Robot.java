@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.util.NtHelper;
+import edu.wpi.first.math.MathUtil;
 
 import java.util.List;
 
@@ -75,11 +76,14 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
-    double xSpeed = -m_xspeedLimiter.calculate(m_controller.getLeftY()) * Drivetrain.kMaxSpeed;
+    double deadband = 0.2;
+    double yControllerInput = MathUtil.applyDeadband(m_controller.getLeftY(), deadband);
+    double xControllerInput = MathUtil.applyDeadband(m_controller.getLeftX(), deadband);
+    double xSpeed = -m_xspeedLimiter.calculate(yControllerInput) * Drivetrain.kMaxSpeed;
     if(Math.abs(m_controller.getLeftY()) < 0.1) {
       xSpeed = 0;
     }
-    double ySpeed = m_yspeedLimiter.calculate(m_controller.getLeftX()) * Drivetrain.kMaxSpeed;
+    double ySpeed = m_yspeedLimiter.calculate(xControllerInput) * Drivetrain.kMaxSpeed;
     if(Math.abs(m_controller.getLeftX()) < 0.1) {
       ySpeed = 0;
     }
