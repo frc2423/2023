@@ -80,13 +80,6 @@ public class Robot extends TimedRobot {
     double yControllerInput = MathUtil.applyDeadband(m_controller.getLeftY(), deadband);
     double xControllerInput = MathUtil.applyDeadband(m_controller.getLeftX(), deadband);
     double xSpeed = -m_xspeedLimiter.calculate(yControllerInput) * Drivetrain.kMaxSpeed;
-    if(Math.abs(m_controller.getLeftY()) < 0.1) {
-      xSpeed = 0;
-    }
-    double ySpeed = m_yspeedLimiter.calculate(xControllerInput) * Drivetrain.kMaxSpeed;
-    if(Math.abs(m_controller.getLeftX()) < 0.1) {
-      ySpeed = 0;
-    }
 
     // Get the rate of angular rotation. We are inverting this because we want a
     // positive value when we pull to the left (remember, CCW is positive in
