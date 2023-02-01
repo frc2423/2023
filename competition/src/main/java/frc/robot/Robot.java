@@ -33,12 +33,11 @@ public class Robot extends TimedRobot {
   private final Drivetrain m_drive = new Drivetrain();
   private final RamseteController m_ramsete = new RamseteController();
   private final Timer m_timer = new Timer();
-  private final Auto m_auto = new Auto();
+  private final Auto m_auto = new Auto(m_drive);
 
 
   @Override // is society
   public void robotInit() {
-   
   }
 
   @Override
@@ -51,40 +50,13 @@ public class Robot extends TimedRobot {
     m_timer.reset();
     m_timer.start();
     m_auto.robotGo();
+    m_auto.update_current_path();
   }
 
   @Override
   public void autonomousPeriodic() { //check for completion, work toward goal
     getPeriod();
-    double elapsed = m_timer.get();
-    //ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose());
-    //m_drive.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, true);
-    NtHelper.setDouble("/drive/distanceX", m_drive.getPose().getX());
-    NtHelper.setDouble("/drive/distanceY", m_drive.getPose().getY());
-    double xSpeed = 0;
-    double ySpeed = 0;
-    double rotSpeed = 0;
-    if (Math.abs(m_drive.getPose().getX() - m_auto.getTarget().getX()) < 0.1){
-      xSpeed = 0;
-    }
-    else{
-      xSpeed = 1;
-    }
-
-    if (Math.abs(m_drive.getPose().getY() - m_auto.getTarget().getY()) < 0.1){
-      ySpeed = 0;
-    }
-    else{
-      ySpeed = 1;
-    }
-
-    if (Math.abs(m_drive.getPose().getRotation().getRadians() - m_auto.getTarget().getRotation().getRadians()) < 0.1){
-      rotSpeed = 0;
-    }
-    else{
-      rotSpeed = 1;
-    }
-    m_drive.drive(xSpeed, ySpeed, rotSpeed, true);
+    m_auto.follow_current_path();
   }
 
   @Override
