@@ -1,5 +1,8 @@
 {
   "NetworkTables": {
+    "Retained Values": {
+      "open": false
+    },
     "transitory": {
       "drive": {
         "BL": {
@@ -14,6 +17,9 @@
         "FR": {
           "open": true
         },
+        "open": true
+      },
+      "robot": {
         "open": true
       }
     },

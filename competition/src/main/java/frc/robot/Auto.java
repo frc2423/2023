@@ -5,7 +5,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.util.NtHelper;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -16,8 +18,9 @@ import java.util.List;
 
 public class Auto {
     private Trajectory next_path = null;
-    private List<PathPlannerTrajectory> move_steps = PathPlanner.loadPathGroup("SimVisible", new PathConstraints(3, 2));
+    private List<PathPlannerTrajectory> move_steps = PathPlanner.loadPathGroup("forward", new PathConstraints(.5, 1));
     private final PPHolonomicDriveController m_holonomicController = new PPHolonomicDriveController(
+        //feedback in Swerve Module 
         new PIDController(0, 0, 0), // x feedback
         new PIDController(0, 0, 0), // y feedback
         new PIDController(0, 0, 0) // w feedback
@@ -40,9 +43,21 @@ public class Auto {
         drivetrain.updateOdometry();
         var currTime = timer.get();
         var desiredState = next_path.sample(currTime);
+        System.out.println(desiredState.poseMeters);
+        NtHelper.setDouble("/auto/desiredX", desiredState.poseMeters.getX());
+        NtHelper.setDouble("/auto/desiredY", desiredState.poseMeters.getY());
+        NtHelper.setDouble("/auto/actualX", drivetrain.getPose().getX());
+        NtHelper.setDouble("/auto/actualY", drivetrain.getPose().getY());
+        // desiredState.
         ChassisSpeeds refChassisSpeeds = m_holonomicController.calculate(drivetrain.getPose(), (PathPlannerState)desiredState);
-        System.out.println(refChassisSpeeds);
-        drivetrain.drive(refChassisSpeeds.vxMetersPerSecond, refChassisSpeeds.vyMetersPerSecond, refChassisSpeeds.omegaRadiansPerSecond, true);
+        // System.out.println(refChassisSpeeds);
+        double vy = RobotBase.isSimulation() ? -refChassisSpeeds.vyMetersPerSecond : -refChassisSpeeds.vyMetersPerSecond;
+
+        // NtHelper.setDouble("/auto/desiredX", desiredState.poseMeters.getX())
+        // NtHelper.setDouble("/auto/vx", refChassisSpeeds.vxMetersPerSecond);
+        // NtHelper.setDouble("/auto/vy", vy);
+
+        drivetrain.drive(refChassisSpeeds.vxMetersPerSecond, vy, refChassisSpeeds.omegaRadiansPerSecond, false);
     }
 
     public Pose2d getTarget() {

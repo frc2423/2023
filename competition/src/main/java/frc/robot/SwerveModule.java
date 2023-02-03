@@ -46,7 +46,7 @@ public class SwerveModule {
   private final FlywheelSim m_turnSim = new FlywheelSim(DCMotor.getNEO(1), 150.0 / 7.0, 0.004096955);
 
   // Gains are for example purposes only - must be determined for your own robot!
-  private final PIDController m_drivePIDController = new PIDController(1.0, 0, 0);
+  private final PIDController m_drivePIDController = new PIDController(0, 0, 0); //for sim use .5
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final PIDController m_turningPIDController = new PIDController(
@@ -58,8 +58,13 @@ public class SwerveModule {
         * kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration)
         */);
 
+        private double ks = RobotBase.isSimulation() ? 0.025 : 1;
+        private double kv = RobotBase.isSimulation() ? 0.075 : 3;
+
   // Gains are for example purposes only - must be determined for your own robot!
-  private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(1, 3);
+  private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ks, kv); 
+
+
   // private final SimpleMotorFeedforward m_turnFeedforward = new
   // SimpleMotorFeedforward(1, 0.5);
 
@@ -125,6 +130,10 @@ public class SwerveModule {
     // Calculate the drive output from the drive PID controller.
     final double driveOutput = m_drivePIDController.calculate(driveEncoderRate, state.speedMetersPerSecond);
 
+    NtHelper.setDouble("/drive/"+name+"/actualSpeed", driveEncoderRate);
+
+    NtHelper.setDouble("/drive/"+name+"/desiredSpeed", state.speedMetersPerSecond);
+
     final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
 
     // Calculate the turning motor output from the turning PID controller.
@@ -137,8 +146,8 @@ public class SwerveModule {
     // driveMotorVoltage = 0;
     // turnMotorVoltage = 0;
 
-    NtHelper.setDouble("/drive/"+name+"/actdistance", turnEncoderDistance);
-    NtHelper.setDouble("/drive/"+name+"/desdistance", state.angle.getRadians());
+    // NtHelper.setDouble("/drive/"+name+"/actdistance", turnEncoderDistance);
+    // NtHelper.setDouble("/drive/"+name+"/desdistance", state.angle.getRadians());
     
   }
 

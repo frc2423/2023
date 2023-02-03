@@ -47,6 +47,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() { //tell robot to go
+    m_drive.resetAngle();
+    m_drive.resetOdometry(new Pose2d());
     m_timer.reset();
     m_timer.start();
     m_auto.robotGo();
