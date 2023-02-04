@@ -36,10 +36,14 @@ public class Robot extends TimedRobot {
   private final Timer m_timer = new Timer();
   private Trajectory m_trajectory;
   private PWMSparkMax clawMotor;
+  private NeoMotor telescopeMotor;
 
   private static final int CLAW_MOTOR_PWM_PORT = 0;
   private static final double CLAW_OPEN_MOTOR_POWER = 0.5;
   private static final double CLAW_CLOSE_MOTOR_POWER = -CLAW_OPEN_MOTOR_POWER;
+  private static final int TELESCOPE_MOTOR_CAN_BUS_PORT = 0;
+  private static final double TELESCOPE_EXTENSION_POWER = 0.5;
+  private static final double TELESCOPE_RETRACTION_POWER = -TELESCOPE_EXTENSION_POWER;
 
   @Override // is society
   public void robotInit() {
@@ -50,6 +54,8 @@ public class Robot extends TimedRobot {
             new Pose2d(6, 4, new Rotation2d()),
             new TrajectoryConfig(2, 2));
     clawMotor = new PWMSparkMax(CLAW_MOTOR_PWM_PORT);
+    telescopeMotor = new NeoMotor(TELESCOPE_MOTOR_CAN_BUS_PORT);
+    telescopeMotor.setPercent(kDefaultPeriod);
   }
 
   @Override
@@ -98,6 +104,19 @@ public class Robot extends TimedRobot {
     }
    
     clawMotor.set(motorPower);
+
+    double telescopeMotorPower = 0.0;
+    // if both triggers are pressed, don't move the claw
+    if (!(m_controller.getRightTriggerAxis() >= 0.98 && m_controller.getLeftTriggerAxis() >= 0.98)) {
+      if (m_controller.getLeftTriggerAxis() > 0) {
+        telescopeMotorPower = TELESCOPE_EXTENSION_POWER;
+      }
+      if (m_controller.getRightTriggerAxis() > 0) {
+        telescopeMotorPower = TELESCOPE_RETRACTION_POWER;
+      }
+    }
+   
+    telescopeMotor.setPercent(telescopeMotorPower);;
 
     double xSpeed = -m_xspeedLimiter.calculate(yControllerInput) * Drivetrain.kMaxSpeed;
   
