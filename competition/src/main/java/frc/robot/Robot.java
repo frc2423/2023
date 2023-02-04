@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -94,14 +95,18 @@ public class Robot extends TimedRobot {
     double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3 
     double manualAngle = NtHelper.getDouble("/test/angle", 0);
     SwerveModuleState bloB = new SwerveModuleState(manualSpeed, Rotation2d.fromDegrees(manualAngle));
-    m_drive.m_frontLeft.setDesiredState(bloB);
-    m_drive.m_frontRight.setDesiredState(bloB);
-    m_drive.m_backLeft.setDesiredState(bloB);
-    m_drive.m_backRight.setDesiredState(bloB);
+    // m_drive.m_frontLeft.setDesiredState(bloB);
+    // m_drive.m_frontRight.setDesiredState(bloB);
+    // m_drive.m_backLeft.setDesiredState(bloB);
+    // m_drive.m_backRight.setDesiredState(bloB);
+    NtHelper.setDouble("/drive/frontLeft/distance", Units.metersToFeet(m_drive.m_frontLeft.getDistance()));
+    
   }
+  
 
   @Override
   public void testInit() {
+    m_drive.resetOdometry(new Pose2d());
     NtHelper.setDouble("/test/speed", 0);
     NtHelper.setDouble("/test/angle", 0);
   }

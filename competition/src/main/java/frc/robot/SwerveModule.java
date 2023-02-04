@@ -173,10 +173,15 @@ public class SwerveModule {
     turnEncoderDistance = (turnEncoderDistance + (m_turnSim.getAngularVelocityRadPerSec() * dtSeconds));
   }
 
+  public double getDistance(){
+    return m_driveMotor.getDistance();
+  }
+
   public void updateReal() {
     // Update real robot inputs
     m_driveMotor.setPercent(driveMotorVoltage / RobotController.getBatteryVoltage());
     m_turningMotor.setPercent((turnMotorVoltage) / RobotController.getBatteryVoltage());
+
 
     // Update state from actual devices
     driveEncoderRate = m_driveMotor.getSpeed();
