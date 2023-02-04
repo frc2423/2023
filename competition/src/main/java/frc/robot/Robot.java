@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import java.util.List;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,10 +19,8 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import frc.robot.util.NtHelper;
-import edu.wpi.first.math.MathUtil;
-
-import java.util.List;
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
@@ -34,7 +35,11 @@ public class Robot extends TimedRobot {
   private final RamseteController m_ramsete = new RamseteController();
   private final Timer m_timer = new Timer();
   private Trajectory m_trajectory;
+  private PWMSparkMax clawMotor;
 
+  private static final int CLAW_MOTOR_PWM_PORT = 0;
+  private static final double CLAW_OPEN_MOTOR_POWER = 0.5;
+  private static final double CLAW_CLOSE_MOTOR_POWER = -CLAW_OPEN_MOTOR_POWER;
 
   @Override // is society
   public void robotInit() {
@@ -44,6 +49,7 @@ public class Robot extends TimedRobot {
             List.of(),
             new Pose2d(6, 4, new Rotation2d()),
             new TrajectoryConfig(2, 2));
+    clawMotor = new PWMSparkMax(CLAW_MOTOR_PWM_PORT);
   }
 
   @Override
@@ -79,6 +85,19 @@ public class Robot extends TimedRobot {
     double deadband = 0.2;
     double yControllerInput = MathUtil.applyDeadband(m_controller.getLeftY(), deadband);
     double xControllerInput = MathUtil.applyDeadband(m_controller.getLeftX(), deadband);
+
+    double motorPower = 0.0;
+    // if both bumpers are pressed, don't move the claw
+    if (!(m_controller.getRightBumper() && m_controller.getLeftBumper())) {
+      if (m_controller.getLeftBumper()) {
+        motorPower = CLAW_OPEN_MOTOR_POWER;
+      }
+      if (m_controller.getRightBumper()) {
+        motorPower = CLAW_CLOSE_MOTOR_POWER;
+      }
+    }
+   
+    clawMotor.set(motorPower);
 
     double xSpeed = -m_xspeedLimiter.calculate(yControllerInput) * Drivetrain.kMaxSpeed;
   
