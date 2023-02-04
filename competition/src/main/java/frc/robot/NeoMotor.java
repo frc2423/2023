@@ -168,4 +168,8 @@ public class NeoMotor {
         }
     }
 
+    public double getCurrent(){
+        return motor.getOutputCurrent();
+    }
+
 }

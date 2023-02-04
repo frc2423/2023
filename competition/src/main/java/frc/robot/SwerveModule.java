@@ -58,8 +58,8 @@ public class SwerveModule {
         * kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration)
         */);
 
-        private double ks = RobotBase.isSimulation() ? 0.025 : 1;
-        private double kv = RobotBase.isSimulation() ? 0.075 : 3;
+        private double ks = RobotBase.isSimulation() ? 0.025 : .2;
+        private double kv = RobotBase.isSimulation() ? 0.075 : 15;
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ks, kv); 
@@ -132,7 +132,10 @@ public class SwerveModule {
 
     NtHelper.setDouble("/drive/"+name+"/actualSpeed", driveEncoderRate);
 
-    NtHelper.setDouble("/drive/"+name+"/desiredSpeed", state.speedMetersPerSecond);
+    NtHelper.setDouble("/drive/"+name+"/desiredSpeed", desiredState.speedMetersPerSecond);
+
+    NtHelper.setDouble("/drive/"+name+"/driveCurrent", m_driveMotor.getCurrent());
+    NtHelper.setDouble("/drive/"+name+"/turnCurrent", m_turningMotor.getCurrent());
 
     final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
 
