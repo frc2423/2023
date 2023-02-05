@@ -95,11 +95,12 @@ public class Robot extends TimedRobot {
     double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3 
     double manualAngle = NtHelper.getDouble("/test/angle", 0);
     SwerveModuleState bloB = new SwerveModuleState(manualSpeed, Rotation2d.fromDegrees(manualAngle));
-    // m_drive.m_frontLeft.setDesiredState(bloB);
-    // m_drive.m_frontRight.setDesiredState(bloB);
-    // m_drive.m_backLeft.setDesiredState(bloB);
-    // m_drive.m_backRight.setDesiredState(bloB);
-    NtHelper.setDouble("/drive/frontLeft/distance", Units.metersToFeet(m_drive.m_frontLeft.getDistance()));
+    m_drive.m_frontLeft.setDesiredState(bloB);
+    m_drive.m_frontRight.setDesiredState(bloB);
+    m_drive.m_backLeft.setDesiredState(bloB);
+    m_drive.m_backRight.setDesiredState(bloB);
+    // NtHelper.setDouble("/drive/frontLeft/distance", Units.metersToFeet(m_drive.m_backRight.getDistance()));
+    // NtHelper.setDouble("/drive/frontLeft/distance", m_drive.m_backRight.getDistance());
     
   }
   

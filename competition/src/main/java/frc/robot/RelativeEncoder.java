@@ -45,7 +45,7 @@ public class RelativeEncoder implements IEncoder {
 
     @Override
     public void setVelocityConversionFactor(double factor) {
-        encoder.setVelocityConversionFactor(factor / 60);
+        encoder.setVelocityConversionFactor(factor);
         
     }
 

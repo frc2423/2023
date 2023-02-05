@@ -54,10 +54,10 @@ public class Auto {
         double vy = RobotBase.isSimulation() ? refChassisSpeeds.vyMetersPerSecond : -refChassisSpeeds.vyMetersPerSecond;
 
         // NtHelper.setDouble("/auto/desiredX", desiredState.poseMeters.getX())
-        // NtHelper.setDouble("/auto/vx", refChassisSpeeds.vxMetersPerSecond);
-        // NtHelper.setDouble("/auto/vy", vy);
         double radiansPerSecond = (RobotBase.isSimulation() ? -1 : 1) * refChassisSpeeds.omegaRadiansPerSecond;
-
+        
+        NtHelper.setDouble("/auto/vx", refChassisSpeeds.vxMetersPerSecond);
+        NtHelper.setDouble("/auto/vy", vy);
         drivetrain.drive(refChassisSpeeds.vxMetersPerSecond, vy, radiansPerSecond, false);
     }
 

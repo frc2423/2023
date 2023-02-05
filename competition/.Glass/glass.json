@@ -20,6 +20,9 @@
         "FR": {
           "open": true
         },
+        "frontLeft": {
+          "open": true
+        },
         "open": true
       },
       "robot": {

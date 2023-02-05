@@ -18,7 +18,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 
 public class SwerveModule {
   // Constants
-  private static final double kWheelRadius = Units.inchesToMeters(3); // We know this
+  private static final double kWheelRadius = Units.inchesToMeters(1.5); // We know this
+  private static final double gearRatio = RobotBase.isSimulation() ? 1 : 5.08;
   private static final int kEncoderResolution = 1; // 4096;
 
   // State from robot logic
@@ -59,7 +60,7 @@ public class SwerveModule {
         */);
 
         private double ks = RobotBase.isSimulation() ? 0.025 : .2;
-        private double kv = RobotBase.isSimulation() ? 0.075 : 15;
+        private double kv = RobotBase.isSimulation() ? 0.075 : 2.5;
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ks, kv); 
@@ -84,7 +85,7 @@ public class SwerveModule {
     // Set the distance per pulse for the drive encoder. We can simply use the
     // distance traveled for one rotation of the wheel divided by the encoder
     // resolution.
-    m_driveMotor.setConversionFactor(2 * Math.PI * kWheelRadius);
+    m_driveMotor.setConversionFactor(2 * Math.PI * kWheelRadius / gearRatio);
 
     // Set the distance (in this case, angle) in radians per pulse for the turning
     // encoder.
@@ -174,7 +175,10 @@ public class SwerveModule {
   }
 
   public double getDistance(){
+    var ratio =  5.08;
+    // return m_driveMotor.getDistance() * 2 * Math.PI * kWheelRadius / ratio;
     return m_driveMotor.getDistance();
+    // return m_driveMotor.getDistance() / 5.08;
   }
 
   public void updateReal() {
