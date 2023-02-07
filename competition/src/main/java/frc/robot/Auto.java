@@ -18,7 +18,7 @@ import java.util.List;
 
 public class Auto {
     private Trajectory next_path = null;
-    private List<PathPlannerTrajectory> move_steps = PathPlanner.loadPathGroup("SimVisible", new PathConstraints(.5, 1));
+    private List<PathPlannerTrajectory> move_steps = PathPlanner.loadPathGroup("competition_just_charge_station_pos2", new PathConstraints(.5, 1));
     private final PPHolonomicDriveController m_holonomicController = new PPHolonomicDriveController(
         //feedback in Swerve Module 
         new PIDController(0, 0, 0), // x feedback
