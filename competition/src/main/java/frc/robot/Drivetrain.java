@@ -124,6 +124,7 @@ public class Drivetrain {
 
   public void resetAngle() {
     m_gyro.reset();
+    angle = new Rotation2d();
   }
 
   /** Check the current robot pose. */

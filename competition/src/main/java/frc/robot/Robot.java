@@ -88,7 +88,7 @@ public class Robot extends TimedRobot {
     double rot = m_rotLimiter.calculate(rotInput) * Drivetrain.kMaxAngularSpeed;
 
     ySpeed *= (isSimulation() ? -.5 : .5);
-    m_drive.drive(xSpeed * .5, ySpeed, rot, isSimulation() ? true : true);
+    m_drive.drive(xSpeed * 0.5, ySpeed, rot, isSimulation() ? true : true);
   }
 
   @Override
