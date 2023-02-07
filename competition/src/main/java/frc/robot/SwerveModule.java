@@ -47,11 +47,11 @@ public class SwerveModule {
   private final FlywheelSim m_turnSim = new FlywheelSim(DCMotor.getNEO(1), 150.0 / 7.0, 0.004096955);
 
   // Gains are for example purposes only - must be determined for your own robot!
-  private final PIDController m_drivePIDController = new PIDController(0, 0, 0); //for sim use .5
+  private final PIDController m_drivePIDController = new PIDController(0, 0, 0); // for sim use .5
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final PIDController m_turningPIDController = new PIDController(
-      RobotBase.isSimulation() ? 23 : 1.8, //kp
+      RobotBase.isSimulation() ? 23 : 1.8, // kp
       0,
       0/*
         * ,
@@ -59,12 +59,14 @@ public class SwerveModule {
         * kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration)
         */);
 
-        private double ks = RobotBase.isSimulation() ? 0.025 : .2;
-        private double kv = RobotBase.isSimulation() ? 0.075 : 2.5;
+  private double ks = RobotBase.isSimulation() ? 0.025 : .2;
+  private double kv = RobotBase.isSimulation() ? 0.075 : 2.5;
 
   // Gains are for example purposes only - must be determined for your own robot!
-  private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ks, kv); 
+  private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ks, kv);
 
+  private final boolean invertDriveEncoderRate;
+  private final boolean invertDriveEncoderDistance;
 
   // private final SimpleMotorFeedforward m_turnFeedforward = new
   // SimpleMotorFeedforward(1, 0.5);
@@ -76,7 +78,7 @@ public class SwerveModule {
    * @param driveid CAN ID for the drive motor.
    * @param turnid  CAN ID for the turning motor.
    */
-  public SwerveModule(int driveid, int turnid, String name, boolean swerveInvert) {
+  public SwerveModule(int driveid, int turnid, String name, boolean swerveInvert, boolean invertDriveEncoderRate) {
     this.name = name;
     m_driveMotor = new NeoMotor(driveid, false);
     m_turningMotor = new NeoMotor(turnid, true);
@@ -97,6 +99,9 @@ public class SwerveModule {
     // to be continuous.
     m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
     m_turningPIDController.setTolerance(.2);
+
+    this.invertDriveEncoderRate = invertDriveEncoderRate;
+    this.invertDriveEncoderDistance = false; //invertDriveEncoderDistance;
   }
 
   /**
@@ -116,7 +121,7 @@ public class SwerveModule {
    */
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        driveEncoderDistance, new Rotation2d(turnEncoderDistance));
+        driveEncoderDistance, new Rotation2d((2 * Math.PI) - turnEncoderDistance));
   }
 
   /**
@@ -126,17 +131,21 @@ public class SwerveModule {
    */
   public void setDesiredState(SwerveModuleState desiredState) {
     // Optimize the reference state to avoid spinning further than 90 degrees
-    SwerveModuleState state = SwerveModuleState.optimize(desiredState, new Rotation2d(turnEncoderDistance));
+    SwerveModuleState state = desiredState; // SwerveModuleState.optimize(desiredState, new
+                                            // Rotation2d(turnEncoderDistance));
 
     // Calculate the drive output from the drive PID controller.
     final double driveOutput = m_drivePIDController.calculate(driveEncoderRate, state.speedMetersPerSecond);
 
-    NtHelper.setDouble("/drive/"+name+"/actualSpeed", driveEncoderRate);
+    // NtHelper.setDouble("/drive/" + name + "/actualSpeed", driveEncoderRate);
 
-    NtHelper.setDouble("/drive/"+name+"/desiredSpeed", desiredState.speedMetersPerSecond);
+    // NtHelper.setDouble("/drive/" + name + "/desiredSpeed",
+    // desiredState.speedMetersPerSecond);
 
-    NtHelper.setDouble("/drive/"+name+"/driveCurrent", m_driveMotor.getCurrent());
-    NtHelper.setDouble("/drive/"+name+"/turnCurrent", m_turningMotor.getCurrent());
+    // NtHelper.setDouble("/drive/" + name + "/driveCurrent",
+    // m_driveMotor.getCurrent());
+    // NtHelper.setDouble("/drive/" + name + "/turnCurrent",
+    // m_turningMotor.getCurrent());
 
     final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
 
@@ -150,14 +159,16 @@ public class SwerveModule {
     // driveMotorVoltage = 0;
     // turnMotorVoltage = 0;
 
-    // NtHelper.setDouble("/drive/"+name+"/actdistance", turnEncoderDistance);
-    // NtHelper.setDouble("/drive/"+name+"/desdistance", state.angle.getRadians());
-    
+    NtHelper.setDouble("/drive/" + name + "/actdistance", turnEncoderDistance);
+    NtHelper.setDouble("/drive/" + name + "/desdistance", state.angle.getRadians());
+
   }
 
   public void resetPosition() {
     m_driveMotor.resetEncoder(0);
     m_turningMotor.resetEncoder(0);
+    driveEncoderDistance = 0;
+    turnEncoderDistance = 0;
   }
 
   public void updateSimulation(double dtSeconds) {
@@ -168,17 +179,20 @@ public class SwerveModule {
     m_driveSim.update(dtSeconds);
     m_turnSim.update(dtSeconds);
     // Get state from simulation devices
-    driveEncoderRate = (m_driveSim.getAngularVelocityRadPerSec());
-    driveEncoderDistance = (driveEncoderDistance + (m_driveSim.getAngularVelocityRadPerSec() * dtSeconds));
-    turnEncoderRate = (m_turnSim.getAngularVelocityRadPerSec());
+    var encoderRateSign = invertDriveEncoderRate ? -1 : 1;
+    driveEncoderRate = m_driveSim.getAngularVelocityRadPerSec() * encoderRateSign;
+    driveEncoderDistance = (driveEncoderDistance
+        + (m_driveSim.getAngularVelocityRadPerSec() * encoderRateSign * dtSeconds));
+
+    turnEncoderRate = m_turnSim.getAngularVelocityRadPerSec();
     turnEncoderDistance = (turnEncoderDistance + (m_turnSim.getAngularVelocityRadPerSec() * dtSeconds));
+
+    NtHelper.setDouble("/rates/" + name + "/speed", driveEncoderRate);
+    NtHelper.setDouble("/rates/" + name + "/distance", driveEncoderDistance);
   }
 
-  public double getDistance(){
-    var ratio =  5.08;
-    // return m_driveMotor.getDistance() * 2 * Math.PI * kWheelRadius / ratio;
+  public double getDistance() {
     return m_driveMotor.getDistance();
-    // return m_driveMotor.getDistance() / 5.08;
   }
 
   public void updateReal() {
@@ -186,12 +200,16 @@ public class SwerveModule {
     m_driveMotor.setPercent(driveMotorVoltage / RobotController.getBatteryVoltage());
     m_turningMotor.setPercent((turnMotorVoltage) / RobotController.getBatteryVoltage());
 
-
     // Update state from actual devices
-    driveEncoderRate = m_driveMotor.getSpeed();
-    driveEncoderDistance = m_driveMotor.getDistance();
+    var encoderRateSign = invertDriveEncoderRate ? -1 : 1;
+    var encoderDistanceSign = invertDriveEncoderDistance ? -1 : 1;
+    driveEncoderRate = m_driveMotor.getSpeed() * encoderRateSign;
+    driveEncoderDistance = m_driveMotor.getDistance() * encoderDistanceSign;
     turnEncoderRate = m_turningMotor.getSpeed();
     turnEncoderDistance = m_turningMotor.getDistance();
+
+    NtHelper.setDouble("/rates/" + name + "/speed", driveEncoderRate);
+    NtHelper.setDouble("/rates/" + name + "/distance", driveEncoderDistance);
   }
 
   public void update() {

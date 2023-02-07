@@ -4,23 +4,17 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.NtHelper;
 import edu.wpi.first.math.MathUtil;
-
-import java.util.List;
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
@@ -32,18 +26,23 @@ public class Robot extends TimedRobot {
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
   private final Drivetrain m_drive = new Drivetrain();
-  private final RamseteController m_ramsete = new RamseteController();
   private final Timer m_timer = new Timer();
   private final Auto m_auto = new Auto(m_drive);
+
+  private final Field2d field = new Field2d();
+
 
 
   @Override // is society
   public void robotInit() {
+    SmartDashboard.putData("Field", field);
+
   }
 
   @Override
   public void robotPeriodic() {
     m_drive.periodic();
+    field.setRobotPose(m_drive.getPose());
   }
 
   @Override
@@ -54,6 +53,7 @@ public class Robot extends TimedRobot {
     m_timer.start();
     m_auto.robotGo();
     m_auto.update_current_path();
+    field.getObject("trajectory").setTrajectory(m_auto.getTrajectory());
   }
 
   @Override
@@ -65,6 +65,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     m_drive.resetAngle();
+    m_drive.resetOdometry(new Pose2d());
   }
 
   @Override

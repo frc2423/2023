@@ -1,9 +1,18 @@
 {
   "NetworkTables": {
+    "Persistent Values": {
+      "open": false
+    },
     "Retained Values": {
       "open": false
     },
     "transitory": {
+      "LiveWindow": {
+        "open": true
+      },
+      "angle": {
+        "open": true
+      },
       "auto": {
         "open": true
       },
@@ -21,6 +30,21 @@
           "open": true
         },
         "frontLeft": {
+          "open": true
+        },
+        "open": true
+      },
+      "rates": {
+        "BL": {
+          "open": true
+        },
+        "BR": {
+          "open": true
+        },
+        "FL": {
+          "open": true
+        },
+        "FR": {
           "open": true
         },
         "open": true
@@ -47,6 +71,20 @@
       "/LiveWindow/Ungrouped/PIDController[9]": "PIDController",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
       "/SmartDashboard/Field": "Field2d"
+    },
+    "windows": {
+      "/SmartDashboard/Field": {
+        "trajectory": {
+          "arrowSize": 87,
+          "length": 0.6000000238418579,
+          "style": "Box/Image",
+          "weight": 1.0,
+          "width": 0.30000001192092896
+        },
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables Settings": {

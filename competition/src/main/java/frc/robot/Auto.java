@@ -7,6 +7,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.NtHelper;
 
 import com.pathplanner.lib.PathPlanner;
@@ -37,6 +38,10 @@ public class Auto {
         move_steps.remove(0);
         timer.reset();
         timer.start();
+    }
+
+    public Trajectory getTrajectory() {
+        return next_path;
     }
 
     public void follow_current_path() {
