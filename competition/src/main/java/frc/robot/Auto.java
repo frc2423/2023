@@ -7,7 +7,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.NtHelper;
 
 import com.pathplanner.lib.PathPlanner;
@@ -19,7 +18,7 @@ import java.util.List;
 
 public class Auto {
     private Trajectory next_path = null;
-    private List<PathPlannerTrajectory> move_steps = PathPlanner.loadPathGroup("Quirky1", new PathConstraints(2.5, 3));//2.5, 3
+    private List<PathPlannerTrajectory> move_steps = PathPlanner.loadPathGroup("competition_just_drive_out", new PathConstraints(2.5, 3));//2.5, 3
     private final PPHolonomicDriveController m_holonomicController = new PPHolonomicDriveController(
         //feedback in Swerve Module 
         new PIDController(0, 0, 0), // x feedback
@@ -56,7 +55,7 @@ public class Auto {
         // desiredState.
         ChassisSpeeds refChassisSpeeds = m_holonomicController.calculate(drivetrain.getPose(), (PathPlannerState)desiredState);
         // System.out.println(refChassisSpeeds);
-        double vy = RobotBase.isSimulation() ? refChassisSpeeds.vyMetersPerSecond : -refChassisSpeeds.vyMetersPerSecond;
+        double vy = RobotBase.isSimulation() ? -refChassisSpeeds.vyMetersPerSecond : -refChassisSpeeds.vyMetersPerSecond; //if not sim, negetive?
 
         // NtHelper.setDouble("/auto/desiredX", desiredState.poseMeters.getX())
         double radiansPerSecond = (RobotBase.isSimulation() ? -1 : 1) * refChassisSpeeds.omegaRadiansPerSecond;
@@ -65,6 +64,8 @@ public class Auto {
         NtHelper.setDouble("/auto/vy", vy);
         drivetrain.drive(refChassisSpeeds.vxMetersPerSecond, vy, radiansPerSecond, false);
     }
+
+// What is this?
 
     public Pose2d getTarget() {
         return new Pose2d(0, 1.7526, new Rotation2d());
