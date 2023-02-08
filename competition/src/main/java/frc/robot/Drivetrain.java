@@ -161,4 +161,14 @@ public class Drivetrain {
       realPeriodic();
     }
   }
+
+  public void set_op(boolean a) {
+
+    m_frontLeft.is_using_op(a);
+    m_backLeft.is_using_op(a);
+    m_frontRight.is_using_op(a);
+    m_backRight.is_using_op(a);
+
+  }
+
 }

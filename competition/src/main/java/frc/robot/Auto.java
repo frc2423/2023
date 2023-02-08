@@ -30,6 +30,7 @@ public class Auto {
 
     public Auto(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
+        this.drivetrain.set_op(false);
     }
 
     public void update_current_path() {

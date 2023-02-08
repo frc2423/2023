@@ -33,6 +33,8 @@ public class SwerveModule {
   private double turnEncoderDistance = 0;
   private String name;
 
+  private boolean use_op = true;
+
   /*
    * private static final double kModuleMaxAngularVelocity =
    * Drivetrain.kMaxAngularSpeed;
@@ -120,11 +122,15 @@ public class SwerveModule {
    * @return The current position of the module.
    */
   public SwerveModulePosition getPosition() {
-    // TODO: we are retunning 360 - turnEncoderDistance (turn angle) to flip odometry over the y-axis.
-    // This should be conditional since this shouldn't be done in simulation.
+    Rotation2d dist = (Robot.isSimulation()) ? new Rotation2d(turnEncoderDistance)  : new Rotation2d((2 * Math.PI) - turnEncoderDistance); 
     return new SwerveModulePosition(
-      driveEncoderDistance, new Rotation2d((2 * Math.PI) - turnEncoderDistance));
+      driveEncoderDistance, dist);  
   }
+
+public void is_using_op(boolean name) {
+  use_op = name;
+}
+
 
   /**
    * Sets the desired state for the module.
@@ -132,14 +138,10 @@ public class SwerveModule {
    * @param desiredState Desired state with speed and angle.
    */
   public void setDesiredState(SwerveModuleState desiredState) {
-    // TODO: Right now we are disabling optimizing the angle to get odometry working. We should
-    // maybe have a function that enables/disables optimization so that it can disabled in auto
-    // and enabled in teleop.
+
 
     // Optimize the reference state to avoid spinning further than 90 degrees
-    SwerveModuleState state = desiredState; // SwerveModuleState.optimize(desiredState, new
-                                            // Rotation2d(turnEncoderDistance));
-
+    SwerveModuleState state = (use_op) ? SwerveModuleState.optimize(desiredState, new Rotation2d(turnEncoderDistance)) : desiredState;
     // Calculate the drive output from the drive PID controller.
     final double driveOutput = m_drivePIDController.calculate(driveEncoderRate, state.speedMetersPerSecond);
 
