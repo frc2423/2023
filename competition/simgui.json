@@ -14,6 +14,9 @@
   },
   "NetworkTables": {
     "transitory": {
+      "SmartDashboard": {
+        "open": true
+      },
       "drive": {
         "BL": {
           "open": true

@@ -37,6 +37,8 @@ public class Robot extends TimedRobot {
   private Trajectory m_trajectory;
   private PWMSparkMax clawMotor;
   private NeoMotor telescopeMotor;
+  private NeoMotor shoulderMotor;
+  
 
   private static final int CLAW_MOTOR_PWM_PORT = 0;
   private static final double CLAW_OPEN_MOTOR_POWER = 0.5;
@@ -44,6 +46,9 @@ public class Robot extends TimedRobot {
   private static final int TELESCOPE_MOTOR_CAN_BUS_PORT = 0;
   private static final double TELESCOPE_EXTENSION_POWER = 0.5;
   private static final double TELESCOPE_RETRACTION_POWER = -TELESCOPE_EXTENSION_POWER;
+  private static final double SHOULDER_FORWARD_POWER = 0.5;
+  private static final double SHOULDER_BACKWARD_POWER = -SHOULDER_FORWARD_POWER;
+  public static final double DISTANCE = 0;
 
   @Override // is society
   public void robotInit() {
@@ -54,7 +59,7 @@ public class Robot extends TimedRobot {
             new Pose2d(6, 4, new Rotation2d()),
             new TrajectoryConfig(2, 2));
     clawMotor = new PWMSparkMax(CLAW_MOTOR_PWM_PORT);
-    telescopeMotor = new NeoMotor(TELESCOPE_MOTOR_CAN_BUS_PORT);
+    telescopeMotor = new NeoMotor(TELESCOPE_MOTOR_CAN_BUS_PORT,false);
     telescopeMotor.setPercent(kDefaultPeriod);
   }
 
@@ -97,9 +102,11 @@ public class Robot extends TimedRobot {
     if (!(m_controller.getRightBumper() && m_controller.getLeftBumper())) {
       if (m_controller.getLeftBumper()) {
         motorPower = CLAW_OPEN_MOTOR_POWER;
+        NtHelper.setBoolean("/test/claw",true);
       }
       if (m_controller.getRightBumper()) {
         motorPower = CLAW_CLOSE_MOTOR_POWER;
+        NtHelper.setBoolean("/test/claw",false);
       }
     }
    
@@ -110,13 +117,17 @@ public class Robot extends TimedRobot {
     if (!(m_controller.getRightTriggerAxis() >= 0.98 && m_controller.getLeftTriggerAxis() >= 0.98)) {
       if (m_controller.getLeftTriggerAxis() > 0) {
         telescopeMotorPower = TELESCOPE_EXTENSION_POWER;
+        NtHelper.setBoolean("/test/telescope",true);
       }
       if (m_controller.getRightTriggerAxis() > 0) {
         telescopeMotorPower = TELESCOPE_RETRACTION_POWER;
+        NtHelper.setBoolean("/test/telescope",false);
       }
     }
-   
+   // can ID for motor is 15, encoder is 25
     telescopeMotor.setPercent(telescopeMotorPower);;
+
+    telescopeMotor.setDistance(telescopeMotorPower);
 
     double xSpeed = -m_xspeedLimiter.calculate(yControllerInput) * Drivetrain.kMaxSpeed;
   

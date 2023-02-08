@@ -7,6 +7,7 @@ import com.revrobotics.SparkMaxPIDController;
 
 public class NeoMotor {
 
+    public static final String ControlType = null;
     protected CANSparkMax motor;
     private IEncoder encoder;
     private SparkMaxPIDController pidController;
