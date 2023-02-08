@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.devices;
 
 /**
  * This is an interface that gurantees both the AbsoluteEncoder and RelativeEncoder classes use every
