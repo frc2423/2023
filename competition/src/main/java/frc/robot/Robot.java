@@ -4,22 +4,17 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.NtHelper;
 import edu.wpi.first.math.MathUtil;
-
-import java.util.List;
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
@@ -31,45 +26,46 @@ public class Robot extends TimedRobot {
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
   private final Drivetrain m_drive = new Drivetrain();
-  private final RamseteController m_ramsete = new RamseteController();
   private final Timer m_timer = new Timer();
-  private Trajectory m_trajectory;
+  private final Auto m_auto = new Auto(m_drive);
+
+  private final Field2d field = new Field2d();
+
 
 
   @Override // is society
   public void robotInit() {
-    m_trajectory =
-        TrajectoryGenerator.generateTrajectory(
-            new Pose2d(2, 2, new Rotation2d()),
-            List.of(),
-            new Pose2d(6, 4, new Rotation2d()),
-            new TrajectoryConfig(2, 2));
+    SmartDashboard.putData("Field", field);
+
   }
 
   @Override
   public void robotPeriodic() {
     m_drive.periodic();
+    field.setRobotPose(m_drive.getPose());
   }
 
   @Override
-  public void autonomousInit() {
+  public void autonomousInit() { //tell robot to go
+    m_drive.resetAngle();
+    m_drive.resetOdometry(new Pose2d());
     m_timer.reset();
     m_timer.start();
-    m_drive.resetOdometry(m_trajectory.getInitialPose());
+    m_auto.robotGo();
+    m_auto.update_current_path();
+    field.getObject("trajectory").setTrajectory(m_auto.getTrajectory());
   }
 
   @Override
-  public void autonomousPeriodic() {
+  public void autonomousPeriodic() { //check for completion, work toward goal
     getPeriod();
-    double elapsed = m_timer.get();
-    Trajectory.State reference = m_trajectory.sample(elapsed);
-    ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), reference);
-    m_drive.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, true);
+    m_auto.follow_current_path();
   }
 
   @Override
   public void teleopInit() {
     m_drive.resetAngle();
+    m_drive.resetOdometry(new Pose2d());
   }
 
   @Override
@@ -92,7 +88,7 @@ public class Robot extends TimedRobot {
     double rot = m_rotLimiter.calculate(rotInput) * Drivetrain.kMaxAngularSpeed;
 
     ySpeed *= (isSimulation() ? -.5 : .5);
-    m_drive.drive(xSpeed * .5, ySpeed, rot, isSimulation() ? true : true);
+    m_drive.drive(xSpeed * 0.5, ySpeed, rot, isSimulation() ? true : true);
   }
 
   @Override
@@ -104,10 +100,15 @@ public class Robot extends TimedRobot {
     m_drive.m_frontRight.setDesiredState(bloB);
     m_drive.m_backLeft.setDesiredState(bloB);
     m_drive.m_backRight.setDesiredState(bloB);
+    // NtHelper.setDouble("/drive/frontLeft/distance", Units.metersToFeet(m_drive.m_backRight.getDistance()));
+    // NtHelper.setDouble("/drive/frontLeft/distance", m_drive.m_backRight.getDistance());
+    
   }
+  
 
   @Override
   public void testInit() {
+    m_drive.resetOdometry(new Pose2d());
     NtHelper.setDouble("/test/speed", 0);
     NtHelper.setDouble("/test/angle", 0);
   }

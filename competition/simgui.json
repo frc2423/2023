@@ -6,6 +6,11 @@
     },
     "windows": {
       "/SmartDashboard/Field": {
+        "trajectory": {
+          "style": "Box/Image",
+          "weight": 2.0,
+          "width": 0.20000000298023224
+        },
         "window": {
           "visible": true
         }
@@ -14,6 +19,12 @@
   },
   "NetworkTables": {
     "transitory": {
+      "angle": {
+        "open": true
+      },
+      "auto": {
+        "open": true
+      },
       "drive": {
         "BL": {
           "open": true
@@ -24,7 +35,9 @@
         "FL": {
           "open": true
         },
-        "open": true
+        "FR": {
+          "open": true
+        }
       },
       "robot": {
         "open": true
