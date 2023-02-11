@@ -16,8 +16,8 @@ public class Arm {
     private static final int GRIPPER_MOTOR_PWM_PORT = 0;
     private static final double GRIPPER_OPEN_MOTOR_POWER = 0.5;
     private static final double GRIPPER_CLOSE_MOTOR_POWER = -GRIPPER_OPEN_MOTOR_POWER;
-    private static final int TELESCOPE_MOTOR_CAN_BUS_PORT = 0;
-    private static final double TELESCOPE_EXTENSION_POWER = 0.25;
+    private static final int TELESCOPE_MOTOR_CAN_BUS_PORT = 9;
+    private static final double TELESCOPE_EXTENSION_POWER = 0.15;
     private static final double TELESCOPE_RETRACTION_POWER = -TELESCOPE_EXTENSION_POWER;
     private static final double SHOULDER_FORWARD_POWER = 0.35;
     private static final double SHOULDER_BACKWARD_POWER = -SHOULDER_FORWARD_POWER;
@@ -31,6 +31,7 @@ public class Arm {
     CANCoderConfiguration _canCoderConfiguration = new CANCoderConfiguration();
     PIDController shoulder_PID = new PIDController(.01 , 0.00075 , 0);
     private double TELESCOPE_CONVERSION_FACTOR = 1; //gear ratio
+    private double currentShoulderAngle = 0;
 
     /*
      * TODO:
@@ -122,7 +123,7 @@ public class Arm {
     }
 
     public void shoulderStop(){
-        shoulderMotor.setPercent(0);
+        set_shoulder_dist_PID(currentShoulderAngle);
         NtHelper.setDouble("/robot/shoulder/speed", 0);
     }
     // this function is to give a certain degrees int and this function will set the motor to the desired location.
@@ -146,12 +147,14 @@ public class Arm {
 
     public void set_shoulder_dist_PID(double degrees) {
         shoulderMotor.setPercent(0.3 * -shoulder_PID.calculate(shoulderEncoder.getPosition(), degrees));
+       
 
     }
 
     public void shoulderSetpoint(Rotation2d shoulderAngle) {
         if(shoulderEncoder.getPosition() <= SHOULDER_MAXIMUM && shoulderEncoder.getPosition() >= SHOULDER_MINIMUM) {
             set_shoulder_dist_PID(shoulderAngle.getDegrees());
+            currentShoulderAngle = shoulderAngle.getDegrees();
         } else{
             shoulderMotor.setPercent(0);
         }
@@ -159,7 +162,7 @@ public class Arm {
     }
 
     public void reset_shoulder () {
-         shoulderEncoder.setPositionToAbsolute(0);
+         shoulderEncoder.setPosition(0);
 
     }
 
@@ -188,14 +191,18 @@ public class Arm {
 
     public void intakeBelt() {
         //sets belt speed to # > 0
+        //very psudo code stuff for the belt
+        //beltMotor.setPercent(.75);
     }
 
     public void outtakeBelt() {
         //sets belt speed to # < 0
+        //beltMotor.setPercent(-.75);
     }
 
     public void beltStop() {
         //set belt speed to 0
+        //beltMotor.setPercent(0);
     }
 
     public void setBeltSpeed(double beltSpeed) {

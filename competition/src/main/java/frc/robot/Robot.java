@@ -130,6 +130,7 @@ public class Robot extends TimedRobot {
    }
 
    arm.getShoulderAngle();
+   arm.getTelescopePosition();
    
     if (m_controller.getLeftBumper()) {
       arm.retract();
@@ -156,5 +157,6 @@ public class Robot extends TimedRobot {
   public void testInit() {
     NtHelper.setDouble("/test/speed", 0);
     NtHelper.setDouble("/test/angle", 0);
+    arm.reset_shoulder();
   }
 }
