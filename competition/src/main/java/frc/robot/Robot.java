@@ -120,7 +120,10 @@ public class Robot extends TimedRobot {
    } 
    else if (m_controller.getBButton()) {
     arm.shoulderBack();
-   } else {                                                                                                                              // funny seeing you here
+   } else if (m_controller.getXButton()) {
+    arm.shoulderSetpoint(new Rotation2d(46));
+    }
+   else {                                                                                                                              // funny seeing you here
     arm.shoulderStop();
    }
    arm.getShoulderAngle();

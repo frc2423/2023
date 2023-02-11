@@ -1,10 +1,11 @@
 package frc.robot;
 
+import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.CANCoderConfiguration;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import frc.robot.util.NtHelper;
-import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.CANCoderConfiguration;
 
 
 public class Arm {
@@ -21,8 +22,8 @@ public class Arm {
     private static final double SHOULDER_BACKWARD_POWER = -SHOULDER_FORWARD_POWER;
     public static final double DISTANCE = 0;
     private double SHOULDER_CONVERSION_FACTOR = 1; //Calculate later (motor is 80:1)
-    private double SHOULDER_MINIMUM = -4; //calculate later ;)
-    private double SHOULDER_MAXIMUM = 4; //calculate later :)
+    private double SHOULDER_MINIMUM = -110; //calculate later ;)
+    private double SHOULDER_MAXIMUM = 110; //calculate later :)
     private double TELESCOPE_MINIMUM = 0; //calculate later
     private double TELESCOPE_MAXIMUM = 10; //calcate later
     private CANCoder shoulderEncoder  = new CANCoder(25);
@@ -30,9 +31,7 @@ public class Arm {
 
     /*
      * TODO:
-     *  - function to reset shoulder encoder postion
      *  - check if getting can values from shoulder encoder -> if not reduce speed 
-     *  - get encoder limits
      *  - make function for set distance for shoulder motor
      */
 
@@ -79,14 +78,14 @@ public class Arm {
     //moves the shoulder angle towards the front of the robot
     //limit shoulder angle
     public void shoulderForward() {
-        // if (shoulderEncoder.getPosition() >= SHOULDER_MAXIMUM) {
-        //     NtHelper.setDouble("/robot/shoulder/speed", 0);
+         if (shoulderEncoder.getPosition() >= SHOULDER_MAXIMUM) {
+            NtHelper.setDouble("/robot/shoulder/speed", 0);
 
-        //     shoulderMotor.setPercent(0);
-        // } else{
+             shoulderMotor.setPercent(0);
+         } else{
             NtHelper.setDouble("/robot/shoulder/speed", SHOULDER_FORWARD_POWER);
             shoulderMotor.setPercent(SHOULDER_FORWARD_POWER);
-       // }
+        }
     }
 
     //moves the shoulder angle towards the back of the robot
@@ -105,14 +104,34 @@ public class Arm {
         shoulderMotor.setPercent(0);
         NtHelper.setDouble("/robot/shoulder/speed", 0);
     }
+    // this function is to give a certain degrees int and this function will set the motor to the desired location.
+
+    private void set_shoulder_dist(double degrees) {
+        if(Math.abs(shoulderEncoder.getPosition()) < degrees + 5) {
+            shoulderMotor.setPercent(0);
+        }
+        else  if (shoulderEncoder.getPosition() > degrees) {
+            shoulderMotor.setPercent(-SHOULDER_FORWARD_POWER);
+        }
+        else {
+             shoulderMotor.setPercent(SHOULDER_FORWARD_POWER);
+        }
+
+
+    } 
 
     public void shoulderSetpoint(Rotation2d shoulderAngle) {
         if(shoulderEncoder.getPosition() <= SHOULDER_MAXIMUM && shoulderEncoder.getPosition() >= SHOULDER_MINIMUM) {
-            shoulderMotor.setDistance(shoulderAngle.getRadians());
+            set_shoulder_dist(shoulderAngle.getDegrees());
         } else{
             shoulderMotor.setPercent(0);
         }
         
+    }
+
+    public void reset_shoulder () {
+         shoulderEncoder.setPositionToAbsolute(0);
+
     }
 
     public void openGripper() {
