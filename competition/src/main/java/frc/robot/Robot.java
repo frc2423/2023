@@ -41,6 +41,7 @@ public class Robot extends TimedRobot {
   // private NeoMotor shoulderMotor;
   private final Field2d field = new Field2d();
 
+  private Arm arm;
 
   // private static final int CLAW_MOTOR_PWM_PORT = 0;
   // private static final double CLAW_OPEN_MOTOR_POWER = 0.5;
@@ -63,6 +64,7 @@ public class Robot extends TimedRobot {
     // clawMotor = new PWMSparkMax(CLAW_MOTOR_PWM_PORT);
     // telescopeMotor = new NeoMotor(TELESCOPE_MOTOR_CAN_BUS_PORT,false);
     // telescopeMotor.setPercent(kDefaultPeriod);
+    arm = new Arm();
   }
 
   @Override
@@ -112,6 +114,16 @@ public class Robot extends TimedRobot {
 
     ySpeed *= (isSimulation() ? -.5 : .5);
     m_drive.drive(xSpeed * .5, ySpeed, rot, isSimulation() ? true : true);
+
+   if (m_controller.getAButton()) {                                                                                                //hello adrian
+    arm.shoulderForward();
+   } 
+   else if (m_controller.getBButton()) {
+    arm.shoulderBack();
+   } else {                                                                                                                              // funny seeing you here
+    arm.shoulderStop();
+   }
+   arm.getShoulderAngle();
   }
 
   @Override
@@ -122,7 +134,7 @@ public class Robot extends TimedRobot {
     m_drive.m_frontLeft.setDesiredState(bloB);
     m_drive.m_frontRight.setDesiredState(bloB);
     m_drive.m_backLeft.setDesiredState(bloB);
-    m_drive.m_backRight.setDesiredState(bloB);
+    m_drive.m_backRight.setDesiredState(bloB);                                                                                           //:P
   }
 
   @Override

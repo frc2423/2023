@@ -50,7 +50,10 @@
         "open": true
       },
       "robot": {
-        "open": true
+        "open": true,
+        "shoulder": {
+          "open": true
+        }
       },
       "test": {
         "open": true
