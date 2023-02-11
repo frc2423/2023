@@ -1,5 +1,13 @@
 package frc.robot;
 
+import java.util.List;
+
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -9,16 +17,10 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.util.NtHelper;
 
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import java.util.List;
-
 public class Auto {
+    private String path_name = NtHelper.getString("/robot/auto/path" , "competition_just_drive_out");
     private Trajectory next_path = null;
-    private List<PathPlannerTrajectory> move_steps = PathPlanner.loadPathGroup("competition_just_drive_out", new PathConstraints(2.5, 3));//2.5, 3
+    private List<PathPlannerTrajectory> move_steps = PathPlanner.loadPathGroup(path_name, new PathConstraints(2.5, 3));//2.5, 3
     private final PPHolonomicDriveController m_holonomicController = new PPHolonomicDriveController(
         //feedback in Swerve Module 
         new PIDController(0, 0, 0), // x feedback
@@ -56,7 +58,7 @@ public class Auto {
         // desiredState.
         ChassisSpeeds refChassisSpeeds = m_holonomicController.calculate(drivetrain.getPose(), (PathPlannerState)desiredState);
         // System.out.println(refChassisSpeeds);
-        double vy = RobotBase.isSimulation() ? -refChassisSpeeds.vyMetersPerSecond : -refChassisSpeeds.vyMetersPerSecond; //if not sim, negetive?
+        double vy = RobotBase.isSimulation() ?  refChassisSpeeds.vyMetersPerSecond : -refChassisSpeeds.vyMetersPerSecond; //if not sim, negetive?
 
         // NtHelper.setDouble("/auto/desiredX", desiredState.poseMeters.getX())
         double radiansPerSecond = (RobotBase.isSimulation() ? -1 : 1) * refChassisSpeeds.omegaRadiansPerSecond;
