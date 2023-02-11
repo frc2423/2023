@@ -68,6 +68,10 @@ public class Robot extends TimedRobot {
     m_drive.resetOdometry(new Pose2d());
   }
 
+  public void autoAlign() {
+     
+  }
+
   @Override
   public void teleopPeriodic() {
     // Get the x speed. We are inverting this because Xbox controllers return
