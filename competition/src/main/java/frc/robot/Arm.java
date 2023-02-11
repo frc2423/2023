@@ -17,7 +17,7 @@ public class Arm {
     private static final double GRIPPER_OPEN_MOTOR_POWER = 0.5;
     private static final double GRIPPER_CLOSE_MOTOR_POWER = -GRIPPER_OPEN_MOTOR_POWER;
     private static final int TELESCOPE_MOTOR_CAN_BUS_PORT = 0;
-    private static final double TELESCOPE_EXTENSION_POWER = 0.5;
+    private static final double TELESCOPE_EXTENSION_POWER = 0.25;
     private static final double TELESCOPE_RETRACTION_POWER = -TELESCOPE_EXTENSION_POWER;
     private static final double SHOULDER_FORWARD_POWER = 0.35;
     private static final double SHOULDER_BACKWARD_POWER = -SHOULDER_FORWARD_POWER;
@@ -52,21 +52,21 @@ public class Arm {
         //limit extension distance
         NtHelper.setBoolean("/robot/telescope/outness",true);
 
-        if(telescopeMotor.getDistance() >= TELESCOPE_MAXIMUM) {
-            telescopeMotor.setPercent(0); 
-        } else {
+        // if(telescopeMotor.getDistance() >= TELESCOPE_MAXIMUM) {
+        //     telescopeMotor.setPercent(0); 
+        // } else {
             telescopeMotor.setPercent(TELESCOPE_EXTENSION_POWER);
-        }
+       //}
     }
 
     public void retract() { //arm un-telescopes
         //limit retraction distance
-        NtHelper.setBoolean("/robot/telescope/outness",false);
-        if(telescopeMotor.getDistance() <= TELESCOPE_MINIMUM){
-            telescopeMotor.setPercent(0); 
-        } else {
+        // NtHelper.setBoolean("/robot/telescope/outness",false);
+        // if(telescopeMotor.getDistance() <= TELESCOPE_MINIMUM){
+        //     telescopeMotor.setPercent(0); 
+        // } else {
             telescopeMotor.setPercent(TELESCOPE_RETRACTION_POWER);
-        }
+        //}
     }
 
     public void telescopeToSetpoint(double meters) {
