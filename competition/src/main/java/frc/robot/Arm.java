@@ -142,7 +142,6 @@ public class Arm {
              NtHelper.setDouble("/robot/shoulder/speed", -SHOULDER_FORWARD_POWER);
         }
 
-
     } 
 
     public void set_shoulder_dist_PID(double degrees) {
@@ -162,6 +161,21 @@ public class Arm {
     public void reset_shoulder () {
          shoulderEncoder.setPositionToAbsolute(0);
 
+    }
+
+    public void getShoulderEncoderCANErrors(){
+        String error = shoulderEncoder.getLastError().toString();
+        NtHelper.setString("/robot/shoulder/error", error);
+    }
+
+    public boolean correctCANError(){
+        //do correcting
+        //bleh bleh bleeh blehh
+        if (shoulderEncoder.getLastError().toString() == ""){
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void openGripper() {
