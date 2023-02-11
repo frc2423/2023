@@ -16,10 +16,10 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.util.NtHelper;
 
@@ -91,6 +91,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     m_drive.resetAngle();
+    NtHelper.setDouble("/robot/shoulder/set_angle", 0);
   }
 
   @Override
@@ -116,17 +117,28 @@ public class Robot extends TimedRobot {
     m_drive.drive(xSpeed * .5, ySpeed, rot, isSimulation() ? true : true);
 
    if (m_controller.getAButton()) {                                                                                                //hello adrian
-    arm.shoulderForward();
+      arm.shoulderForward();
    } 
    else if (m_controller.getBButton()) {
-    arm.shoulderBack();
+      arm.shoulderBack();
    } else if (m_controller.getXButton()) {
-    arm.shoulderSetpoint(new Rotation2d(46));
-    }
+      double benny = NtHelper.getDouble("/robot/shoulder/set_angle", 0);
+      arm.shoulderSetpoint(new Rotation2d(Units.degreesToRadians(benny)));
+    } 
    else {                                                                                                                              // funny seeing you here
-    arm.shoulderStop();
+      arm.shoulderStop();
    }
+
    arm.getShoulderAngle();
+   
+    if (m_controller.getLeftBumper()) {
+      arm.retract();
+   } else if (m_controller.getRightBumper()) {
+      arm.extend();
+   } else {
+      arm.stopTelescopeMotor();
+   }
+
   }
 
   @Override
