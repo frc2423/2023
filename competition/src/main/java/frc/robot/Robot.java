@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.util.NtHelper;
 
 public class Robot extends TimedRobot {
@@ -38,7 +39,8 @@ public class Robot extends TimedRobot {
   // private PWMSparkMax clawMotor;
   // private NeoMotor telescopeMotor;
   // private NeoMotor shoulderMotor;
-  
+  private final Field2d field = new Field2d();
+
 
   // private static final int CLAW_MOTOR_PWM_PORT = 0;
   // private static final double CLAW_OPEN_MOTOR_POWER = 0.5;
@@ -96,8 +98,6 @@ public class Robot extends TimedRobot {
     double deadband = 0.2;
     double yControllerInput = MathUtil.applyDeadband(m_controller.getLeftY(), deadband);
     double xControllerInput = MathUtil.applyDeadband(m_controller.getLeftX(), deadband);
-
-
 
     double xSpeed = -m_xspeedLimiter.calculate(yControllerInput) * Drivetrain.kMaxSpeed;
   
