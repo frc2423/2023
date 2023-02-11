@@ -35,20 +35,20 @@ public class Robot extends TimedRobot {
   private final RamseteController m_ramsete = new RamseteController();
   private final Timer m_timer = new Timer();
   private Trajectory m_trajectory;
-  private PWMSparkMax clawMotor;
-  private NeoMotor telescopeMotor;
-  private NeoMotor shoulderMotor;
+  // private PWMSparkMax clawMotor;
+  // private NeoMotor telescopeMotor;
+  // private NeoMotor shoulderMotor;
   
 
-  private static final int CLAW_MOTOR_PWM_PORT = 0;
-  private static final double CLAW_OPEN_MOTOR_POWER = 0.5;
-  private static final double CLAW_CLOSE_MOTOR_POWER = -CLAW_OPEN_MOTOR_POWER;
-  private static final int TELESCOPE_MOTOR_CAN_BUS_PORT = 0;
-  private static final double TELESCOPE_EXTENSION_POWER = 0.5;
-  private static final double TELESCOPE_RETRACTION_POWER = -TELESCOPE_EXTENSION_POWER;
-  private static final double SHOULDER_FORWARD_POWER = 0.5;
-  private static final double SHOULDER_BACKWARD_POWER = -SHOULDER_FORWARD_POWER;
-  public static final double DISTANCE = 0;
+  // private static final int CLAW_MOTOR_PWM_PORT = 0;
+  // private static final double CLAW_OPEN_MOTOR_POWER = 0.5;
+  // private static final double CLAW_CLOSE_MOTOR_POWER = -CLAW_OPEN_MOTOR_POWER;
+  // private static final int TELESCOPE_MOTOR_CAN_BUS_PORT = 0;
+  // private static final double TELESCOPE_EXTENSION_POWER = 0.5;
+  // private static final double TELESCOPE_RETRACTION_POWER = -TELESCOPE_EXTENSION_POWER;
+  // private static final double SHOULDER_FORWARD_POWER = 0.5;
+  // private static final double SHOULDER_BACKWARD_POWER = -SHOULDER_FORWARD_POWER;
+  // public static final double DISTANCE = 0;
 
   @Override // is society
   public void robotInit() {
@@ -58,9 +58,9 @@ public class Robot extends TimedRobot {
             List.of(),
             new Pose2d(6, 4, new Rotation2d()),
             new TrajectoryConfig(2, 2));
-    clawMotor = new PWMSparkMax(CLAW_MOTOR_PWM_PORT);
-    telescopeMotor = new NeoMotor(TELESCOPE_MOTOR_CAN_BUS_PORT,false);
-    telescopeMotor.setPercent(kDefaultPeriod);
+    // clawMotor = new PWMSparkMax(CLAW_MOTOR_PWM_PORT);
+    // telescopeMotor = new NeoMotor(TELESCOPE_MOTOR_CAN_BUS_PORT,false);
+    // telescopeMotor.setPercent(kDefaultPeriod);
   }
 
   @Override
@@ -97,37 +97,7 @@ public class Robot extends TimedRobot {
     double yControllerInput = MathUtil.applyDeadband(m_controller.getLeftY(), deadband);
     double xControllerInput = MathUtil.applyDeadband(m_controller.getLeftX(), deadband);
 
-    double motorPower = 0.0;
-    // if both bumpers are pressed, don't move the claw
-    if (!(m_controller.getRightBumper() && m_controller.getLeftBumper())) {
-      if (m_controller.getLeftBumper()) {
-        motorPower = CLAW_OPEN_MOTOR_POWER;
-        NtHelper.setBoolean("/test/claw",true);
-      }
-      if (m_controller.getRightBumper()) {
-        motorPower = CLAW_CLOSE_MOTOR_POWER;
-        NtHelper.setBoolean("/test/claw",false);
-      }
-    }
-   
-    clawMotor.set(motorPower);
 
-    double telescopeMotorPower = 0.0;
-    // if both triggers are pressed, don't move the claw
-    if (!(m_controller.getRightTriggerAxis() >= 0.98 && m_controller.getLeftTriggerAxis() >= 0.98)) {
-      if (m_controller.getLeftTriggerAxis() > 0) {
-        telescopeMotorPower = TELESCOPE_EXTENSION_POWER;
-        NtHelper.setBoolean("/test/telescope",true);
-      }
-      if (m_controller.getRightTriggerAxis() > 0) {
-        telescopeMotorPower = TELESCOPE_RETRACTION_POWER;
-        NtHelper.setBoolean("/test/telescope",false);
-      }
-    }
-   // can ID for motor is 15, encoder is 25
-    telescopeMotor.setPercent(telescopeMotorPower);;
-
-    telescopeMotor.setDistance(telescopeMotorPower);
 
     double xSpeed = -m_xspeedLimiter.calculate(yControllerInput) * Drivetrain.kMaxSpeed;
   
