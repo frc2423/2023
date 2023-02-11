@@ -29,9 +29,11 @@ public class Drivetrain {
   private final Translation2d m_frontRightLocation = new Translation2d(kWheelBase, -kTrackWidth);
   private final Translation2d m_backLeftLocation = new Translation2d(-kWheelBase, kTrackWidth);
   private final Translation2d m_backRightLocation = new Translation2d(-kWheelBase, -kTrackWidth);
-  public final SwerveModule m_frontLeft = new SwerveModule(17, 16, "FL", !RobotBase.isSimulation(), !RobotBase.isSimulation());
+  public final SwerveModule m_frontLeft = new SwerveModule(17, 16, "FL", !RobotBase.isSimulation(),
+      !RobotBase.isSimulation());
   public final SwerveModule m_frontRight = new SwerveModule(3, 4, "FR", false, false);
-  public final SwerveModule m_backLeft = new SwerveModule(19, 18, "BL", !RobotBase.isSimulation(), !RobotBase.isSimulation());
+  public final SwerveModule m_backLeft = new SwerveModule(19, 18, "BL", !RobotBase.isSimulation(),
+      !RobotBase.isSimulation());
   public final SwerveModule m_backRight = new SwerveModule(1, 2, "BR", false, false);
 
   private final Gyro m_gyro = new Gyro();
@@ -56,6 +58,7 @@ public class Drivetrain {
           m_backLeft.getPosition(),
           m_backRight.getPosition()
       });
+
 
   /** Subsystem constructor. */
   public Drivetrain() {
@@ -122,9 +125,20 @@ public class Drivetrain {
         pose);
   }
 
+  public void setOptimized(boolean optimize) {
+    m_frontLeft.setOptimized(optimize);
+    m_backLeft.setOptimized(optimize);
+    m_frontRight.setOptimized(optimize);
+    m_backRight.setOptimized(optimize);
+  }
+
   public void resetAngle() {
     m_gyro.reset();
     angle = new Rotation2d();
+  }
+
+  public Rotation2d getAngle(){
+    return angle;
   }
 
   /** Check the current robot pose. */

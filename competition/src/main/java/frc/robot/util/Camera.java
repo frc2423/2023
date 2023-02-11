@@ -18,19 +18,19 @@ public class Camera {
     public double getTapeX() {
         // use the getYaw value
         // use a median filter to filter out bad values
-        return 0;
-    }
-
-    public boolean seesTarget() {
-
-        return false;
+        if(seesTarget()){
+            return camera.getLatestResult().getBestTarget().getYaw();
+        }
+        else{
+            return 0;
+        }
     }
 
     public PhotonPipelineResult getLatestResult() {
         return camera.getLatestResult();
     }
 
-    public boolean haveTags() {
+    public boolean seesTarget() {
         return camera.getLatestResult().hasTargets();
         // assuming it's on the AprilTags pipeline
     }
