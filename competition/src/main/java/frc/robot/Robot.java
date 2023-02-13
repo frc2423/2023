@@ -111,10 +111,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    var angleError = Math.PI - m_drive.getAngle().getRadians();
-    NtHelper.setDouble("robot/autoRotate/angleError", angleError);
-    // if (m_controller.getAButton()) {
-    // autoAlign();
+
     if (m_controller.getBButton()) {
       autoRotate();
     } else {
@@ -144,16 +141,11 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
     double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3
     double manualAngle = NtHelper.getDouble("/test/angle", 0);
-    SwerveModuleState bloB = new SwerveModuleState(manualSpeed, Rotation2d.fromDegrees(manualAngle));
-    m_drive.m_frontLeft.setDesiredState(bloB);
-    m_drive.m_frontRight.setDesiredState(bloB);
-    m_drive.m_backLeft.setDesiredState(bloB);
-    m_drive.m_backRight.setDesiredState(bloB);
-    // NtHelper.setDouble("/drive/frontLeft/distance",
-    // Units.metersToFeet(m_drive.m_backRight.getDistance()));
-    // NtHelper.setDouble("/drive/frontLeft/distance",
-    // m_drive.m_backRight.getDistance());
-
+    SwerveModuleState state = new SwerveModuleState(manualSpeed, Rotation2d.fromDegrees(manualAngle));
+    m_drive.m_frontLeft.setDesiredState(state);
+    m_drive.m_frontRight.setDesiredState(state);
+    m_drive.m_backLeft.setDesiredState(state);
+    m_drive.m_backRight.setDesiredState(state);
   }
 
   @Override

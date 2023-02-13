@@ -1,7 +1,7 @@
 package frc.robot.util;
 
 /**
- * A Rotation object for calculating turn rate values based on an error between an actual and desired rotation
+ * An object for mapping a range of values to another
  */
 public class LinearScale {
 
@@ -10,13 +10,11 @@ public class LinearScale {
   private double onTargetMargin;
   private double maxDomain;
 
-
   /**
-   * Initializes a new Rotation object
-   * @param minRange The minimum rotation speed that the object will ever return
-   * @param maxRange The maximum rotation speed that the object will ever return
-   * @param onTargetMargin The maximum angle error allowed in either direction to consider us at the target rotation
-   * @param maxDomain The angle error threshold beyond which the min/max turn speedo will be returned
+   * @param minRange The minimum value that the object will ever return
+   * @param maxRange The maximum value that the object will ever return
+   * @param onTargetMargin The maximum error allowed in either direction to consider us at the target value
+   * @param maxDomain The error threshold beyond which the min/max value will be returned
    */
   public LinearScale(double minRange, double maxRange, double onTargetMargin, double maxDomain) {
     this.minRange = minRange;
@@ -26,9 +24,9 @@ public class LinearScale {
   }
   
   /**
-   * Takes in an angle error and returns a proper rotation speed to reduce the error.
-   * @param value The angle error
-   * @return The rotation speed to provide to the robot.
+   * Takes in an error and returns a value to reduce the error.
+   * @param value The error
+   * @return The value to provide to the robot.
    */
   public double calculate(double value) { 
     
@@ -46,15 +44,6 @@ public class LinearScale {
 
     }
 
-    // turn speed = (1 - .1) * (10 - 5) / (15 - 5) + .1 = 0.55
-    // turn speed = (1 - .1) * (15 - 5) / (15 - 5) + .1 = 1
-    // turn speed = (1 - .1) * (5 - 5) / (10 - 5) + .1 = .1
-   
-    // turn speed = (1 - .1) * (-10 - 5) / (15 - 5) + .1 = -1.25
-    // turn speed = (1 - .1) * (-15 - 5) / (15 - 5) + .1 = -1.7
-    // turn speed = (1 - .1) * (-5 - 5) / (10 - 5) + .1 = -1.7
-
-
     //Sets the speed depending on the distance of target
     double absValue = Math.abs(value);
 
@@ -68,6 +57,5 @@ public class LinearScale {
 
   public boolean isDone(double x){
     return x >= -onTargetMargin && x <= onTargetMargin;
-    //return (angle < maxX && angle > minX);
   }
 }
