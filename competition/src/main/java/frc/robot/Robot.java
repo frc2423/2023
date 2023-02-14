@@ -25,6 +25,7 @@ import frc.robot.util.NtHelper;
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
+  private final XboxController m_controller_right = new XboxController(1);
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0
   // to 1.
@@ -92,6 +93,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     m_drive.resetAngle();
     NtHelper.setDouble("/robot/shoulder/set_angle", 0);
+    arm.resetTelescopeEncoder();
   }
 
   @Override
@@ -116,15 +118,17 @@ public class Robot extends TimedRobot {
     ySpeed *= (isSimulation() ? -.5 : .5);
     m_drive.drive(xSpeed * .5, ySpeed, rot, isSimulation() ? true : true);
 
-   if (m_controller.getAButton()) {                                                                                                //hello adrian
+   if (m_controller.getLeftBumper()) {                                                                                                //hello adrian
       arm.shoulderForward();
    } 
-   else if (m_controller.getBButton()) {
+   else if (m_controller.getRightBumper()) {
       arm.shoulderBack();
-   } else if (m_controller.getXButton()) {
+   } else if (m_controller.getBButton()) {
       double benny = NtHelper.getDouble("/robot/shoulder/set_angle", 0);
       arm.shoulderSetpoint(new Rotation2d(Units.degreesToRadians(benny)));
-    } 
+    } else if (m_controller.getXButton()) {
+      arm.shoulderSetpoint(new Rotation2d(0));
+    }
    else {                                                                                                                              // funny seeing you here
       arm.shoulderStop();
    }
@@ -132,14 +136,23 @@ public class Robot extends TimedRobot {
    arm.getShoulderAngle();
    arm.getTelescopePosition();
    
-    if (m_controller.getLeftBumper()) {
+    if (m_controller.getAButton()) {
       arm.retract();
-   } else if (m_controller.getRightBumper()) {
+   } else if (m_controller.getYButton()) { //double check this
       arm.extend();
-   } else {
+      
+   } 
+
+   else {
       arm.stopTelescopeMotor();
    }
-
+   if (m_controller_right.getYButton()) {
+    arm.intakeBelt();
+   } else if (m_controller_right.getAButton()) {
+    arm.outtakeBelt();
+   } else if (m_controller_right.getXButton()) {
+    arm.beltStop();
+   } 
   }
 
   @Override
@@ -147,10 +160,19 @@ public class Robot extends TimedRobot {
     double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3 
     double manualAngle = NtHelper.getDouble("/test/angle", 0);
     SwerveModuleState bloB = new SwerveModuleState(manualSpeed, Rotation2d.fromDegrees(manualAngle));
-    m_drive.m_frontLeft.setDesiredState(bloB);
-    m_drive.m_frontRight.setDesiredState(bloB);
-    m_drive.m_backLeft.setDesiredState(bloB);
-    m_drive.m_backRight.setDesiredState(bloB);                                                                                           //:P
+    // m_drive.m_frontLeft.setDesiredState(bloB);
+    // m_drive.m_frontRight.setDesiredState(bloB);
+    // m_drive.m_backLeft.setDesiredState(bloB);
+    // m_drive.m_backRight.setDesiredState(bloB);        
+    if (m_controller_right.getStartButton()){
+      arm.telescope_override();
+   }
+   else if (m_controller_right.getBackButton()){
+    arm.resetTelescopeEncoder();
+   }             
+   else {
+    arm.stopTelescopeMotor();
+   }                                                                      //:P
   }
 
   @Override
