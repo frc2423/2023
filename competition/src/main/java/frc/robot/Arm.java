@@ -115,8 +115,8 @@ public class Arm {
             the arm fall (not fun)*/ 
         } else {
             NtHelper.setDouble("/robot/shoulder/speed", SHOULDER_FORWARD_POWER);
-            set_shoulder_dist(currentShoulderAngle + 1); 
-            currentShoulderAngle = shoulderEncoder.getPosition() + 1;
+            set_shoulder_dist(currentShoulderAngle + 5); 
+            currentShoulderAngle = shoulderEncoder.getPosition() + 5;
         }
     }
 
@@ -127,8 +127,8 @@ public class Arm {
             set_shoulder_dist(currentShoulderAngle);
             NtHelper.setDouble("/robot/shoulder/speed", 0);
         } else {
-            set_shoulder_dist(currentShoulderAngle - 1);
-            currentShoulderAngle = shoulderEncoder.getPosition() - 1;
+            set_shoulder_dist(currentShoulderAngle - 5);
+            currentShoulderAngle = shoulderEncoder.getPosition() - 5;
             NtHelper.setDouble("/robot/shoulder/speed", SHOULDER_BACKWARD_POWER);
         }
     }

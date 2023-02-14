@@ -139,11 +139,8 @@ public class Robot extends TimedRobot {
     if (m_controller.getAButton()) {
       arm.retract();
    } else if (m_controller.getYButton()) { //double check this
-      arm.extend();
-      
-   } 
-
-   else {
+      arm.extend();  
+   } else {
       arm.stopTelescopeMotor();
    }
    if (m_controller_right.getYButton()) {
@@ -153,6 +150,16 @@ public class Robot extends TimedRobot {
    } else if (m_controller_right.getXButton()) {
     arm.beltStop();
    } 
+
+   if (m_controller_right.getBButton()){
+    arm.shoulderSetpoint(new Rotation2d(0));
+   } else if (m_controller_right.getLeftBumper()) {
+    arm.shoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
+   } else if (m_controller_right.getRightBumper()) {
+    arm.shoulderSetpoint(new Rotation2d(Units.degreesToRadians(65)));
+   }
+
+
   }
 
   @Override
