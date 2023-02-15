@@ -12,6 +12,7 @@ public class yellow implements Led {
     }
 
     public void run(AddressableLEDBuffer buffer, int length) {
+        System.out.println("yellow");
         for (var i = 0; i < buffer.getLength(); i++) {
             buffer.setRGB(i, 255,255,0);
         }

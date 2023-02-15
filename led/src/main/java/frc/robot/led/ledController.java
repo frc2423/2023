@@ -5,13 +5,13 @@ import java.util.HashMap;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
-public class LedController {
+public class ledController {
     private HashMap<String, Led> leds = new HashMap<String, Led>();
     private AddressableLED led = new AddressableLED(1);
     private AddressableLEDBuffer ledBuffer;
     private String currentLed;
     
-    public LedController(int length) {
+    public ledController(int length) {
         ledBuffer = new AddressableLEDBuffer(length);
         led.setLength(ledBuffer.getLength());
         led.setData(ledBuffer);

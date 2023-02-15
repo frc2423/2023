@@ -12,6 +12,7 @@ public class purple implements Led {
     }
 
     public void run(AddressableLEDBuffer buffer, int length) {
+        System.out.println("purple");
         for (var i = 0; i < buffer.getLength(); i++) {
             buffer.setHSV(i, 255,75,54);
         }

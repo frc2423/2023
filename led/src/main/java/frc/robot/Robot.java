@@ -12,6 +12,7 @@ import frc.robot.led.Led;
 import frc.robot.led.purple;
 import frc.robot.led.rainbow;
 import frc.robot.led.yellow;
+import frc.robot.util.NtHelper;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -34,10 +35,11 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     /* led controller */
     /*  Led color modules*/
-    LedController.add("yellow",new yellow());
-    LedController.add("purple",new purple());
-    
-  }
+    /*LedController.add("yellow",new yellow());
+    LedController.add("purple",new purple());*/
+    NtHelper.getBoolean("/test/led/ledstatus",false);
+    NtHelper.setBoolean("/test/led/ledstatus",true);
+    }
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -48,8 +50,15 @@ public class Robot extends TimedRobot {
    */
   @Override
 
-  public void robotPeriodic() {}
-
+  public void robotPeriodic() {
+    if (NtHelper.getBoolean("/test/led/ledstatus",true) == true) {
+      LedController.add("purple",new purple());
+      System.out.println("PURPEL HAHAHA");
+    }
+    else {
+      LedController.add("yellow",new yellow());
+      System.out.println("YELLOW HAHAHA");
+    }
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
    * autonomous modes using the dashboard. The sendable chooser code works with the Java
@@ -60,6 +69,7 @@ public class Robot extends TimedRobot {
    * below with additional strings. If using the SendableChooser make sure to add them to the
    * chooser code above as well.
    */
+  }
   @Override
   public void autonomousInit() {
     m_autoSelected = m_chooser.getSelected();
