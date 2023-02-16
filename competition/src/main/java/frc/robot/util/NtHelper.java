@@ -1,10 +1,13 @@
 package frc.robot.util;
 
+import java.util.EnumSet;
 import java.util.function.Consumer;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.Topic;
 import edu.wpi.first.networktables.NetworkTable.TableEventListener;
 import edu.wpi.first.networktables.NetworkTableEvent.Kind;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableEvent;
 
 public class NtHelper {
 
@@ -14,17 +17,18 @@ public class NtHelper {
 
     /**
      * Adds an entry listener to network tables
-     * @param key String for network tables key
+     * 
+     * @param key      String for network tables key
      * @param listener Function to be called when value changes
      */
-    // public static void listen(String key, Consumer<TableEventListener> listener) {
-    //     NetworkTableInstance.getDefault().addListener(key,
-    //            Kind.kValueAll, listener);
-    //  }
-      //  Might be an or with kImmediate 
+    public static void listen(String key, Consumer<NetworkTableEvent> listener) {
+        var entry = NtHelper.getEntry(key);
+        NetworkTableInstance.getDefault().addListener(entry, EnumSet.of(Kind.kValueAll), listener);
+    }
 
     /**
      * Get current value from network tables
+     * 
      * @param key Key to get value of
      * @return current value of key
      */
@@ -34,7 +38,8 @@ public class NtHelper {
 
     /**
      * Get current value from network tables
-     * @param key Key to get value of
+     * 
+     * @param key          Key to get value of
      * @param defaultValue default value if key in network tables is null
      * @return current value of key
      */
@@ -44,16 +49,18 @@ public class NtHelper {
 
     /**
      * Sets the current value to network tables
-     * @param key key to set
+     * 
+     * @param key   key to set
      * @param value new value for key
      */
     public static void setDouble(String key, double value) {
         getEntry(key).setDouble(value);
     }
-    
+
     /**
      * Get current value from network tables
-     * @param key Key to get value of
+     * 
+     * @param key          Key to get value of
      * @param defaultValue default value if key in network tables is null
      * @return current value of key
      */
@@ -63,7 +70,8 @@ public class NtHelper {
 
     /**
      * Sets the current value to network tables
-     * @param key key to set
+     * 
+     * @param key   key to set
      * @param value new value for key
      */
     public static void setString(String key, String value) {
@@ -72,7 +80,8 @@ public class NtHelper {
 
     /**
      * Sets the current value to network tables
-     * @param key key to set
+     * 
+     * @param key   key to set
      * @param value new value for key
      */
     public static void setBoolean(String key, Boolean value) {
@@ -81,7 +90,8 @@ public class NtHelper {
 
     /**
      * Get current value from network tables
-     * @param key Key to get value of
+     * 
+     * @param key          Key to get value of
      * @param defaultValue default value if key in network tables is null
      * @return current value of key
      */
@@ -91,7 +101,8 @@ public class NtHelper {
 
     /**
      * Sets the current value to network tables
-     * @param key key to set
+     * 
+     * @param key   key to set
      * @param value new value for key
      */
     public static void setStringArray(String key, String[] value) {
@@ -100,7 +111,8 @@ public class NtHelper {
 
     /**
      * Sets the current value to network tables
-     * @param key key to set
+     * 
+     * @param key   key to set
      * @param value new value for key
      */
     public static void setDoubleArray(String key, double[] value) {

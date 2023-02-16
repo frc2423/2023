@@ -12,7 +12,6 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -37,40 +36,25 @@ public class Robot extends TimedRobot {
   private final RamseteController m_ramsete = new RamseteController();
   private final Timer m_timer = new Timer();
   private Trajectory m_trajectory;
-  // private PWMSparkMax clawMotor;
-  // private NeoMotor telescopeMotor;
-  // private NeoMotor shoulderMotor;
   private final Field2d field = new Field2d();
 
   private Arm arm;
 
-  // private static final int CLAW_MOTOR_PWM_PORT = 0;
-  // private static final double CLAW_OPEN_MOTOR_POWER = 0.5;
-  // private static final double CLAW_CLOSE_MOTOR_POWER = -CLAW_OPEN_MOTOR_POWER;
-  // private static final int TELESCOPE_MOTOR_CAN_BUS_PORT = 0;
-  // private static final double TELESCOPE_EXTENSION_POWER = 0.5;
-  // private static final double TELESCOPE_RETRACTION_POWER = -TELESCOPE_EXTENSION_POWER;
-  // private static final double SHOULDER_FORWARD_POWER = 0.5;
-  // private static final double SHOULDER_BACKWARD_POWER = -SHOULDER_FORWARD_POWER;
-  // public static final double DISTANCE = 0;
-
   @Override // is society
   public void robotInit() {
-    m_trajectory =
-        TrajectoryGenerator.generateTrajectory(
-            new Pose2d(2, 2, new Rotation2d()),
-            List.of(),
-            new Pose2d(6, 4, new Rotation2d()),
-            new TrajectoryConfig(2, 2));
-    // clawMotor = new PWMSparkMax(CLAW_MOTOR_PWM_PORT);
-    // telescopeMotor = new NeoMotor(TELESCOPE_MOTOR_CAN_BUS_PORT,false);
-    // telescopeMotor.setPercent(kDefaultPeriod);
+    m_trajectory = TrajectoryGenerator.generateTrajectory(
+        new Pose2d(2, 2, new Rotation2d()),
+        List.of(),
+        new Pose2d(6, 4, new Rotation2d()),
+        new TrajectoryConfig(2, 2));
     arm = new Arm();
+    NtHelper.setString("/arm/position", "up");
   }
 
   @Override
   public void robotPeriodic() {
     m_drive.periodic();
+    arm.periodic();
   }
 
   @Override
@@ -105,7 +89,7 @@ public class Robot extends TimedRobot {
     double xControllerInput = MathUtil.applyDeadband(m_controller.getLeftX(), deadband);
 
     double xSpeed = -m_xspeedLimiter.calculate(yControllerInput) * Drivetrain.kMaxSpeed;
-  
+
     double ySpeed = m_yspeedLimiter.calculate(xControllerInput) * Drivetrain.kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
@@ -118,82 +102,115 @@ public class Robot extends TimedRobot {
     ySpeed *= (isSimulation() ? -.5 : .5);
     m_drive.drive(xSpeed * .5, ySpeed, rot, isSimulation() ? true : true);
 
-  //  if (m_controller.getLeftBumper()) {                                                                                                //hello adrian
-  //     arm.shoulderForward();
-  //  } 
-  //  else if (m_controller.getRightBumper()) {
-  //     arm.shoulderBack();
-  //  } else if (m_controller.getBButton()) {
-  //     double benny = NtHelper.getDouble("/robot/shoulder/set_angle", 0);
-  //     arm.shoulderSetpoint(new Rotation2d(Units.degreesToRadians(benny)));
-  //   } else if (m_controller.getXButton()) {
-  //     arm.shoulderSetpoint(new Rotation2d(0));
-  //   }
-  //  else {                                                                                                                              // funny seeing you here
-  //     arm.shoulderStop();
-   //}
+    // if (m_controller.getLeftBumper()) { //hello adrian
+    // arm.shoulderForward();
+    // }
+    // else if (m_controller.getRightBumper()) {
+    // arm.shoulderBack();
+    // } else if (m_controller.getBButton()) {
+    // double benny = NtHelper.getDouble("/robot/shoulder/set_angle", 0);
+    // arm.shoulderSetpoint(new Rotation2d(Units.degreesToRadians(benny)));
+    // } else if (m_controller.getXButton()) {
+    // arm.shoulderSetpoint(new Rotation2d(0));
+    // }
+    // else { // funny seeing you here
+    // arm.shoulderStop();
+    // }
 
-   arm.getShoulderAngle();
-   arm.getTelescopePosition();
-   
-    if (m_controller.getAButton()) {
+    arm.getShoulderAngle();
+    arm.getTelescopePosition();
+
+    if (m_controller.getXButton()) {
+      arm.extend();
+    } else if (m_controller.getBButton()) { // double check this
       arm.retract();
-   } else if (m_controller.getYButton()) { //double check this
-      arm.extend();  
-   } else {
+    }
+
+    if (m_controller.getXButtonReleased()) {
       arm.stopTelescopeMotor();
-   }
-   if (m_controller_right.getYButton()) {
-    arm.intakeBelt();
-   } else if (m_controller_right.getAButton()) {
-    arm.outtakeBelt();
-   } else if (m_controller_right.getXButton()) {
-    arm.beltStop();
-   } 
+    }
 
-   if (m_controller_right.getBButton()){
-    arm.shoulderSetpoint(new Rotation2d(0));
-   } else if (m_controller_right.getLeftBumper()) {
-    arm.shoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
-   } else if (m_controller_right.getRightBumper()) {
-    arm.shoulderSetpoint(new Rotation2d(Units.degreesToRadians(65)));
-   } else {
-    arm.shoulderSetpoint(new Rotation2d(Units.degreesToRadians(arm.getShoulderEncoderPosition())));
-   }
+    if (m_controller.getBButtonReleased()) {
+      arm.stopTelescopeMotor();
+    }
 
+    if (m_controller.getYButton() || m_controller_right.getYButton()) {
+      arm.intakeBelt();
+    } else if (m_controller.getAButton() || m_controller_right.getAButton()) {
+      arm.outtakeBelt();
+    } else {
+      arm.beltStop();
+    }
+
+    NtHelper.listen("/arm/position", (entry) -> {
+      var position = NtHelper.getString("/arm/position", "up");
+      if (position.equals("Up")) {
+        arm.setShoulderSetpoint(new Rotation2d(0));
+        arm.telescopeToSetpoint(10);
+      } else if (position.equals("Front Score")) {
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(65)));
+        arm.telescopeToSetpoint(30);
+      } else if (position.equals("Front Floor")) {
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
+        arm.telescopeToSetpoint(10);
+      } else if (position.equals("Back Floor")) {
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-110)));
+        arm.telescopeToSetpoint(10);
+      } else if (position.equals("Back Score")) {
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-65)));
+        arm.telescopeToSetpoint(30);
+
+      }
+    });
+
+    if (m_controller.getLeftBumperReleased()) { // hello adrian
+      arm.shoulderForward();
+    } else if (m_controller.getRightBumperReleased()) {
+      arm.shoulderBack();
+    }
+
+    // if (m_controller_right.getBButtonReleased()) {
+    // arm.setShoulderSetpoint(new Rotation2d(0));
+    // } else if (m_controller_right.getLeftBumperReleased()) {
+    // arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
+    // } else if (m_controller_right.getRightBumperReleased()) {
+    // arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(65)));
+    // } else {
+    // // arm.setShoulderSetpoint(new
+    // // Rotation2d(Units.degreesToRadians(arm.getShoulderEncoderPosition())));
+    // }
 
   }
 
   @Override
   public void testPeriodic() {
-    if (m_controller.getStartButton()){
-      arm.reset_shoulder();
+    if (m_controller.getStartButton()) {
+      arm.resetShoulder();
     }
     NtHelper.setDouble("/test/shoulderPosition", arm.getShoulderEncoderPosition());
     double radians = Units.degreesToRadians(5);
-    if (m_controller.getYButton()){
-      arm.setShoulderVelocity(radians);
-     } else if (m_controller.getAButton()) {
-      arm.setShoulderVelocity(-radians);
-     } else {
-      arm.setShoulderVelocity(0);
-     }
-  //   double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3 
-  //   double manualAngle = NtHelper.getDouble("/test/angle", 0);
-  //   SwerveModuleState bloB = new SwerveModuleState(manualSpeed, Rotation2d.fromDegrees(manualAngle));
-  //   // m_drive.m_frontLeft.setDesiredState(bloB);
-  //   // m_drive.m_frontRight.setDesiredState(bloB);
-  //   // m_drive.m_backLeft.setDesiredState(bloB);
-  //   // m_drive.m_backRight.setDesiredState(bloB);        
-    if (m_controller_right.getStartButton()){
+    // if (m_controller.getYButton()){
+    // arm.setShoulderVelocity(radians);
+    // } else if (m_controller.getAButton()) {
+    // arm.setShoulderVelocity(-radians);
+    // } else {
+    // arm.setShoulderVelocity(0);
+    // }
+    // double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3
+    // double manualAngle = NtHelper.getDouble("/test/angle", 0);
+    // SwerveModuleState bloB = new SwerveModuleState(manualSpeed,
+    // Rotation2d.fromDegrees(manualAngle));
+    // // m_drive.m_frontLeft.setDesiredState(bloB);
+    // // m_drive.m_frontRight.setDesiredState(bloB);
+    // // m_drive.m_backLeft.setDesiredState(bloB);
+    // // m_drive.m_backRight.setDesiredState(bloB);
+    if (m_controller_right.getStartButton()) {
       arm.telescope_override();
-   }
-   else if (m_controller_right.getBackButton()){
-    arm.resetTelescopeEncoder();
-   }             
-   else {
-    arm.stopTelescopeMotor();
-   }                                                                      //:P
+    } else if (m_controller_right.getBackButton()) {
+      arm.resetTelescopeEncoder();
+    } else {
+      arm.stopTelescopeMotor();
+    } // :P
   }
 
   @Override
