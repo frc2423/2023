@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.util.NtHelper;
+import frc.robot.auto.Auto;
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
@@ -32,13 +33,15 @@ public class Robot extends TimedRobot {
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
-  private final Drivetrain m_drive = new Drivetrain();
-  private final RamseteController m_ramsete = new RamseteController();
+  public static Drivetrain m_drive = new Drivetrain();
   private final Timer m_timer = new Timer();
   private Trajectory m_trajectory;
   private final Field2d field = new Field2d();
+  public static Trajectories trajectories= new Trajectories();
 
-  private Arm arm;
+  public static Arm arm = new Arm();
+
+  private Auto auto = new Auto();
 
   @Override // is society
   public void robotInit() {
@@ -47,7 +50,6 @@ public class Robot extends TimedRobot {
         List.of(),
         new Pose2d(6, 4, new Rotation2d()),
         new TrajectoryConfig(2, 2));
-    arm = new Arm();
     NtHelper.setString("/arm/value", "Up");
     String[] options = { "Front Floor", "Front Score", "Up", "Back Score", "Back Floor" };
     NtHelper.setStringArray("/arm/options", options);
@@ -85,15 +87,12 @@ public class Robot extends TimedRobot {
     m_timer.reset();
     m_timer.start();
     m_drive.resetOdometry(m_trajectory.getInitialPose());
+    auto.restart();
   }
 
   @Override
   public void autonomousPeriodic() {
-    getPeriod();
-    double elapsed = m_timer.get();
-    Trajectory.State reference = m_trajectory.sample(elapsed);
-    ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), reference);
-    m_drive.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, true);
+    auto.run();
   }
 
   @Override

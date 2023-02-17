@@ -36,7 +36,7 @@ public class Arm {
     CANCoderConfiguration _canCoderConfiguration = new CANCoderConfiguration();
     PIDController shoulder_PID = new PIDController(.005, 0, 0);
     private double TELESCOPE_CONVERSION_FACTOR = 1; // gear ratio
-    private double beltoSpeedo = .40;
+    private double beltoSpeedo = .75;
     // Create a new ArmFeedforward with gains kS, kG, kV, and kA
     private ArmFeedforward feedforward = new ArmFeedforward(0.16623, 0.39399, 17.022, 1.7561);
 
