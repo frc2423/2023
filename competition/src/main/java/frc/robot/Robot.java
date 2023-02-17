@@ -206,9 +206,7 @@ public class Robot extends TimedRobot {
     // // m_drive.m_frontRight.setDesiredState(bloB);
     // // m_drive.m_backLeft.setDesiredState(bloB);
     // // m_drive.m_backRight.setDesiredState(bloB);
-    if (m_controller_right.getStartButton()) {
-      arm.telescope_override();
-    } else if (m_controller_right.getBackButton()) {
+    if (m_controller_right.getBackButton()) {
       arm.resetTelescopeEncoder();
     } else {
       arm.stopTelescopeMotor();

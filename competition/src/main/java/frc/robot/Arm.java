@@ -93,10 +93,6 @@ public class Arm {
 
     }
 
-    public void telescope_override() {
-        telescopeMotor.setPercent(TELESCOPE_RETRACTION_POWER % 2);
-    }
-
     public void telescopeToSetpoint(double meters) {
         // setpoint is in meters instead of inches or an encoder value (subject to
         // change)
