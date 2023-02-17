@@ -122,8 +122,9 @@ public class SwerveModule {
   public SwerveModulePosition getPosition() {
     // TODO: we are retunning 360 - turnEncoderDistance (turn angle) to flip odometry over the y-axis.
     // This should be conditional since this shouldn't be done in simulation.
+    double encoderDist = Robot.isSimulation() ?  turnEncoderDistance :- turnEncoderDistance;
     return new SwerveModulePosition(
-      driveEncoderDistance, new Rotation2d((2 * Math.PI) - turnEncoderDistance));
+      driveEncoderDistance, new Rotation2d((2 * Math.PI) + encoderDist));
   }
 
   /**
@@ -137,8 +138,7 @@ public class SwerveModule {
     // and enabled in teleop.
 
     // Optimize the reference state to avoid spinning further than 90 degrees
-    SwerveModuleState state = desiredState; // SwerveModuleState.optimize(desiredState, new
-                                            // Rotation2d(turnEncoderDistance));
+    SwerveModuleState state = (Robot.isSimulation() ? desiredState : SwerveModuleState.optimize(desiredState, new Rotation2d(turnEncoderDistance)));
 
     // Calculate the drive output from the drive PID controller.
     final double driveOutput = m_drivePIDController.calculate(driveEncoderRate, state.speedMetersPerSecond);

@@ -4,9 +4,11 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
+import com.ctre.phoenix.sensors.CANCoder;
 
 public class NeoMotor {
 
+    public static final String ControlType = null;
     protected CANSparkMax motor;
     private IEncoder encoder;
     private SparkMaxPIDController pidController;
@@ -33,7 +35,7 @@ public class NeoMotor {
     }
 
     public NeoMotor(int port) {
-        new NeoMotor(port, false);
+        this(port, false);
     }
 
     public void setIZone(double zone) {
