@@ -22,7 +22,7 @@ public class Arm {
     private static final double GRIPPER_OPEN_MOTOR_POWER = 0.5;
     private static final double GRIPPER_CLOSE_MOTOR_POWER = -GRIPPER_OPEN_MOTOR_POWER;
     private static final int TELESCOPE_MOTOR_CAN_BUS_PORT = 9;
-    private static final double TELESCOPE_EXTENSION_POWER = 0.25;
+    private static final double TELESCOPE_EXTENSION_POWER = 0.40;
     private static final double TELESCOPE_RETRACTION_POWER = -TELESCOPE_EXTENSION_POWER;
     private static final double SHOULDER_FORWARD_POWER = 0.005;
     private static final double SHOULDER_BACKWARD_POWER = -SHOULDER_FORWARD_POWER;
@@ -36,7 +36,7 @@ public class Arm {
     CANCoderConfiguration _canCoderConfiguration = new CANCoderConfiguration();
     PIDController shoulder_PID = new PIDController(.005, 0, 0);
     private double TELESCOPE_CONVERSION_FACTOR = 1; // gear ratio
-    private double beltoSpeedo = .25;
+    private double beltoSpeedo = .40;
     // Create a new ArmFeedforward with gains kS, kG, kV, and kA
     private ArmFeedforward feedforward = new ArmFeedforward(0.16623, 0.39399, 17.022, 1.7561);
 
@@ -243,6 +243,6 @@ public class Arm {
     private void telemtry() {
         NtHelper.setDouble("/arm/telescopeDistance", telescopeMotor.getDistance());
         NtHelper.setDouble("/arm/shoulderAngle", getShoulderAngle().getDegrees());
-
+        NtHelper.setDouble("/arm/beltMotor", beltoMotor.get());
     }
 }

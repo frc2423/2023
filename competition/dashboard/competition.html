@@ -12,10 +12,10 @@
     ></frc-sendable-chooser>
     <frc-toggle-group
         source-provider="NetworkTables"
-        style="transform: translate(371px, 20.6562px); width: 519.333px; height: 429.323px;"
-        source-key="/arm/position"
+        style="transform: translate(363.8px, 20.6562px); width: 519.333px; height: 429.323px;"
+        source-key="/arm"
         options="[&quot;Back Floor&quot;,&quot;Back Score&quot;,&quot;Up&quot;,&quot;Front Score&quot;,&quot;Front Floor&quot;]"
-        value="backFloor"
+        value="Back Floor"
     ></frc-toggle-group>
     <vaadin-number-field
         label="Shoulder Angle"
@@ -26,24 +26,23 @@
         style="transform: translate(60px, 258px); width: 164.667px; height: 77px;"
         readonly=""
         source-key="/arm/shoulderAngle"
-        placeholder=""
         min="NaN"
         max="NaN"
     ><input
             slot="input"
             value="0"
             type="number"
-            id="vaadin-number-field-88"
+            id="vaadin-number-field-2"
             aria-labelledby="label-vaadin-number-field-88"
             aria-describedby=""
-            min="undefined"
-            max="undefined"
+            min="NaN"
+            max="NaN"
             step="any"
             readonly=""
         ><label
             slot="label"
             id="label-vaadin-number-field-88"
-            for="vaadin-number-field-88"
+            for="vaadin-number-field-2"
         >Shoulder Angle</label>
         <div
             slot="error-message"
@@ -59,6 +58,37 @@
         source-provider="NetworkTables"
         style="transform: translate(53.3334px, 359.667px); width: 177.333px; height: 77px;"
         source-key="/arm/telescopeDistance"
+        min="NaN"
+        max="NaN"
+    ><input
+            slot="input"
+            value="0"
+            type="number"
+            id="vaadin-number-field-3"
+            aria-labelledby="label-vaadin-number-field-112"
+            aria-describedby=""
+            min="NaN"
+            max="NaN"
+            step="any"
+        ><label
+            slot="label"
+            id="label-vaadin-number-field-112"
+            for="vaadin-number-field-3"
+        >Telescope Distance</label>
+        <div
+            slot="error-message"
+            id="error-message-vaadin-number-field-104"
+            hidden=""
+        ></div>
+    </vaadin-number-field>
+    <vaadin-number-field
+        label="Belt Motor"
+        value="0"
+        has-value=""
+        has-label=""
+        source-provider="NetworkTables"
+        style="transform: translate(47.2px, 164.8px);"
+        source-key="/arm/beltMotor"
         placeholder=""
         min="NaN"
         max="NaN"
@@ -66,20 +96,20 @@
             slot="input"
             value="0"
             type="number"
-            id="vaadin-number-field-112"
-            aria-labelledby="label-vaadin-number-field-112"
+            id="vaadin-number-field-14"
+            aria-labelledby="label-vaadin-number-field-14"
             aria-describedby=""
             min="undefined"
             max="undefined"
             step="any"
         ><label
             slot="label"
-            id="label-vaadin-number-field-112"
-            for="vaadin-number-field-112"
-        >Telescope Distance</label>
+            id="label-vaadin-number-field-14"
+            for="vaadin-number-field-14"
+        >Belt Motor</label>
         <div
             slot="error-message"
-            id="error-message-vaadin-number-field-104"
+            id="error-message-vaadin-number-field-14"
             hidden=""
         ></div>
     </vaadin-number-field>

@@ -48,7 +48,30 @@ public class Robot extends TimedRobot {
         new Pose2d(6, 4, new Rotation2d()),
         new TrajectoryConfig(2, 2));
     arm = new Arm();
-    NtHelper.setString("/arm/position", "up");
+    NtHelper.setString("/arm/value", "Up");
+    String[] options = { "Front Floor", "Front Score", "Up", "Back Score", "Back Floor" };
+    NtHelper.setStringArray("/arm/options", options);
+
+    NtHelper.listen("/arm/value", (entry) -> {
+      var position = NtHelper.getString("/arm/value", "Up");
+      if (position.equals("Up")) {
+        arm.setShoulderSetpoint(new Rotation2d(0));
+        arm.telescopeToSetpoint(10);
+      } else if (position.equals("Front Score")) {
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(65))); // 57 but 59 good
+        arm.telescopeToSetpoint(51);
+      } else if (position.equals("Front Floor")) {
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(113)));
+        arm.telescopeToSetpoint(10);
+      } else if (position.equals("Back Floor")) {
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-113)));
+        arm.telescopeToSetpoint(10);
+      } else if (position.equals("Back Score")) {
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-65)));
+        arm.telescopeToSetpoint(51);
+
+      }
+    });
   }
 
   @Override
@@ -99,8 +122,8 @@ public class Robot extends TimedRobot {
     double rotInput = MathUtil.applyDeadband(-m_controller.getRightX(), deadband);
     double rot = m_rotLimiter.calculate(rotInput) * Drivetrain.kMaxAngularSpeed;
 
-    ySpeed *= (isSimulation() ? -.5 : .5);
-    m_drive.drive(xSpeed * .5, ySpeed, rot, isSimulation() ? true : true);
+    ySpeed *= (isSimulation() ? -.75 : .75);
+    m_drive.drive(xSpeed * .75, ySpeed, rot, isSimulation() ? true : true);
 
     // if (m_controller.getLeftBumper()) { //hello adrian
     // arm.shoulderForward();
@@ -141,27 +164,6 @@ public class Robot extends TimedRobot {
     } else {
       arm.beltStop();
     }
-
-    NtHelper.listen("/arm/position", (entry) -> {
-      var position = NtHelper.getString("/arm/position", "up");
-      if (position.equals("Up")) {
-        arm.setShoulderSetpoint(new Rotation2d(0));
-        arm.telescopeToSetpoint(10);
-      } else if (position.equals("Front Score")) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(65)));
-        arm.telescopeToSetpoint(30);
-      } else if (position.equals("Front Floor")) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
-        arm.telescopeToSetpoint(10);
-      } else if (position.equals("Back Floor")) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-110)));
-        arm.telescopeToSetpoint(10);
-      } else if (position.equals("Back Score")) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-65)));
-        arm.telescopeToSetpoint(30);
-
-      }
-    });
 
     if (m_controller.getLeftBumperReleased()) { // hello adrian
       arm.shoulderForward();
