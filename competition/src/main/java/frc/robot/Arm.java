@@ -59,6 +59,7 @@ public class Arm {
         telescopeMotor.setPid(.1, 0.0000, 0);
 
         shoulderMotor = new NeoMotor(15, true);
+        // TODO: These conversion factors need to be fixed
         shoulderMotor.setConversionFactor(SHOULDER_CONVERSION_FACTOR);
         shoulderMotor.setConversionFactor(TELESCOPE_CONVERSION_FACTOR);
         _canCoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
