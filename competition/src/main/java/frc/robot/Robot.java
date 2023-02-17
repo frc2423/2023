@@ -165,7 +165,7 @@ public class Robot extends TimedRobot {
       arm.beltStop();
     }
 
-    if (m_controller.getLeftBumperReleased()) { // hello adrian
+    if (m_controller.getLeftBumperReleased()) { //TODO: revisit this 
       arm.shoulderForward();
     } else if (m_controller.getRightBumperReleased()) {
       arm.shoulderBack();

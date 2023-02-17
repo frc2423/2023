@@ -35,7 +35,7 @@ public class NeoMotor {
     }
 
     public NeoMotor(int port) {
-        new NeoMotor(port, false);
+        this(port, false);
     }
 
     public void setIZone(double zone) {
