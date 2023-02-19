@@ -8,22 +8,9 @@ import frc.robot.util.stateMachine.State;
 import frc.robot.util.stateMachine.StateMachine;
 public class BasedAuto extends StateMachine {
     
-    private double timerDelay = 5;
-
     public BasedAuto(){
         super("Score");
         Robot.arm.beltStop();
-    }
-
-    @State(name = "Wait")
-    public void waitRun(StateContext ctx){
-        // if (ctx.isInit()) {
-        //     Subsystems.follower.setTrajectory("Taxi");   
-        //}
-
-        if (ctx.getTime() > timerDelay){
-            // setState("Taxi");
-        }
     }
 
     @State(name = "Score")
@@ -34,10 +21,6 @@ public class BasedAuto extends StateMachine {
         if (ctx.getTime() > 2){
             setState("Spit");
         }
-        // if (ctx.isInit()) {
-        //     Subsystems.follower.startFollowing();
-        // }
-        // Subsystems.follower.follow();
     }
 
     @State(name = "Spit")

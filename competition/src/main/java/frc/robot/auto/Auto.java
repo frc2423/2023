@@ -1,6 +1,5 @@
 package frc.robot.auto;
 
-import frc.robot.util.NtHelper;
 import frc.robot.util.stateMachine.State;
 import frc.robot.util.stateMachine.StateContext;
 import frc.robot.util.stateMachine.StateMachine;
@@ -18,8 +17,6 @@ public class Auto extends StateMachine {
         taxi = new BasedAuto();
 
         m_chooser.setDefaultOption("taxi", "taxi");
-        m_chooser.addOption("taxi", "taxi");
-
 
         SmartDashboard.putData("Auto choices", m_chooser);
     }
@@ -29,10 +26,10 @@ public class Auto extends StateMachine {
 
 
         switch (name) {
-            case "taxi": //0 ball
+            case "taxi":
                 selectedAutonomous = taxi;
                 break;
-            default: //default, 0 ballll
+            default:
                 selectedAutonomous = taxi;
                 break;
         }
