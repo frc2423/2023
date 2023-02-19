@@ -28,7 +28,7 @@ public class BasedAuto extends StateMachine {
 
     @State(name = "Score")
     public void taxiRun(StateContext ctx){
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-65)));
+        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-67)));
         Robot.arm.telescopeToSetpoint(51);
 
         if (ctx.getTime() > 2){
@@ -52,7 +52,7 @@ public class BasedAuto extends StateMachine {
     public void moove(StateContext ctx){
         Robot.arm.beltStop();
         Robot.m_drive.drive(1, 0, 0, false);
-        if (ctx.getTime() > 2) {
+        if (ctx.getTime() > 4) {
             setState("Stahp");
         }
     }
