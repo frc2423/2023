@@ -18,7 +18,8 @@ import java.util.List;
 
 public class Trajectories {
     private Trajectory next_path = null;
-    private List<PathPlannerTrajectory> move_steps = PathPlanner.loadPathGroup("competition_just_drive_out", new PathConstraints(2.5, 3));//2.5, 3
+    private String name = null; //"competition_just_drive_out"
+    private List<PathPlannerTrajectory> move_steps = PathPlanner.loadPathGroup(name, new PathConstraints(2.5, 3));//2.5, 3
     private final PPHolonomicDriveController m_holonomicController = new PPHolonomicDriveController(
         //feedback in Swerve Module 
         new PIDController(0, 0, 0), // x feedback
@@ -35,6 +36,12 @@ public class Trajectories {
         timer.start();
     }
 
+    public void setNewTrajectoryGroup(String newName) {
+        name = newName;
+        move_steps = PathPlanner.loadPathGroup(name, new PathConstraints(2.5, 3));//2.5, 3
+        update_current_path();
+    }
+
     public Trajectory getTrajectory() {
         return next_path;
     }
@@ -48,12 +55,9 @@ public class Trajectories {
         NtHelper.setDouble("/auto/desiredY", desiredState.poseMeters.getY());
         NtHelper.setDouble("/auto/actualX", drivetrain.getPose().getX());
         NtHelper.setDouble("/auto/actualY", drivetrain.getPose().getY());
-        // desiredState.
         ChassisSpeeds refChassisSpeeds = m_holonomicController.calculate(drivetrain.getPose(), (PathPlannerState)desiredState);
-        // System.out.println(refChassisSpeeds);
         double vy = RobotBase.isSimulation() ? -refChassisSpeeds.vyMetersPerSecond : -refChassisSpeeds.vyMetersPerSecond; //if not sim, negetive?
 
-        // NtHelper.setDouble("/auto/desiredX", desiredState.poseMeters.getX())
         double radiansPerSecond = (RobotBase.isSimulation() ? -1 : 1) * refChassisSpeeds.omegaRadiansPerSecond;
         
         NtHelper.setDouble("/auto/vx", refChassisSpeeds.vxMetersPerSecond);
@@ -61,14 +65,13 @@ public class Trajectories {
         drivetrain.drive(refChassisSpeeds.vxMetersPerSecond, vy, radiansPerSecond, false);
     }
 
-// What is this?
-
-    public Pose2d getTarget() {
-        return new Pose2d(0, 1.7526, new Rotation2d());
-    }
-
-    public void robotGo() {
-    
+    public Boolean isFinished() {
+        if (timer.get() > next_path.getTotalTimeSeconds()) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
 }
