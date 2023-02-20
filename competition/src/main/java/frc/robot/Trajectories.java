@@ -16,7 +16,7 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import java.util.List;
 
-public class Auto {
+public class Trajectories {
     private Trajectory next_path = null;
     private List<PathPlannerTrajectory> move_steps = PathPlanner.loadPathGroup("competition_just_drive_out", new PathConstraints(2.5, 3));//2.5, 3
     private final PPHolonomicDriveController m_holonomicController = new PPHolonomicDriveController(
@@ -25,12 +25,8 @@ public class Auto {
         new PIDController(0, 0, 0), // y feedback
         new PIDController(0, 0, 0) // w feedback
     );
-    private Drivetrain drivetrain;
+    private Drivetrain drivetrain = Robot.m_drive;
     private Timer timer = new Timer();
-
-    public Auto(Drivetrain drivetrain) {
-        this.drivetrain = drivetrain;
-    }
 
     public void update_current_path() {
         next_path = move_steps.get(0);

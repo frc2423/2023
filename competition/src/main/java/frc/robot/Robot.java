@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.util.NtHelper;
+import frc.robot.auto.Auto;
+import edu.wpi.first.cameraserver.CameraServer;
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
@@ -32,22 +34,24 @@ public class Robot extends TimedRobot {
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
-  private final Drivetrain m_drive = new Drivetrain();
-  private final RamseteController m_ramsete = new RamseteController();
+  public static Drivetrain m_drive = new Drivetrain();
   private final Timer m_timer = new Timer();
   private Trajectory m_trajectory;
   private final Field2d field = new Field2d();
+  public static Trajectories trajectories= new Trajectories();
 
-  private Arm arm;
+  public static Arm arm = new Arm();
+
+  private Auto auto = new Auto();
 
   @Override // is society
   public void robotInit() {
+    CameraServer.startAutomaticCapture();
     m_trajectory = TrajectoryGenerator.generateTrajectory(
         new Pose2d(2, 2, new Rotation2d()),
         List.of(),
         new Pose2d(6, 4, new Rotation2d()),
         new TrajectoryConfig(2, 2));
-    arm = new Arm();
     NtHelper.setString("/arm/value", "Up");
     String[] options = { "Front Floor", "Front Score", "Up", "Back Score", "Back Floor" };
     NtHelper.setStringArray("/arm/options", options);
@@ -55,19 +59,19 @@ public class Robot extends TimedRobot {
     NtHelper.listen("/arm/value", (entry) -> {
       var position = NtHelper.getString("/arm/value", "Up");
       if (position.equals("Up")) {
-        arm.setShoulderSetpoint(new Rotation2d(0));
-        arm.telescopeToSetpoint(10);
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(5)));
+        arm.telescopeToSetpoint(0);
       } else if (position.equals("Front Score")) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(65))); // 57 but 59 good
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57))); // 57 but 59 good
         arm.telescopeToSetpoint(51);
       } else if (position.equals("Front Floor")) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(113)));
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
         arm.telescopeToSetpoint(10);
       } else if (position.equals("Back Floor")) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-113)));
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-110)));
         arm.telescopeToSetpoint(10);
       } else if (position.equals("Back Score")) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-65)));
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-57)));
         arm.telescopeToSetpoint(51);
 
       }
@@ -85,15 +89,12 @@ public class Robot extends TimedRobot {
     m_timer.reset();
     m_timer.start();
     m_drive.resetOdometry(m_trajectory.getInitialPose());
+    auto.restart();
   }
 
   @Override
   public void autonomousPeriodic() {
-    getPeriod();
-    double elapsed = m_timer.get();
-    Trajectory.State reference = m_trajectory.sample(elapsed);
-    ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), reference);
-    m_drive.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, true);
+    auto.run();
   }
 
   @Override
@@ -120,10 +121,14 @@ public class Robot extends TimedRobot {
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
     double rotInput = MathUtil.applyDeadband(-m_controller.getRightX(), deadband);
-    double rot = m_rotLimiter.calculate(rotInput) * Drivetrain.kMaxAngularSpeed;
+    
+    boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
+    double maxSpeed = isSlowMode ? .55 : .75;
+    double maxRotation = isSlowMode ? .55 : 1;
+    double rot = m_rotLimiter.calculate(rotInput) * Drivetrain.kMaxAngularSpeed * maxRotation;
 
-    ySpeed *= (isSimulation() ? -.75 : .75);
-    m_drive.drive(xSpeed * .75, ySpeed, rot, isSimulation() ? true : true);
+    ySpeed *= (isSimulation() ? -maxSpeed : maxSpeed);
+    m_drive.drive(xSpeed * maxSpeed, ySpeed, rot, isSimulation() ? true : true);
 
     // if (m_controller.getLeftBumper()) { //hello adrian
     // arm.shoulderForward();
@@ -170,6 +175,7 @@ public class Robot extends TimedRobot {
     } else if (m_controller.getRightBumperReleased()) {
       arm.shoulderBack();
     }
+
 
     // if (m_controller_right.getBButtonReleased()) {
     // arm.setShoulderSetpoint(new Rotation2d(0));
