@@ -4,6 +4,8 @@ import java.lang.reflect.Method;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 
+import frc.robot.util.NtHelper;
+
 public class StateMachine {
 
   private HashMap<String, Method> states;
@@ -58,6 +60,7 @@ public class StateMachine {
    */
   public void setState(String name) {
     nextState = name;
+    NtHelper.setString("/robot/auto/state", name);
   }
 
   public void runState(String name) {

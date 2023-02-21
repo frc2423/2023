@@ -10,13 +10,16 @@ public class Auto extends StateMachine {
 
     StateMachine selectedAutonomous;
     StateMachine taxi;
+    StateMachine yoyo;
     private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
     public Auto() {
         super("run");
         taxi = new BasedAuto();
+        yoyo = new YoYoAuto();
 
         m_chooser.setDefaultOption("taxi", "taxi");
+        m_chooser.addOption("yoyo", "yoyo");
 
         SmartDashboard.putData("Auto choices", m_chooser);
     }
@@ -28,6 +31,9 @@ public class Auto extends StateMachine {
         switch (name) {
             case "taxi":
                 selectedAutonomous = taxi;
+                break;
+            case "yoyo":
+                selectedAutonomous = yoyo;
                 break;
             default:
                 selectedAutonomous = taxi;

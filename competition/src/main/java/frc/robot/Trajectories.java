@@ -40,6 +40,7 @@ public class Trajectories {
         name = newName;
         move_steps = PathPlanner.loadPathGroup(name, new PathConstraints(2.5, 3));//2.5, 3
         update_current_path();
+        Robot.field.getObject("trajectory").setTrajectory(getTrajectory());
     }
 
     public Trajectory getTrajectory() {
@@ -49,8 +50,10 @@ public class Trajectories {
     public void follow_current_path() {
         drivetrain.updateOdometry();
         var currTime = timer.get();
+        System.out.println(timer.get());
         var desiredState = next_path.sample(currTime);
-        System.out.println(desiredState.poseMeters);
+        Robot.field.getObject("ghost").setPose(desiredState.poseMeters);
+        // System.out.println(desiredState.poseMeters);
         NtHelper.setDouble("/auto/desiredX", desiredState.poseMeters.getX());
         NtHelper.setDouble("/auto/desiredY", desiredState.poseMeters.getY());
         NtHelper.setDouble("/auto/actualX", drivetrain.getPose().getX());

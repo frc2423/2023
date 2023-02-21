@@ -28,22 +28,21 @@ public class YoYoAuto extends StateMachine {
         Robot.arm.outtakeBelt();
         if (ctx.getTime() > 1) {
             setState("Moove");
+            Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
+            Robot.arm.telescopeToSetpoint(0);
+            Robot.arm.beltStop();
+            Robot.trajectories.setNewTrajectoryGroup("FirstYo");
         }
     }
 
     @State(name = "Moove")
     public void moove(StateContext ctx){
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
-        Robot.arm.telescopeToSetpoint(0);
-        Robot.arm.beltStop();
-        if (ctx.getTime() > 1){
-            Robot.trajectories.setNewTrajectoryGroup("FirstYo");
+    
             Robot.trajectories.follow_current_path();
-            
+            if (Robot.trajectories.isFinished()) {
+                setState("Stahp");
         }
-         if (Robot.trajectories.isFinished()) {
-             setState("Stahp");
-         }
+        
     }
 
     @State(name = "Stahp")
@@ -67,11 +66,12 @@ public class YoYoAuto extends StateMachine {
 
         if (Robot.arm.getShoulderAngle().getDegrees() < 113 && Robot.arm.getShoulderAngle().getDegrees() > 107 ) {
             Robot.m_drive.drive(0.1, 0, 0, false);
-            if (ctx.getTime() > 0.5) {
+            if (ctx.getTime() > 1) {
                 Robot.arm.beltStop();
                 Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
                 Robot.arm.telescopeToSetpoint(0);
                 setState("Yo2");
+                Robot.trajectories.setNewTrajectoryGroup("SecondYo");
             }
         }
     }
@@ -79,7 +79,6 @@ public class YoYoAuto extends StateMachine {
     @State(name = "Yo2")
     public void yo2(StateContext ctx){
         //head the back
-        Robot.trajectories.setNewTrajectoryGroup("SecondYo");
         Robot.trajectories.follow_current_path();
         if (Robot.trajectories.isFinished()) {
             setState("TryScoreLow");
@@ -91,5 +90,6 @@ public class YoYoAuto extends StateMachine {
         //try score low :P
         Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-110)));
         Robot.arm.telescopeToSetpoint(10);
+        Robot.arm.outtakeBelt();
     }
 }

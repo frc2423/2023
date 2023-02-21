@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.NtHelper;
 import frc.robot.auto.Auto;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -37,7 +38,7 @@ public class Robot extends TimedRobot {
   public static Drivetrain m_drive = new Drivetrain();
   private final Timer m_timer = new Timer();
   private Trajectory m_trajectory;
-  private final Field2d field = new Field2d();
+  public static final Field2d field = new Field2d();
   public static Trajectories trajectories= new Trajectories();
 
   public static Arm arm = new Arm();
@@ -76,12 +77,14 @@ public class Robot extends TimedRobot {
 
       }
     });
+    SmartDashboard.putData("Field", field);
   }
 
   @Override
   public void robotPeriodic() {
     m_drive.periodic();
     arm.periodic();
+    field.setRobotPose(m_drive.getPose());
   }
 
   @Override

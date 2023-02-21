@@ -6,6 +6,11 @@
       "/SmartDashboard/Field": "Field2d"
     },
     "windows": {
+      "/SmartDashboard/Auto choices": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
         "trajectory": {
           "style": "Box/Image",
@@ -41,6 +46,9 @@
         }
       },
       "robot": {
+        "auto": {
+          "open": true
+        },
         "open": true
       }
     }
