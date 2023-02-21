@@ -16,7 +16,7 @@ public class YoYoAuto extends StateMachine {
     @State(name = "Score")
     public void taxiRun(StateContext ctx){
         Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-67)));
-        Robot.arm.telescopeToSetpoint(51);
+        Robot.arm.telescopeToSetpoint(35);
 
         if (ctx.getTime() > 2){
             setState("Spit");
@@ -66,7 +66,7 @@ public class YoYoAuto extends StateMachine {
 
         if (Robot.arm.getShoulderAngle().getDegrees() < 113 && Robot.arm.getShoulderAngle().getDegrees() > 107 ) {
             Robot.m_drive.drive(0.1, 0, 0, false);
-            if (ctx.getTime() > 1) {
+            if (ctx.getTime() > 2) {
                 Robot.arm.beltStop();
                 Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
                 Robot.arm.telescopeToSetpoint(0);
@@ -90,6 +90,9 @@ public class YoYoAuto extends StateMachine {
         //try score low :P
         Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-110)));
         Robot.arm.telescopeToSetpoint(10);
-        Robot.arm.outtakeBelt();
+        Robot.m_drive.drive(0, 0, 0, false);
+        if (ctx.getTime() > 1) {
+            Robot.arm.outtakeBelt();
+        }
     }
 }

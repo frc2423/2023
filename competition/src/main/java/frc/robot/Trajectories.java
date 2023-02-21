@@ -19,12 +19,12 @@ import java.util.List;
 public class Trajectories {
     private Trajectory next_path = null;
     private String name = null; //"competition_just_drive_out"
-    private List<PathPlannerTrajectory> move_steps = PathPlanner.loadPathGroup(name, new PathConstraints(2.5, 3));//2.5, 3
+    private List<PathPlannerTrajectory> move_steps = PathPlanner.loadPathGroup(name, new PathConstraints(1.5, 3));//2.5, 3
     private final PPHolonomicDriveController m_holonomicController = new PPHolonomicDriveController(
         //feedback in Swerve Module 
-        new PIDController(0, 0, 0), // x feedback
-        new PIDController(0, 0, 0), // y feedback
-        new PIDController(0, 0, 0) // w feedback
+        new PIDController(1.8, 0, 0), // x feedback
+        new PIDController(1.8, 0, 0), // y feedback
+        new PIDController(1.8, 0, 0) // w feedback
     );
     private Drivetrain drivetrain = Robot.m_drive;
     private Timer timer = new Timer();
@@ -32,13 +32,14 @@ public class Trajectories {
     public void update_current_path() {
         next_path = move_steps.get(0);
         move_steps.remove(0);
+        drivetrain.resetOdometry(next_path.getInitialPose());
         timer.reset();
         timer.start();
     }
 
     public void setNewTrajectoryGroup(String newName) {
         name = newName;
-        move_steps = PathPlanner.loadPathGroup(name, new PathConstraints(2.5, 3));//2.5, 3
+        move_steps = PathPlanner.loadPathGroup(name, new PathConstraints(0.5, 3));//2.5, 3
         update_current_path();
         Robot.field.getObject("trajectory").setTrajectory(getTrajectory());
     }
