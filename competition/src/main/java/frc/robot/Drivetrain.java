@@ -25,13 +25,16 @@ public class Drivetrain {
   public static final double kWheelBaseHalf = 0.33;
   public static final double kTrackWidthHalf = 0.273;
 
-  private final Translation2d m_frontLeftLocation = new Translation2d(kWheelBaseHalf, kTrackWidthHalf); // x = .273, y = .33
+  private final Translation2d m_frontLeftLocation = new Translation2d(kWheelBaseHalf, kTrackWidthHalf); // x = .273, y =
+                                                                                                        // .33
   private final Translation2d m_frontRightLocation = new Translation2d(kWheelBaseHalf, -kTrackWidthHalf);
   private final Translation2d m_backLeftLocation = new Translation2d(-kWheelBaseHalf, kTrackWidthHalf);
   private final Translation2d m_backRightLocation = new Translation2d(-kWheelBaseHalf, -kTrackWidthHalf);
-  public final SwerveModule m_frontLeft = new SwerveModule(17, 16, "FL", !RobotBase.isSimulation(), !RobotBase.isSimulation());
+  public final SwerveModule m_frontLeft = new SwerveModule(17, 16, "FL", !RobotBase.isSimulation(),
+      !RobotBase.isSimulation());
   public final SwerveModule m_frontRight = new SwerveModule(3, 4, "FR", false, false);
-  public final SwerveModule m_backLeft = new SwerveModule(19, 18, "BL", !RobotBase.isSimulation(), !RobotBase.isSimulation());
+  public final SwerveModule m_backLeft = new SwerveModule(19, 18, "BL", !RobotBase.isSimulation(),
+      !RobotBase.isSimulation());
   public final SwerveModule m_backRight = new SwerveModule(1, 2, "BR", false, false);
 
   private final Gyro m_gyro = new Gyro();
@@ -40,10 +43,10 @@ public class Drivetrain {
   Rotation2d angle = new Rotation2d();
 
   private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
-     m_frontLeftLocation,
-     m_frontRightLocation, 
-    m_backLeftLocation,
-    m_backRightLocation);
+      m_frontLeftLocation,
+      m_frontRightLocation,
+      m_backLeftLocation,
+      m_backRightLocation);
   // new SwerveDriveKinematics(m_frontLeftLocation, m_frontRightLocation,
   // m_backLeftLocation, m_backRightLocation);
 
@@ -86,19 +89,18 @@ public class Drivetrain {
     m_backLeft.setDesiredState(swerveModuleStates[2]);
     m_backRight.setDesiredState(swerveModuleStates[3]);
     double[] desiredStates = {
-      swerveModuleStates[0].angle.getRadians(),
-      swerveModuleStates[0].speedMetersPerSecond,
-      swerveModuleStates[1].angle.getRadians(),
-      swerveModuleStates[1].speedMetersPerSecond,
-      swerveModuleStates[2].angle.getRadians(),
-      swerveModuleStates[2].speedMetersPerSecond,
-      swerveModuleStates[3].angle.getRadians(),
-      swerveModuleStates[3].speedMetersPerSecond,
-  };
+        swerveModuleStates[0].angle.getRadians(),
+        swerveModuleStates[0].speedMetersPerSecond,
+        swerveModuleStates[1].angle.getRadians(),
+        swerveModuleStates[1].speedMetersPerSecond,
+        swerveModuleStates[2].angle.getRadians(),
+        swerveModuleStates[2].speedMetersPerSecond,
+        swerveModuleStates[3].angle.getRadians(),
+        swerveModuleStates[3].speedMetersPerSecond,
+    };
 
-  NtHelper.setDoubleArray("/swerve/desiredStates", desiredStates);
-
-    NtHelper.setDouble("/drive/FLactualangle", m_frontLeft.getPosition().angle.getDegrees());
+    NtHelper.setDoubleArray("/swerve/desiredStates", desiredStates);
+    NtHelper.setDouble("/swerve/chassisSpeeds/rot", rot);
   }
 
   /** Updates the field relative position of the robot. */
@@ -151,12 +153,7 @@ public class Drivetrain {
 
   /** Update our simulation. This should be run every robot loop in simulation. */
   private void simulationPeriodic() {
-    // To update our simulation, we set motor voltage inputs, update the
-    // simulation, and write the simulated positions and velocities to our
-    // simulated encoder and gyro. We negate the right side so that positive
-    // voltages make the right side move forward.
-    angle = angle.plus(new Rotation2d(-speeds.omegaRadiansPerSecond * /* dtSeconds */0.02));
-    // m_gyroSim.setAngle(angle);
+    angle = angle.plus(new Rotation2d(speeds.omegaRadiansPerSecond * 0.02));
   }
 
   /** Update odometry - this should be run every robot loop. */
@@ -175,20 +172,21 @@ public class Drivetrain {
     }
   }
 
-private void telemetry() {
+  private void telemetry() {
 
-  double[] measuredStates = {
-      m_frontLeft.getState().angle.getRadians(),
-      m_frontLeft.getState().speedMetersPerSecond,
-      m_frontRight.getState().angle.getRadians(),
-      m_frontRight.getState().speedMetersPerSecond,
-      m_backLeft.getState().angle.getRadians(),
-      m_backLeft.getState().speedMetersPerSecond,
-      m_backRight.getState().angle.getRadians(),
-      m_backRight.getState().speedMetersPerSecond,
-  };
+    double[] measuredStates = {
+        m_frontLeft.getState().angle.getRadians(),
+        m_frontLeft.getState().speedMetersPerSecond,
+        m_frontRight.getState().angle.getRadians(),
+        m_frontRight.getState().speedMetersPerSecond,
+        m_backLeft.getState().angle.getRadians(),
+        m_backLeft.getState().speedMetersPerSecond,
+        m_backRight.getState().angle.getRadians(),
+        m_backRight.getState().speedMetersPerSecond,
+    };
 
-  NtHelper.setDoubleArray("/swerve/measuredStates", measuredStates);
-  NtHelper.setDouble("/swerve/robotRotation", getPose().getRotation().getRadians());
+    NtHelper.setDoubleArray("/swerve/measuredStates", measuredStates);
+    NtHelper.setDouble("/swerve/robotRotation", getPose().getRotation().getRadians());
 
-}}
+  }
+}

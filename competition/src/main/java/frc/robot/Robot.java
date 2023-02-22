@@ -109,47 +109,28 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    // Get the x speed. We are inverting this because Xbox controllers return
-    // negative values when we push forward.
+
+    boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
+    double maxSpeed = Drivetrain.kMaxSpeed * (isSlowMode ? .55 : .75);
+    double maxRotation = Drivetrain.kMaxAngularSpeed * (isSlowMode ? .55 : 1);
+
     double deadband = 0.2;
-    double yControllerInput = MathUtil.applyDeadband(m_controller.getLeftY(), deadband);
-    double xControllerInput = MathUtil.applyDeadband(m_controller.getLeftX(), deadband);
 
-    double xSpeed = -m_xspeedLimiter.calculate(yControllerInput) * Drivetrain.kMaxSpeed;
-
-    double ySpeed = m_yspeedLimiter.calculate(xControllerInput) * Drivetrain.kMaxSpeed;
-
+    // Get the y speed. We are inverting this because Xbox controllers return
+    // negative values when we push forward.
+    double xInput = -MathUtil.applyDeadband(m_controller.getLeftY(), deadband);
+    double yInput = -MathUtil.applyDeadband(m_controller.getLeftX(), deadband);
     // Get the rate of angular rotation. We are inverting this because we want a
     // positive value when we pull to the left (remember, CCW is positive in
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
-    double rotInput = MathUtil.applyDeadband(-m_controller.getRightX(), deadband);
-    
-    boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
-    double maxSpeed = isSlowMode ? .55 : .75;
-    double maxRotation = isSlowMode ? .55 : 1;
-    double rot = -m_rotLimiter.calculate(rotInput) * Drivetrain.kMaxAngularSpeed * maxRotation;
+    double rotInput = -MathUtil.applyDeadband(m_controller.getRightX(), deadband);
 
-    ySpeed *= -maxSpeed;
-    m_drive.drive(xSpeed * maxSpeed, ySpeed, rot, true);
+    double xSpeed = m_xspeedLimiter.calculate(xInput) * maxSpeed;
+    double ySpeed = m_yspeedLimiter.calculate(yInput) * maxSpeed;
+    double rot = m_rotLimiter.calculate(rotInput) * maxRotation;
 
-    // if (m_controller.getLeftBumper()) { //hello adrian
-    // arm.shoulderForward();
-    // }
-    // else if (m_controller.getRightBumper()) {
-    // arm.shoulderBack();
-    // } else if (m_controller.getBButton()) {
-    // double benny = NtHelper.getDouble("/robot/shoulder/set_angle", 0);
-    // arm.shoulderSetpoint(new Rotation2d(Units.degreesToRadians(benny)));
-    // } else if (m_controller.getXButton()) {
-    // arm.shoulderSetpoint(new Rotation2d(0));
-    // }
-    // else { // funny seeing you here
-    // arm.shoulderStop();
-    // }
-
-    arm.getShoulderAngle();
-    arm.getTelescopePosition();
+    m_drive.drive(xSpeed, ySpeed, rot, true);
 
     if (m_controller.getXButton()) {
       arm.extend();
@@ -178,19 +159,6 @@ public class Robot extends TimedRobot {
     } else if (m_controller.getRightBumperReleased()) {
       arm.shoulderBack();
     }
-
-
-    // if (m_controller_right.getBButtonReleased()) {
-    // arm.setShoulderSetpoint(new Rotation2d(0));
-    // } else if (m_controller_right.getLeftBumperReleased()) {
-    // arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
-    // } else if (m_controller_right.getRightBumperReleased()) {
-    // arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(65)));
-    // } else {
-    // // arm.setShoulderSetpoint(new
-    // // Rotation2d(Units.degreesToRadians(arm.getShoulderEncoderPosition())));
-    // }
-
   }
 
   @Override
