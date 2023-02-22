@@ -122,9 +122,8 @@ public class SwerveModule {
   public SwerveModulePosition getPosition() {
     // TODO: we are retunning 360 - turnEncoderDistance (turn angle) to flip odometry over the y-axis.
     // This should be conditional since this shouldn't be done in simulation.
-    double encoderDist = Robot.isSimulation() ?  turnEncoderDistance :- turnEncoderDistance;
     return new SwerveModulePosition(
-      driveEncoderDistance, new Rotation2d((2 * Math.PI) + encoderDist));
+      driveEncoderDistance, new Rotation2d((turnEncoderDistance)));
   }
 
   /**
@@ -138,20 +137,10 @@ public class SwerveModule {
     // and enabled in teleop.
 
     // Optimize the reference state to avoid spinning further than 90 degrees
-    SwerveModuleState state = (Robot.isSimulation() ? desiredState : SwerveModuleState.optimize(desiredState, new Rotation2d(turnEncoderDistance)));
+    SwerveModuleState state = (SwerveModuleState.optimize(desiredState, new Rotation2d(turnEncoderDistance)));
 
     // Calculate the drive output from the drive PID controller.
     final double driveOutput = m_drivePIDController.calculate(driveEncoderRate, state.speedMetersPerSecond);
-
-    // NtHelper.setDouble("/drive/" + name + "/actualSpeed", driveEncoderRate);
-
-    // NtHelper.setDouble("/drive/" + name + "/desiredSpeed",
-    // desiredState.speedMetersPerSecond);
-
-    // NtHelper.setDouble("/drive/" + name + "/driveCurrent",
-    // m_driveMotor.getCurrent());
-    // NtHelper.setDouble("/drive/" + name + "/turnCurrent",
-    // m_turningMotor.getCurrent());
 
     final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
 
@@ -161,7 +150,7 @@ public class SwerveModule {
     final double turnFeedforward = 0;
     // m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
     driveMotorVoltage = (driveOutput + driveFeedforward);
-    turnMotorVoltage = (RobotBase.isSimulation() ? 1 : -1) * (turnOutput + turnFeedforward);
+    turnMotorVoltage = -(turnOutput + turnFeedforward);
     // driveMotorVoltage = 0;
     // turnMotorVoltage = 0;
 

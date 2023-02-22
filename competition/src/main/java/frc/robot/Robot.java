@@ -128,10 +128,10 @@ public class Robot extends TimedRobot {
     boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
     double maxSpeed = isSlowMode ? .55 : .75;
     double maxRotation = isSlowMode ? .55 : 1;
-    double rot = m_rotLimiter.calculate(rotInput) * Drivetrain.kMaxAngularSpeed * maxRotation;
+    double rot = -m_rotLimiter.calculate(rotInput) * Drivetrain.kMaxAngularSpeed * maxRotation;
 
-    ySpeed *= (isSimulation() ? -maxSpeed : maxSpeed);
-    m_drive.drive(xSpeed * maxSpeed, ySpeed, rot, isSimulation() ? true : true);
+    ySpeed *= -maxSpeed;
+    m_drive.drive(xSpeed * maxSpeed, ySpeed, rot, true);
 
     // if (m_controller.getLeftBumper()) { //hello adrian
     // arm.shoulderForward();
