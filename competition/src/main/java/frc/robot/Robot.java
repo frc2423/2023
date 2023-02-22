@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
         new Pose2d(6, 4, new Rotation2d()),
         new TrajectoryConfig(2, 2));
     NtHelper.setString("/arm/value", "Up");
-    String[] options = { "Front Floor", "Front Score", "Up", "Back Score", "Back Floor" };
+    String[] options = { "Front Floor", "Front Score", "Up", "Back Score", "Back Floor", "Front Score High", "Back Score High"};
     NtHelper.setStringArray("/arm/options", options);
 
     NtHelper.listen("/arm/value", (entry) -> {
@@ -73,6 +73,12 @@ public class Robot extends TimedRobot {
       } else if (position.equals("Back Score")) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-57)));
         arm.telescopeToSetpoint(51);
+      } else if (position.equals("Front Score High")){
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(30)));
+        arm.telescopeToSetpoint(60);
+      } else if (position.equals("Back Score High")){
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-30)));
+        arm.telescopeToSetpoint(60);
 
       }
     });
@@ -174,6 +180,14 @@ public class Robot extends TimedRobot {
       arm.shoulderForward();
     } else if (m_controller.getRightBumperReleased()) {
       arm.shoulderBack();
+    }
+
+
+    if (m_controller_right.getLeftBumperPressed()){
+      arm.openGripper();
+    }
+    else if (m_controller_right.getRightBumperPressed()){
+      arm.closeGripper();
     }
 
 
