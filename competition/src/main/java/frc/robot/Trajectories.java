@@ -19,7 +19,7 @@ import java.util.List;
 public class Trajectories {
     private Trajectory next_path = null;
     private String name = null; //"competition_just_drive_out"
-    private List<PathPlannerTrajectory> move_steps = PathPlanner.loadPathGroup(name, new PathConstraints(1.5, 3));//2.5, 3
+    private List<PathPlannerTrajectory> move_steps ;//= PathPlanner.loadPathGroup(name, new PathConstraints(1.5, 3));//2.5, 3
     private final PPHolonomicDriveController m_holonomicController = new PPHolonomicDriveController(
         //feedback in Swerve Module 
         new PIDController(1.8, 0, 0), // x feedback
