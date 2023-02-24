@@ -1,0 +1,108 @@
+<dashboard-tab
+    tab-name="TeleOperated"
+    slot="tab"
+    selected=""
+    source-provider="NetworkTables"
+>
+    <frc-swerve-drivebase
+        source-provider="NetworkTables"
+        style="transform: translate(176px, 138px);"
+        source-key="/swerve"
+        wheellocations="[2.5,2,2.5,-2,-2.5,2,-2.5,-2]"
+        measuredstates="[0,0,0,0,0,0,0,0]"
+        desiredstates="[0,0,0,0,0,0,0,0]"
+        sizeleftright="4"
+        sizefrontback="5"
+    ></frc-swerve-drivebase>
+    <vaadin-number-field
+        label="Speed"
+        has-label=""
+        source-provider="NetworkTables"
+        style="transform: translate(652px, 119px);"
+        source-key="/test/speed"
+        min="NaN"
+        max="NaN"
+        has-value=""
+        value="1"
+    ><input
+            slot="input"
+            value="0"
+            type="number"
+            id="vaadin-number-field-174"
+            aria-labelledby="label-vaadin-number-field-27"
+            aria-describedby=""
+            min="NaN"
+            max="NaN"
+            step="any"
+        ><label
+            slot="label"
+            id="label-vaadin-number-field-27"
+            for="vaadin-number-field-174"
+        >Speed</label>
+        <div
+            slot="error-message"
+            id="error-message-vaadin-number-field-27"
+            hidden=""
+        ></div>
+    </vaadin-number-field>
+    <vaadin-number-field
+        label="Angle"
+        value="90"
+        has-label=""
+        source-provider="NetworkTables"
+        style="transform: translate(663px, 299px);"
+        source-key="/test/angle"
+        min="NaN"
+        max="NaN"
+        has-value=""
+    ><input
+            slot="input"
+            value="0"
+            type="number"
+            id="vaadin-number-field-175"
+            aria-labelledby="label-vaadin-number-field-51"
+            aria-describedby=""
+            min="NaN"
+            max="NaN"
+            step="any"
+        ><label
+            slot="label"
+            id="label-vaadin-number-field-51"
+            for="vaadin-number-field-175"
+        >Angle</label>
+        <div
+            slot="error-message"
+            id="error-message-vaadin-number-field-43"
+            hidden=""
+        ></div>
+    </vaadin-number-field>
+    <frc-label
+        text="desired= red, measured= blue"
+        source-provider="NetworkTables"
+        style="transform: translate(104.333px, 20px); width: 227.698px; height: 34px;"
+    ></frc-label>
+    <frc-field
+        source-key="/SmartDashboard/Field"
+        source-provider="NetworkTables"
+        style="transform: translate(833px, 14px); width: 667px; height: 513.333px;"
+        width="54.27083"
+        height="26.2916"
+        image="/field-images/2023-field.jpg"
+        top-left-field-corner-x="46"
+        top-left-field-corner-y="36"
+        bottom-right-field-corner-x="1088"
+        bottom-right-field-corner-y="544"
+    >
+        <frc-field-robot
+            source-key="/SmartDashboard/Field/Robot"
+            source-provider="NetworkTables"
+            style="width: 22.2306px; height: 33.3458px; transform: translate(57.4859px, 223.98px) rotate(76.739deg);"
+            pose="[0,0,0]"
+        ></frc-field-robot>
+    </frc-field>
+</dashboard-tab>
+<dashboard-tab
+    slot="tab"
+    tab-name="Autonomous"
+    source-provider="NetworkTables"
+></dashboard-tab>

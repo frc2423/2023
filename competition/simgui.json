@@ -43,7 +43,8 @@
         },
         "FR": {
           "open": true
-        }
+        },
+        "open": true
       },
       "robot": {
         "auto": {
