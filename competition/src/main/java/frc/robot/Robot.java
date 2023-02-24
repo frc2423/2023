@@ -12,6 +12,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -39,7 +40,7 @@ public class Robot extends TimedRobot {
   private final Timer m_timer = new Timer();
   private Trajectory m_trajectory;
   public static final Field2d field = new Field2d();
-  public static Trajectories trajectories= new Trajectories();
+  public static Trajectories trajectories = new Trajectories();
 
   public static Arm arm = new Arm();
 
@@ -154,7 +155,7 @@ public class Robot extends TimedRobot {
       arm.beltStop();
     }
 
-    if (m_controller.getLeftBumperReleased()) { //TODO: revisit this 
+    if (m_controller.getLeftBumperReleased()) { // TODO: revisit this
       arm.shoulderForward();
     } else if (m_controller.getRightBumperReleased()) {
       arm.shoulderBack();
@@ -175,19 +176,33 @@ public class Robot extends TimedRobot {
     // } else {
     // arm.setShoulderVelocity(0);
     // }
-    // double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3
-    // double manualAngle = NtHelper.getDouble("/test/angle", 0);
-    // SwerveModuleState bloB = new SwerveModuleState(manualSpeed,
-    // Rotation2d.fromDegrees(manualAngle));
-    // // m_drive.m_frontLeft.setDesiredState(bloB);
-    // // m_drive.m_frontRight.setDesiredState(bloB);
-    // // m_drive.m_backLeft.setDesiredState(bloB);
-    // // m_drive.m_backRight.setDesiredState(bloB);
-    if (m_controller_right.getBackButton()) {
-      arm.resetTelescopeEncoder();
-    } else {
-      arm.stopTelescopeMotor();
-    } // :P
+    double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3
+    double manualAngle = NtHelper.getDouble("/test/angle", 0);
+    SwerveModuleState bloB = new SwerveModuleState(manualSpeed,
+        Rotation2d.fromDegrees(manualAngle));
+
+    double[] desiredStates = {
+        bloB.angle.getRadians(),
+        bloB.speedMetersPerSecond,
+        bloB.angle.getRadians(),
+        bloB.speedMetersPerSecond,
+        bloB.angle.getRadians(),
+        bloB.speedMetersPerSecond,
+        bloB.angle.getRadians(),
+        bloB.speedMetersPerSecond,
+    };
+
+    NtHelper.setDoubleArray("/swerve/desiredStates", desiredStates);
+
+    m_drive.m_frontLeft.setDesiredState(bloB);
+    m_drive.m_frontRight.setDesiredState(bloB);
+    m_drive.m_backLeft.setDesiredState(bloB);
+    m_drive.m_backRight.setDesiredState(bloB);
+    // if (m_controller_right.getBackButton()) {
+    // arm.resetTelescopeEncoder();
+    // } else {
+    // arm.stopTelescopeMotor();
+    // } // :P
   }
 
   @Override

@@ -151,7 +151,7 @@ public class SwerveModule {
     final double turnFeedforward = 0;
     // m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
     driveMotorVoltage = (driveOutput + driveFeedforward);
-    turnMotorVoltage = (turnOutput + turnFeedforward);
+    turnMotorVoltage = (RobotBase.isSimulation() ? 1 : 1) * (turnOutput + turnFeedforward);
     // driveMotorVoltage = 0;
     // turnMotorVoltage = 0;
 
@@ -202,7 +202,7 @@ public class SwerveModule {
     driveEncoderRate = m_driveMotor.getSpeed() * encoderRateSign;
     driveEncoderDistance = m_driveMotor.getDistance() * encoderDistanceSign;
     turnEncoderRate = m_turningMotor.getSpeed();
-    turnEncoderDistance = m_turningMotor.getDistance();
+    turnEncoderDistance = (RobotBase.isSimulation() ? 1 : -1) * m_turningMotor.getDistance();
 
     NtHelper.setDouble("/rates/" + name + "/speed", driveEncoderRate);
     NtHelper.setDouble("/rates/" + name + "/distance", driveEncoderDistance);
