@@ -101,7 +101,7 @@ public class SwerveModule {
     m_turningPIDController.setTolerance(.2);
 
     this.invertDriveEncoderRate = invertDriveEncoderRate;
-    this.invertDriveEncoderDistance = false; //invertDriveEncoderDistance;
+    this.invertDriveEncoderDistance = false; // invertDriveEncoderDistance;
   }
 
   /**
@@ -120,11 +120,9 @@ public class SwerveModule {
    * @return The current position of the module.
    */
   public SwerveModulePosition getPosition() {
-    // TODO: we are retunning 360 - turnEncoderDistance (turn angle) to flip odometry over the y-axis.
-    // This should be conditional since this shouldn't be done in simulation.
-    double encoderDist = Robot.isSimulation() ?  turnEncoderDistance :- turnEncoderDistance;
+
     return new SwerveModulePosition(
-      driveEncoderDistance, new Rotation2d((2 * Math.PI) + encoderDist));
+        driveEncoderDistance, new Rotation2d(turnEncoderDistance));
   }
 
   /**
@@ -133,25 +131,17 @@ public class SwerveModule {
    * @param desiredState Desired state with speed and angle.
    */
   public void setDesiredState(SwerveModuleState desiredState) {
-    // TODO: Right now we are disabling optimizing the angle to get odometry working. We should
-    // maybe have a function that enables/disables optimization so that it can disabled in auto
+    // TODO: Right now we are disabling optimizing the angle to get odometry
+    // working. We should
+    // maybe have a function that enables/disables optimization so that it can
+    // disabled in auto
     // and enabled in teleop.
 
     // Optimize the reference state to avoid spinning further than 90 degrees
-    SwerveModuleState state = (Robot.isSimulation() ? desiredState : SwerveModuleState.optimize(desiredState, new Rotation2d(turnEncoderDistance)));
+    SwerveModuleState state = SwerveModuleState.optimize(desiredState, new Rotation2d(turnEncoderDistance));
 
     // Calculate the drive output from the drive PID controller.
     final double driveOutput = m_drivePIDController.calculate(driveEncoderRate, state.speedMetersPerSecond);
-
-    // NtHelper.setDouble("/drive/" + name + "/actualSpeed", driveEncoderRate);
-
-    // NtHelper.setDouble("/drive/" + name + "/desiredSpeed",
-    // desiredState.speedMetersPerSecond);
-
-    // NtHelper.setDouble("/drive/" + name + "/driveCurrent",
-    // m_driveMotor.getCurrent());
-    // NtHelper.setDouble("/drive/" + name + "/turnCurrent",
-    // m_turningMotor.getCurrent());
 
     final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
 
@@ -161,7 +151,7 @@ public class SwerveModule {
     final double turnFeedforward = 0;
     // m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
     driveMotorVoltage = (driveOutput + driveFeedforward);
-    turnMotorVoltage = (RobotBase.isSimulation() ? 1 : -1) * (turnOutput + turnFeedforward);
+    turnMotorVoltage = (turnOutput + turnFeedforward);
     // driveMotorVoltage = 0;
     // turnMotorVoltage = 0;
 
@@ -212,7 +202,7 @@ public class SwerveModule {
     driveEncoderRate = m_driveMotor.getSpeed() * encoderRateSign;
     driveEncoderDistance = m_driveMotor.getDistance() * encoderDistanceSign;
     turnEncoderRate = m_turningMotor.getSpeed();
-    turnEncoderDistance = m_turningMotor.getDistance();
+    turnEncoderDistance = (RobotBase.isSimulation() ? 1 : -1) * m_turningMotor.getDistance();
 
     NtHelper.setDouble("/rates/" + name + "/speed", driveEncoderRate);
     NtHelper.setDouble("/rates/" + name + "/distance", driveEncoderDistance);
