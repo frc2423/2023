@@ -132,7 +132,7 @@ public class Robot extends TimedRobot {
 
   public void autoRotate() {
     var angleError = MathUtil.angleModulus(m_drive.getAngle().getRadians() - Math.PI);
-    if (robotRotate.isDone(angleError) == false) {
+    if (!robotRotate.isDone(angleError)) {
       var rotationSpeed = robotRotate.calculate(angleError);
       m_drive.drive(0, 0, rotationSpeed, false);
     } else {
