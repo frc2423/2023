@@ -151,7 +151,7 @@ public class SwerveModule {
     final double turnFeedforward = 0;
     // m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
     driveMotorVoltage = (driveOutput + driveFeedforward);
-    turnMotorVoltage = (RobotBase.isSimulation() ? 1 : 1) * (turnOutput + turnFeedforward);
+    turnMotorVoltage = (turnOutput + turnFeedforward);
     // driveMotorVoltage = 0;
     // turnMotorVoltage = 0;
 

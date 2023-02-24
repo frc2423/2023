@@ -18,28 +18,37 @@ import java.util.List;
 
 public class Trajectories {
     private Trajectory next_path = null;
-    private String name = null; //"competition_just_drive_out"
-    private List<PathPlannerTrajectory> move_steps ;//= PathPlanner.loadPathGroup(name, new PathConstraints(1.5, 3));//2.5, 3
+    private String name = null; // "competition_just_drive_out"
+    private List<PathPlannerTrajectory> move_steps;// = PathPlanner.loadPathGroup(name, new PathConstraints(1.5,
+                                                   // 3));//2.5, 3
     private final PPHolonomicDriveController m_holonomicController = new PPHolonomicDriveController(
-        //feedback in Swerve Module 
-        new PIDController(1.8, 0, 0), // x feedback
-        new PIDController(1.8, 0, 0), // y feedback
-        new PIDController(1.8, 0, 0) // w feedback
+            // feedback in Swerve Module
+            new PIDController(1.8, 0, 0), // x feedback
+            new PIDController(1.8, 0, 0), // y feedback
+            new PIDController(1.8, 0, 0) // w feedback
     );
     private Drivetrain drivetrain = Robot.m_drive;
     private Timer timer = new Timer();
 
     public void update_current_path() {
+        // PathPlanner.loadPath(name, null, false)
         next_path = move_steps.get(0);
         move_steps.remove(0);
-        drivetrain.resetOdometry(next_path.getInitialPose());
         timer.reset();
         timer.start();
     }
 
+    public void resetOdometry(){
+        drivetrain.resetOdometry(next_path.getInitialPose());
+    }
+
     public void setNewTrajectoryGroup(String newName) {
+        setNewTrajectoryGroup(newName, false);
+    }
+
+    public void setNewTrajectoryGroup(String newName, boolean isReversed) {
         name = newName;
-        move_steps = PathPlanner.loadPathGroup(name, new PathConstraints(0.5, 3));//2.5, 3
+        move_steps = PathPlanner.loadPathGroup(name, 2.269, 3, isReversed);// 2.5, 3
         update_current_path();
         Robot.field.getObject("trajectory").setTrajectory(getTrajectory());
     }
@@ -59,21 +68,23 @@ public class Trajectories {
         NtHelper.setDouble("/auto/desiredY", desiredState.poseMeters.getY());
         NtHelper.setDouble("/auto/actualX", drivetrain.getPose().getX());
         NtHelper.setDouble("/auto/actualY", drivetrain.getPose().getY());
-        ChassisSpeeds refChassisSpeeds = m_holonomicController.calculate(drivetrain.getPose(), (PathPlannerState)desiredState);
-        double vy = RobotBase.isSimulation() ? -refChassisSpeeds.vyMetersPerSecond : -refChassisSpeeds.vyMetersPerSecond; //if not sim, negetive?
+        ChassisSpeeds refChassisSpeeds = m_holonomicController.calculate(drivetrain.getPose(),
+                (PathPlannerState) desiredState);
+        // double vy = RobotBase.isSimulation() ? -refChassisSpeeds.vyMetersPerSecond
+        //         : -refChassisSpeeds.vyMetersPerSecond; // if not sim, negetive?
 
-        double radiansPerSecond = (RobotBase.isSimulation() ? -1 : 1) * refChassisSpeeds.omegaRadiansPerSecond;
-        
+        // double radiansPerSecond = (RobotBase.isSimulation() ? -1 : 1) * refChassisSpeeds.omegaRadiansPerSecond;
+
         NtHelper.setDouble("/auto/vx", refChassisSpeeds.vxMetersPerSecond);
-        NtHelper.setDouble("/auto/vy", vy);
-        drivetrain.drive(refChassisSpeeds.vxMetersPerSecond, vy, radiansPerSecond, false);
+        NtHelper.setDouble("/auto/vy", refChassisSpeeds.vyMetersPerSecond);
+        drivetrain.drive(refChassisSpeeds.vxMetersPerSecond, refChassisSpeeds.vyMetersPerSecond,
+                refChassisSpeeds.omegaRadiansPerSecond, false);
     }
 
     public Boolean isFinished() {
         if (timer.get() > next_path.getTotalTimeSeconds()) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
