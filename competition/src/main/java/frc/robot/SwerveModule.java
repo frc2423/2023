@@ -122,15 +122,9 @@ public class SwerveModule {
    * @return The current position of the module.
    */
   public SwerveModulePosition getPosition() {
-    // TODO: we are retunning 360 - turnEncoderDistance (turn angle) to flip
-    // odometry over the y-axis.
-    // This should be conditional since this shouldn't be done in simulation.
-    return new SwerveModulePosition(
-        driveEncoderDistance, new Rotation2d((2 * Math.PI) - turnEncoderDistance));
-  }
 
-  public void setOptimized(boolean optimize) {
-    optimizeState = optimize;
+    return new SwerveModulePosition(
+        driveEncoderDistance, new Rotation2d(turnEncoderDistance));
   }
 
   /**
@@ -146,9 +140,7 @@ public class SwerveModule {
     // and enabled in teleop.
 
     // Optimize the reference state to avoid spinning further than 90 degrees
-    SwerveModuleState state = optimizeState
-        ? SwerveModuleState.optimize(desiredState, new Rotation2d(turnEncoderDistance))
-        : desiredState;
+    SwerveModuleState state = SwerveModuleState.optimize(desiredState, new Rotation2d(turnEncoderDistance));
 
     // Calculate the drive output from the drive PID controller.
     final double driveOutput = m_drivePIDController.calculate(driveEncoderRate, state.speedMetersPerSecond);
@@ -160,7 +152,9 @@ public class SwerveModule {
 
     final double turnFeedforward = 0;
     driveMotorVoltage = (driveOutput + driveFeedforward);
-    turnMotorVoltage = (RobotBase.isSimulation() ? 1 : -1) * (turnOutput + turnFeedforward);
+    turnMotorVoltage = (turnOutput + turnFeedforward);
+    // driveMotorVoltage = 0;
+    // turnMotorVoltage = 0;
 
     NtHelper.setDouble("/drive/" + name + "/actdistance", turnEncoderDistance);
     NtHelper.setDouble("/drive/" + name + "/desdistance", state.angle.getRadians());
@@ -206,7 +200,7 @@ public class SwerveModule {
     driveEncoderRate = m_driveMotor.getSpeed() * encoderRateSign;
     driveEncoderDistance = m_driveMotor.getDistance() * encoderDistanceSign;
     turnEncoderRate = m_turningMotor.getSpeed();
-    turnEncoderDistance = m_turningMotor.getDistance();
+    turnEncoderDistance = (RobotBase.isSimulation() ? 1 : -1) * m_turningMotor.getDistance();
 
   }
 

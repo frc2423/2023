@@ -3,9 +3,6 @@
     "Persistent Values": {
       "open": false
     },
-    "Retained Values": {
-      "open": false
-    },
     "transitory": {
       "LiveWindow": {
         "open": true
@@ -50,7 +47,13 @@
         "open": true
       },
       "robot": {
-        "open": true
+        "auto": {
+          "open": true
+        },
+        "open": true,
+        "shoulder": {
+          "open": true
+        }
       },
       "test": {
         "open": true
@@ -69,7 +72,9 @@
       "/LiveWindow/Ungrouped/PIDController[7]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[8]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[9]": "PIDController",
+      "/LiveWindow/Ungrouped/PWMSparkMax[0]": "Motor Controller",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
+      "/SmartDashboard/Auto choices": "String Chooser",
       "/SmartDashboard/Field": "Field2d"
     },
     "windows": {
