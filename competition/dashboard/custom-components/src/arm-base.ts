@@ -1,6 +1,5 @@
 import { html, css, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import getAssetUrl from "@frc-web-components/fwc/get-asset-url";
 
 @customElement("kwarqs-arm-base")
 export class ArmBase extends LitElement {
@@ -44,9 +43,6 @@ export class ArmBase extends LitElement {
   @property({ type: Number, reflect: true })
   count = 0;
 
-  private onClick() {
-    this.count++;
-  }
 
   firstUpdated(): void {
     const observer = new ResizeObserver(() => this.requestUpdate());
@@ -67,41 +63,30 @@ export class ArmBase extends LitElement {
 
   render() {
     const rect = this.getBoundingClientRect();
-
-    const name = "Amowee";
-
-    // const sayHello = 'Hello ' + name + ' how are you?';
-    const sayHello = `Hello ${name} how are you`;
-
-    let x2 = this.Xpos(this.angleMeasured, rect.height / 2) + rect.width / 2;
-    let y2 = this.Ypos(this.angleMeasured, rect.height / 2) + rect.height;
+    const triangleWidth = 200;
+    const triangleHeight = 100;
+    const blueBoxHeight = 75;
+    const triangleX = rect.width / 2;
+    const triangleY = rect.height - blueBoxHeight - triangleHeight;
+      
+    let x2 = this.Xpos(this.angleMeasured, triangleY / 2) + triangleX;
+    let y2 = this.Ypos(this.angleMeasured, triangleY / 2) + triangleY;
     let x3 =
-      this.Xpos(this.angleMeasured, rect.height / 2 + this.telescopeLenMeasured) +
-      rect.width / 2;
+      this.Xpos(this.angleMeasured, triangleY / 2 + this.telescopeLenMeasured) +
+      triangleX;
     let y3 =
-      this.Ypos(this.angleMeasured, rect.height / 2 + this.telescopeLenMeasured) + rect.height;
-    let x4 = this.Xpos(this.angleSetpoint, rect.height / 2) + rect.width / 2;
-    let y4 = this.Ypos(this.angleSetpoint, rect.height / 2) + rect.height;
+      this.Ypos(this.angleMeasured, triangleY / 2 + this.telescopeLenMeasured) + triangleY;
+    let x4 = this.Xpos(this.angleSetpoint, triangleY / 2) + triangleX;
+    let y4 = this.Ypos(this.angleSetpoint, triangleY / 2) + triangleY;
     let x5 =
-      this.Xpos(this.angleSetpoint, rect.height / 2 + this.telescopeLenSetpoint) +
-      rect.width / 2;
+      this.Xpos(this.angleSetpoint, triangleY / 2 + this.telescopeLenSetpoint) +
+      triangleX;
     let y5 =
-      this.Ypos(this.angleSetpoint, rect.height / 2 + this.telescopeLenSetpoint) + rect.height;
-
-    const points: [number, number][] = [
-      [0, 0],
-      [0, 100],
-      [100, 100],
-    ];
-
-    // const pointsAtr = points
-    //   .map(point => [point[0] + rect.width / 2, [point[1] + rect.height]])
-    //   .map(point => point.join(' ')).join(',');
-
-    const pointsAtr = `${rect.width / 2},${rect.height} ${rect.width / 2},${
-      rect.height
-    } 120,660 380,660`;
-
+      this.Ypos(this.angleSetpoint, triangleY / 2 + this.telescopeLenSetpoint) + triangleY;
+      
+      const pointsAtr = `${triangleX},${
+        triangleY
+      } ${triangleX - triangleWidth / 2}, ${triangleY + triangleHeight} ${triangleX + triangleWidth / 2}, ${triangleY + triangleHeight}`;
     return html`
       <div class="container">
         <svg width=${rect.width} height=${rect.height}>
@@ -112,8 +97,8 @@ export class ArmBase extends LitElement {
             stroke-width="20"
           />
           <line
-            x1="${rect.width / 2}"
-            y1="${rect.height}"
+            x1="${triangleX}"
+            y1="${triangleY}"
             x2="${x2}"
             y2="${y2}"
             stroke="orange"
@@ -128,8 +113,8 @@ export class ArmBase extends LitElement {
             stroke-width="14"
           />
           <line
-            x1="${rect.width / 2}"
-            y1="${rect.height}"
+            x1="${triangleX}"
+            y1="${triangleY}"
             x2="${x4}"
             y2="${y4}"
             stroke="orange"
@@ -147,13 +132,13 @@ export class ArmBase extends LitElement {
           />
           <rect
             x="${rect.width / 2 - 150}"
-            y="${rect.height + 150}"
+            y="${rect.height - blueBoxHeight}"
             width="300"
-            height="75"
+            height="${blueBoxHeight}"
             rx="15"
             fill="steelblue"
           />
-          <text x="${rect.width / 2 - 75}" y="${rect.height + 200}" style="font-weight:bold; font-size:59px">
+          <text x="${rect.width / 2 - 75}" y="${rect.height - 20}" style="font-weight:bold; font-size:59px">
             2423
           </text>
         </svg>
