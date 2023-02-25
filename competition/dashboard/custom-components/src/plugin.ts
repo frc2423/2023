@@ -1,15 +1,21 @@
-import './my-counter';
-import { FrcDashboard } from '@frc-web-components/fwc';
+import "./arm-setpoints";
+import "./arm-base";
+import { FrcDashboard } from "@frc-web-components/fwc";
 
 export default function addPlugin(dashboard: FrcDashboard) {
-  dashboard.addElements({
-    'my-counter': {
-      dashboard: {
-        displayName: 'My Counter',
+  dashboard.addElements(
+    {
+      "kwarqs-arm-setpoints": {
+        dashboard: {
+          displayName: "Arm Setpoints",
+        },
       },
-      properties: {
-        count: { type: 'Number', reflect: true }
-      }
+      "kwarqs-arm-base": {
+        dashboard: {
+          displayName: "Arm Base",
+        },
+      },
     },
-  }, 'My Elements');
+    "My Elements"
+  );
 }

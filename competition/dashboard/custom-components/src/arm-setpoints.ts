@@ -2,7 +2,7 @@ import { html, css, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import getAssetUrl from '@frc-web-components/fwc/get-asset-url';
 
-@customElement("my-counter")
+@customElement("kwarqs-arm-setpoints")
 export class MyCounter extends LitElement {
   static styles = css`
     :host {

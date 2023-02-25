@@ -1,4 +1,4 @@
-import './my-counter';
+import './arm-setpoints';
 import createDashboard from '@frc-web-components/fwc';
 import loadLocalStorage from '@frc-web-components/fwc/load-local-storage';
 import addPlugin from './plugin';
