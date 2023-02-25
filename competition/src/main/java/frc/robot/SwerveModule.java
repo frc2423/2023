@@ -167,7 +167,7 @@ public class SwerveModule {
     turnEncoderDistance = 0;
   }
 
-  public void updateSimulation(double dtSeconds) {
+  public void updateSimulation(double dtSeconds) { //0.02
     // Update simulation inputs
     m_driveSim.setInputVoltage(driveMotorVoltage);
     m_turnSim.setInputVoltage(turnMotorVoltage);
