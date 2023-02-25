@@ -122,10 +122,10 @@ public class Robot extends TimedRobot {
     String AutoPos = NtHelper.getString("/robot/score/AutoPos", "low");
     if (AutoPos.equals("low")) {
       frontFloor();
-    }else if (AutoPos == "mid"){
+    }else if (AutoPos.equals("mid")){
       frontScoreMid();
     }
-    else if (AutoPos == "high") {
+    else if (AutoPos.equals("high")) {
       //make a function for high score
     }
     else {
@@ -157,7 +157,6 @@ public class Robot extends TimedRobot {
       var rotationSpeed = robotRotate.calculate(angleError);
       m_drive.drive(0, 0, rotationSpeed / 4, false);
     } else {
-      System.out.println(1);
       autoAlign();
     }
   }
