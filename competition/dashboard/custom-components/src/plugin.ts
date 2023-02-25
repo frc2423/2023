@@ -15,8 +15,10 @@ export default function addPlugin(dashboard: FrcDashboard) {
           displayName: "Arm Base",
         },
         properties: {
-          angle:{type:"Number", primary: true},
-          telescopeLen:{type:"Number", attribute:"telescope-len"}
+          angleMeasured:{type:"Number", attribute:"angle-measured"},
+          telescopeLenMeasured:{type:"Number", attribute:"telescope-len-measured"},
+          angleSetpoint:{type:"Number", attribute:"angle-setpoint"},
+          telescopeLenSetpoint:{type:"Number", attribute:"telescope-len-setpoint"}
         }
       },
     },
