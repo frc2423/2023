@@ -57,6 +57,9 @@
           "open": true
         },
         "open": true
+      },
+      "sim": {
+        "open": true
       }
     }
   }
