@@ -14,6 +14,10 @@ export default function addPlugin(dashboard: FrcDashboard) {
         dashboard: {
           displayName: "Arm Base",
         },
+        properties: {
+          angle:{type:"Number", primary: true},
+          telescopeLen:{type:"Number", attribute:"telescope-len"}
+        }
       },
     },
     "My Elements"
