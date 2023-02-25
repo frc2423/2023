@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
   private final Camera camera = new Camera(null);
 
   private final LinearScale objectalignment = new LinearScale(.1, 1, 5, 15);
-  private final LinearScale robotRotate = new LinearScale(0, Math.PI, Rotation2d.fromDegrees(1).getRadians(),
+  private final LinearScale robotRotate = new LinearScale(0, Math.PI, Rotation2d.fromDegrees(10).getRadians(),
       Rotation2d.fromDegrees(100).getRadians());
   public static Arm arm = new Arm();
 
@@ -62,6 +62,7 @@ public class Robot extends TimedRobot {
         new Pose2d(6, 4, new Rotation2d()),
         new TrajectoryConfig(2, 2));
     NtHelper.setString("/arm/value", "Up");
+    NtHelper.setString("/robot/score/AutoPos", "low");
     String[] options = { "Front Floor", "Front Score", "Up", "Back Score", "Back Floor" };
     NtHelper.setStringArray("/arm/options", options);
 
@@ -71,11 +72,9 @@ public class Robot extends TimedRobot {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(5)));
         arm.telescopeToSetpoint(0);
       } else if (position.equals("Front Score")) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57))); // 57 but 59 good
-        arm.telescopeToSetpoint(51);
+        frontScoreMid();
       } else if (position.equals("Front Floor")) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
-        arm.telescopeToSetpoint(10);
+        frontFloor();
       } else if (position.equals("Back Floor")) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-110)));
         arm.telescopeToSetpoint(10);
@@ -108,17 +107,38 @@ public class Robot extends TimedRobot {
     auto.run();
   }
 
+  public void frontFloor() {
+    arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
+    arm.telescopeToSetpoint(10);
+  }
+
+  public void frontScoreMid() {
+    arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57))); // 57 but 59 good
+    arm.telescopeToSetpoint(51);
+  }
+
   public void autoScore() {
     m_drive.drive(0, 0, 0, false);
-
-  }
+    String AutoPos = NtHelper.getString("/robot/score/AutoPos", "low");
+    if (AutoPos.equals("low")) {
+      frontFloor();
+    }else if (AutoPos == "mid"){
+      frontScoreMid();
+    }
+    else if (AutoPos == "high") {
+      //make a function for high score
+    }
+    else {
+    }
+    }
+  
 
   public void autoAlign() {
     if (camera.seesTarget()) {
       var tapeX = camera.getTapeX();
       if (!objectalignment.isDone(tapeX)) {
         var speed = objectalignment.calculate(tapeX);
-        m_drive.drive(0, speed, 0, false);
+        m_drive.drive(0, -speed, 0, false);
 
         NtHelper.setDouble("/autoAlign/speed", speed);
         NtHelper.setDouble("/autoAlign/tapeX", tapeX);
@@ -131,11 +151,13 @@ public class Robot extends TimedRobot {
   }
 
   public void autoRotate() {
-    var angleError = MathUtil.angleModulus(m_drive.getAngle().getRadians() - Math.PI);
+    var angleError = MathUtil.angleModulus(m_drive.getAngle().getRadians());
+    NtHelper.setDouble("/robot/score/angleEroor", angleError);
     if (!robotRotate.isDone(angleError)) {
       var rotationSpeed = robotRotate.calculate(angleError);
-      m_drive.drive(0, 0, rotationSpeed, false);
+      m_drive.drive(0, 0, rotationSpeed / 4, false);
     } else {
+      System.out.println(1);
       autoAlign();
     }
   }
