@@ -9,9 +9,16 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import frc.robot.util.NtHelper;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 
 public class Arm {
     private PWMSparkMax gripperMotor;
@@ -45,6 +52,9 @@ public class Arm {
     public static final double MAX_SHOULDER_VOLTAGE = 4;
     private Rotation2d shoulderSetpoint = new Rotation2d();
 
+    private MechanismLigament2d shoulder;
+    private MechanismLigament2d telescope;
+
     /*
      * TODO:
      * - check if getting can values from shoulder encoder -> if not reduce speed ->
@@ -68,6 +78,21 @@ public class Arm {
         shoulderEncoder.configAllSettings(_canCoderConfiguration);
         beltoMotor = new PWMSparkMax(0);
         shoulder_PID.setTolerance(5);
+
+        // the main mechanism object
+        Mechanism2d mech = new Mechanism2d(3, 3);
+        // the mechanism root node
+        MechanismRoot2d arm = mech.getRoot("arm", 2, .5);
+    
+        // MechanismLigament2d objects represent each "section"/"stage" of the mechanism, and are based
+        // off the root node or another ligament object
+        shoulder = arm.append(new MechanismLigament2d("shoulder", Units.inchesToMeters(21), 0, 10,new Color8Bit(200,0,10)));
+        telescope =
+            shoulder.append(
+                new MechanismLigament2d("telescope", 0, 0, 6, new Color8Bit(Color.kGreen)));
+
+        // post the mechanism to the dashboard
+        SmartDashboard.putData("Mech2d", mech);
     }
 
     public void extend() { // arm telescopes out
@@ -236,6 +261,9 @@ public class Arm {
             NtHelper.setBoolean("/robot/telescope/moving", false);
             telescopeMotor.setPercent(0);
         }
+
+        telescope.setLength(telescopeMotor.getDistance()/100);
+        shoulder.setAngle(shoulderEncoder.getAbsolutePosition()+90);
     }
 
     private void telemtry() {
