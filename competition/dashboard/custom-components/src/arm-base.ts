@@ -68,21 +68,22 @@ export class ArmBase extends LitElement {
     const blueBoxHeight = 75;
     const triangleX = rect.width / 2;
     const triangleY = rect.height - blueBoxHeight - triangleHeight;
+    const armY = 500 - blueBoxHeight - triangleHeight;
       
-    let x2 = this.Xpos(this.angleMeasured, triangleY / 2) + triangleX;
-    let y2 = this.Ypos(this.angleMeasured, triangleY / 2) + triangleY;
+    let x2 = this.Xpos(this.angleMeasured, armY / 2) + triangleX;
+    let y2 = this.Ypos(this.angleMeasured, armY / 2) + triangleY;
     let x3 =
-      this.Xpos(this.angleMeasured, triangleY / 2 + this.telescopeLenMeasured) +
+      this.Xpos(this.angleMeasured, armY / 2 + this.telescopeLenMeasured) +
       triangleX;
     let y3 =
-      this.Ypos(this.angleMeasured, triangleY / 2 + this.telescopeLenMeasured) + triangleY;
-    let x4 = this.Xpos(this.angleSetpoint, triangleY / 2) + triangleX;
-    let y4 = this.Ypos(this.angleSetpoint, triangleY / 2) + triangleY;
+      this.Ypos(this.angleMeasured, armY / 2 + this.telescopeLenMeasured) + triangleY;
+    let x4 = this.Xpos(this.angleSetpoint, armY / 2) + triangleX;
+    let y4 = this.Ypos(this.angleSetpoint, armY / 2) + triangleY;
     let x5 =
-      this.Xpos(this.angleSetpoint, triangleY / 2 + this.telescopeLenSetpoint) +
+      this.Xpos(this.angleSetpoint, armY / 2 + this.telescopeLenSetpoint) +
       triangleX;
     let y5 =
-      this.Ypos(this.angleSetpoint, triangleY / 2 + this.telescopeLenSetpoint) + triangleY;
+      this.Ypos(this.angleSetpoint, armY / 2 + this.telescopeLenSetpoint) + triangleY;
       
       const pointsAtr = `${triangleX},${
         triangleY

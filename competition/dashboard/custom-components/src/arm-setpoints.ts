@@ -23,8 +23,11 @@ export class MyCounter extends LitElement {
     
     width:15%;
     height:15%;
-    font-size:30px;
+    font-size:20px;
     border-radius:999px;
+   }
+   .button-on {
+    background: green !important;
    }
    .position1 {
     left: 90%; top: 60%;
@@ -60,10 +63,13 @@ export class MyCounter extends LitElement {
    * The number of times the button has been clicked.
    */
   @property({ type: Number, reflect: true })
-  count = 0;
+  buttonselected = 1;
 
-  private onClick() {
-    this.count++;
+  private onClick(buttonnumber:number) {
+    this.buttonselected = buttonnumber;
+    if (this.buttonselected == 1) {
+      html`<button style='background-color: #ff00ff'>`
+    }
   }
 
   render() {
@@ -71,89 +77,90 @@ export class MyCounter extends LitElement {
     <div class="container">
 
       <button
-        @click=${this.onClick}
-        part="90degrees"
+        @click=${()=>this.onClick(1)}
+        part = "90degrees"
         style='background-image: url("${getAssetUrl("button-background.jpg")}" )'
-        class="button position1"
+        class = '${`button position1 ${this.buttonselected == 1 ? "button-on" : ""}`}'
         >
-        a1
+        Floor
       </button>
 
 
       <button
-        @click=${this.onClick}
+        @click=${()=>this.onClick(2)}
         part="90degrees"
         style='background-image: url("${getAssetUrl("button-background.jpg")}" )'
-        class="button position2"
+        class = '${`button position2 ${this.buttonselected == 2 ? "button-on" : ""}`}'
         >
-        a2
-      </button>
-
-
-      
-      <button
-        @click=${this.onClick}
-        part="90degrees"
-        style='background-image: url("${getAssetUrl("button-background.jpg")}" )'
-        class="button position3"
-        >
-        a3
+        Score<br>Mid
       </button>
 
 
       
       <button
-        @click=${this.onClick}
+        @click=${()=>this.onClick(3)}
         part="90degrees"
         style='background-image: url("${getAssetUrl("button-background.jpg")}" )'
-        class="button position4"
+        class='${`button position3 ${this.buttonselected == 3 ? "button-on" : ""}`}'
         >
-        a4
+        Score<br>High
+      </button>
+
+
+      
+      <button
+        @click=${()=>this.onClick(4)}
+        part="90degrees"
+        style='background-image: url("${getAssetUrl("button-background.jpg")}" )'
+        class='${`button position4 ${this.buttonselected == 4 ? "button-on" : ""}`}'
+        >
+        HP
       </button>
 
       
       <button
-        @click=${this.onClick}
+        @click=${()=>this.onClick(5)}
         part="90degrees"
         style='background-image: url("${getAssetUrl("button-background.jpg")}" )'
-        class="button position5"
+        class='${`button position5 ${this.buttonselected == 5 ? "button-on" : ""}`}'
         >
-        a5
+        Up
         </button>
       <button
-        @click=${this.onClick}
+        @click=${()=>this.onClick(6)}
         part="90degrees"
         style='background-image: url("${getAssetUrl("button-background.jpg")}" )'
-        class="button position6"
+        class='${`button position6 ${this.buttonselected == 6 ? "button-on" : ""}`}'
         >
-        a6
+        HP
       </button>
         
       <button
-        @click=${this.onClick}
+        @click=${()=>this.onClick(7)}
         part="90degrees"
         style='background-image: url("${getAssetUrl("button-background.jpg")}" )'
-        class="button position7"
+        class='${`button position7 ${this.buttonselected == 7 ? "button-on" : ""}`}'
         >
-        a7
+        Score<br>High
       </button>
       <button
-        @click=${this.onClick}
+        @click=${()=>this.onClick(8)}
         part="90degrees"
         style='background-image: url("${getAssetUrl("button-background.jpg")}" )'
-        class="button position8"
+        class='${`button position8 ${this.buttonselected == 8 ? "button-on" : ""}`}'
         >
-        a8
+        Score<br>Mid
       </button>
       <button
-        @click=${this.onClick}
+        @click=${()=>this.onClick(9)}
         part="90degrees"
         style='background-image: url("${getAssetUrl("button-background.jpg")}" )'
-        class="button position9"
+        class='${`button position9 ${this.buttonselected == 9 ? "button-on" : ""}`}'
         >
-        a9
+        Floor
       </button>
     </div>
+    <>
     `;
   }
 }
