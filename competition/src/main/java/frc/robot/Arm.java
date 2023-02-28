@@ -10,6 +10,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
@@ -37,8 +38,9 @@ public class Arm {
     private double outtakeBeltoSpeedo = -0.35;
     // Create a new ArmFeedforward with gains kS, kG, kV, and kA
     private ArmFeedforward feedforward = new ArmFeedforward(0.16623, 0.39399, 17.022, 1.7561);
-    private DoubleSolenoid gripper = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 0);
-
+   // private PneumaticHub hub = new PneumaticHub(1);
+   // private DoubleSolenoid gripper = hub.makeDoubleSolenoid( 1, 0);
+    public DoubleSolenoid gripper = new DoubleSolenoid(22,PneumaticsModuleType.REVPH, 1, 0);
     private double shoulderVoltage = 0;
     public static final double MAX_SHOULDER_VOLTAGE = 4;
     private Rotation2d shoulderSetpoint = new Rotation2d();

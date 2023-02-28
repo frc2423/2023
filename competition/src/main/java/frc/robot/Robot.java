@@ -108,6 +108,7 @@ public class Robot extends TimedRobot {
     m_drive.resetAngle();
     NtHelper.setDouble("/robot/shoulder/set_angle", 0);
     arm.resetTelescopeEncoder();
+    NtHelper.setString("/robot/arm/sol", "off");
   }
 
   @Override
@@ -190,6 +191,12 @@ public class Robot extends TimedRobot {
       arm.closeGripper();
     }
 
+    if (NtHelper.getString("/robot/arm/setsolenoid", "off").equals("go")) {
+      arm.openGripper();
+    } else if (NtHelper.getString("/robot/arm/setsolenoid", "off").equals("no")) { 
+      arm.closeGripper();
+    }
+    NtHelper.setString("/robot/arm/solState", arm.gripper.get().toString());
 
     // if (m_controller_right.getBButtonReleased()) {
     // arm.setShoulderSetpoint(new Rotation2d(0));
