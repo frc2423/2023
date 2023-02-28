@@ -133,6 +133,31 @@ public class Robot extends TimedRobot {
 
     m_drive.drive(xSpeed, ySpeed, rot, true);
 
+    NtHelper.setString("/arm/value", "Up");
+    String[] options = { "Front Floor", "Front Score", "Up", "Back Score", "Back Floor" };
+   
+    switch(m_controller.getPOV()){
+      case 0:
+      NtHelper.setString("/arm/value", "Up");
+      break;
+      case 45:
+      NtHelper.setString("/arm/value", "Front Score");
+      break;
+      case 90:
+      break;
+      case 135:
+      NtHelper.setString("/arm/value", "Front Floor");
+      break;
+      case 225:
+      NtHelper.setString("arm/value", "Back Floor");
+      break;
+      case 270:
+      break;
+      case 315:
+      NtHelper.setString("/arm/value", "Back Score");
+      break;
+    }
+
     if (m_controller.getXButton()) {
       arm.extend();
     } else if (m_controller.getBButton()) { // double check this
