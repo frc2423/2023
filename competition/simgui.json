@@ -1,4 +1,11 @@
 {
+  "HALProvider": {
+    "PWM Outputs": {
+      "window": {
+        "visible": true
+      }
+    }
+  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
@@ -47,7 +54,7 @@
         "open": true
       },
       "robot": {
-        "auto": {
+        "arm": {
           "open": true
         },
         "open": true
