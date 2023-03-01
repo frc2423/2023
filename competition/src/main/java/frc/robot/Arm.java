@@ -21,7 +21,7 @@ public class Arm {
     private NeoMotor shoulderMotor;
     private PWMSparkMax beltoMotor;
     private static final int TELESCOPE_MOTOR_CAN_BUS_PORT = 9;
-    private static final double TELESCOPE_EXTENSION_POWER = 0.5;
+    private static final double TELESCOPE_EXTENSION_POWER = -0.2;
     private static final double TELESCOPE_RETRACTION_POWER = -TELESCOPE_EXTENSION_POWER;
     private static final double SHOULDER_FORWARD_POWER = 0.005;
     public static final double DISTANCE = 0;
@@ -38,9 +38,7 @@ public class Arm {
     private double outtakeBeltoSpeedo = -0.35;
     // Create a new ArmFeedforward with gains kS, kG, kV, and kA
     private ArmFeedforward feedforward = new ArmFeedforward(0.16623, 0.39399, 17.022, 1.7561);
-   // private PneumaticHub hub = new PneumaticHub(1);
-   // private DoubleSolenoid gripper = hub.makeDoubleSolenoid( 1, 0);
-    public DoubleSolenoid gripper = new DoubleSolenoid(22,PneumaticsModuleType.REVPH, 1, 0);
+    public DoubleSolenoid gripper = new DoubleSolenoid(22, PneumaticsModuleType.REVPH, 1, 0);
     private double shoulderVoltage = 0;
     public static final double MAX_SHOULDER_VOLTAGE = 4;
     private Rotation2d shoulderSetpoint = new Rotation2d();

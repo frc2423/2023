@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
         new Pose2d(6, 4, new Rotation2d()),
         new TrajectoryConfig(2, 2));
     NtHelper.setString("/arm/value", "Up");
-    String[] options = { "Front Floor", "Front Score", "Up", "Back Score", "Back Floor", "Front Score High", "Back Score High"};
+    String[] options = { "Front Floor", "Front Score", "Front Score High", "Up", "Back Score High", "Back Score", "Back Floor"};
     NtHelper.setStringArray("/arm/options", options);
 
     NtHelper.listen("/arm/value", (entry) -> {
@@ -112,7 +112,7 @@ public class Robot extends TimedRobot {
     m_drive.resetAngle();
     NtHelper.setDouble("/robot/shoulder/set_angle", 0);
     arm.resetTelescopeEncoder();
-    NtHelper.setString("/robot/arm/sol", "off");
+    NtHelper.setString("/robot/arm/setsolenoid", "off");
   }
 
   @Override
@@ -175,13 +175,6 @@ public class Robot extends TimedRobot {
     else if (m_controller_right.getRightBumperPressed()){
       arm.closeGripper();
     }
-
-    if (NtHelper.getString("/robot/arm/setsolenoid", "off").equals("go")) {
-      arm.openGripper();
-    } else if (NtHelper.getString("/robot/arm/setsolenoid", "off").equals("no")) { 
-      arm.closeGripper();
-    }
-    NtHelper.setString("/robot/arm/solState", arm.gripper.get().toString());
 
   }
 
