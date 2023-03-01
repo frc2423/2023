@@ -50,24 +50,16 @@ public class Arm {
     private double telescopeSetPoint = 0;
     private boolean telescopePIDUsage = false;
     public static final double MAX_SHOULDER_VOLTAGE = 4;
-    private Rotation2d shoulderSetpoint = new Rotation2d(); // worrrrrrrrrrrrrrrrrrrrrrrrrk
+    private Rotation2d shoulderSetpoint = new Rotation2d();
 
     private MechanismLigament2d shoulder;
     private MechanismLigament2d telescope;
 
-    /*
-     * Shoulder Angle
-     * telescope distance
-     * (and sim but not now)
-     */
-
     private Rotation2d shoulderAngle = new Rotation2d(0);
     private double telescopeDist = 0;
 
-    // private final FlywheelSim shoulderSimMotor = new
-    // FlywheelSim(DCMotor.getNEO(1), 6.75, 0.025);
     private final FlywheelSim telescopeSimMotor = new FlywheelSim(DCMotor.getNEO(1), 150.0 / 7.0, 0.004096955);
-    
+
     private final FlywheelSim shoulderSimMotor = new FlywheelSim(DCMotor.getNEO(1), 6.75, 0.025);
 
     public Arm() {
@@ -125,13 +117,6 @@ public class Arm {
         telescopeMotor.setPercent(TELESCOPE_RETRACTION_POWER);
         telescopePIDUsage = false;
 
-        // NtHelper.setBoolean("/robot/telescope/outness", false);
-        // if (telescopeDist <= TELESCOPE_MINIMUM) {
-        // telescopeMotor.setPercent(0);
-        // } else {
-        // telescopeMotor.setPercent(TELESCOPE_RETRACTION_POWER);
-        // }
-
         if (Robot.isSimulation()) {
             telescopeVoltage = TELESCOPE_RETRACTION_POWER * 12;
             NtHelper.setBoolean("/arm/retract", true);
@@ -147,7 +132,6 @@ public class Arm {
     }
 
     public double getTelescopePosition() {
-        NtHelper.setDouble("/robot/telescope/dist", telescopeDist);
         return telescopeDist;
     }
 
@@ -240,11 +224,8 @@ public class Arm {
         beltoSpeedo = beltoSpeed;
     }
 
-    public Rotation2d getShoulderAngle() { // may update later
-        if (Robot.isSimulation()) {
-            return shoulderAngle;
-        }
-        return Rotation2d.fromDegrees(shoulderEncoder.getAbsolutePosition());
+    public Rotation2d getShoulderAngle() {
+        return shoulderAngle;
     }
 
     public double getShoulderEncoderPosition() {
@@ -257,7 +238,6 @@ public class Arm {
 
     public void simPeriodic(double dtSeconds, double shoulderMotorPercent, double telescopeMotorPercent) {
         // Update simulation inputs
-
         shoulderSimMotor.setInputVoltage(shoulderMotorPercent * RobotController.getBatteryVoltage());
         telescopeSimMotor.setInputVoltage(telescopeMotorPercent * RobotController.getBatteryVoltage());
 
@@ -271,40 +251,32 @@ public class Arm {
         telescopeDist += telescopeRate * 0.02;
         var shoulderRate = shoulderSimMotor.getAngularVelocityRadPerSec() * encoderRateSign;
         shoulderAngle = shoulderAngle.plus(Rotation2d.fromRadians(shoulderRate * 0.02));
-        NtHelper.setDouble("/sim/shoulderVolt", shoulderMotorPercent * RobotController.getBatteryVoltage());
-        NtHelper.setDouble("/sim/shoulderAngleDesired", shoulderSetpoint.getDegrees());
-        NtHelper.setDouble("/sim/shoulderAngleMeasured", shoulderAngle.getDegrees());
-
-        // mechanism2d
+        
+        // mechanism2d :/
         telescope.setLength(-telescopeDist / 25);
         shoulder.setAngle(shoulderAngle.getDegrees() + 90);
     }
 
     public void realPeriodic(double shoulderMotorPercent, double telescopeMotorPercent) {
         // Update real robot inputs
-        setShoulderVelocity(calculatePid(shoulderSetpoint));
-        if (shoulderAngle.getDegrees() >= SHOULDER_MAXIMUM && shoulderVoltage < 0) {
-            shoulderMotor.setPercent(0);
-        } else if (shoulderAngle.getDegrees() <= SHOULDER_MINIMUM && shoulderVoltage > 0) {
-            shoulderMotor.setPercent(0);
-        } else {
-            var voltage = MathUtil.clamp(shoulderVoltage, -MAX_SHOULDER_VOLTAGE, MAX_SHOULDER_VOLTAGE);
-            shoulderMotor.setPercent(voltage / RobotController.getBatteryVoltage());
-        }
+        shoulderMotor.setPercent(shoulderMotorPercent);
 
         // Update state from actual devices (telescopeDist and shoulderAngle)
         if (telescopeDist <= TELESCOPE_MINIMUM || telescopeDist >= TELESCOPE_MAXIMUM) {
             NtHelper.setBoolean("/robot/telescope/moving", false);
             telescopeMotor.setPercent(0);
         }
+        telescopeDist = telescopeMotor.getDistance();
+        shoulderAngle = Rotation2d.fromDegrees(shoulderEncoder.getAbsolutePosition());
     }
 
     public void periodic() {
         telemtry();
         double shoulderMotorPercent = shoulderMotor.getPercent();
         double telescopeMotorPercent = (telescopeVoltage / RobotController.getBatteryVoltage());
-        if (telescopePIDUsage){
-            telescopeMotorPercent = telescopePIDController.calculate(telescopeDist, telescopeSetPoint) / RobotController.getBatteryVoltage();
+        if (telescopePIDUsage) {
+            telescopeMotorPercent = telescopePIDController.calculate(telescopeDist, telescopeSetPoint)
+                    / RobotController.getBatteryVoltage();
         }
 
         setShoulderVelocity(calculatePid(shoulderSetpoint));
