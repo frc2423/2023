@@ -239,12 +239,12 @@ public class Arm {
         
         // mechanism2d :/
         telescope.setLength(telescopeDist / 25);
-        shoulder.setAngle(shoulderAngle.getDegrees() + 90);
+        shoulder.setAngle(-shoulderAngle.getDegrees() + 90);
     }
 
     public void realPeriodic(double shoulderMotorPercent, double telescopeMotorPercent) {
         // Update real robot inputs
-        shoulderMotor.setPercent(shoulderMotorPercent);
+        shoulderMotor.setPercent(-shoulderMotorPercent);
         telescopeMotor.setPercent(telescopeMotorPercent);
     
         telescopeDist = telescopeMotor.getDistance();
@@ -285,6 +285,12 @@ public class Arm {
         } else {
             realPeriodic(shoulderMotorPercent, telescopeMotorPercent);
         }
+    }
+    public Rotation2d getShoulderSetpoint() {
+        return shoulderSetpoint;
+    }
+    public double getTelescopeSetpoint() {
+        return telescopeSetPoint;
     }
 
     private void telemtry() {
