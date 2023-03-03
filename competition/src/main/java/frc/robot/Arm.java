@@ -9,23 +9,21 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import frc.robot.util.NtHelper;
 
 public class Arm {
-    private PWMSparkMax gripperMotor;
     private NeoMotor telescopeMotor;
     private NeoMotor shoulderMotor;
     private PWMSparkMax beltoMotor;
-    private static final int GRIPPER_MOTOR_PWM_PORT = 0;
-    private static final double GRIPPER_OPEN_MOTOR_POWER = 0.5;
-    private static final double GRIPPER_CLOSE_MOTOR_POWER = -GRIPPER_OPEN_MOTOR_POWER;
     private static final int TELESCOPE_MOTOR_CAN_BUS_PORT = 9;
-    private static final double TELESCOPE_EXTENSION_POWER = 0.5;
+    private static final double TELESCOPE_EXTENSION_POWER = -0.2;
     private static final double TELESCOPE_RETRACTION_POWER = -TELESCOPE_EXTENSION_POWER;
     private static final double SHOULDER_FORWARD_POWER = 0.005;
-    private static final double SHOULDER_BACKWARD_POWER = -SHOULDER_FORWARD_POWER;
     public static final double DISTANCE = 0;
     private double SHOULDER_CONVERSION_FACTOR = 1; // Calculate later (motor is 80:1)
     private double SHOULDER_MINIMUM = -110; // calculate later ;)
@@ -40,22 +38,13 @@ public class Arm {
     private double outtakeBeltoSpeedo = -0.35;
     // Create a new ArmFeedforward with gains kS, kG, kV, and kA
     private ArmFeedforward feedforward = new ArmFeedforward(0.16623, 0.39399, 17.022, 1.7561);
-
+    public DoubleSolenoid gripper = new DoubleSolenoid(22, PneumaticsModuleType.REVPH, 1, 0);
     private double shoulderVoltage = 0;
     public static final double MAX_SHOULDER_VOLTAGE = 4;
     private Rotation2d shoulderSetpoint = new Rotation2d();
 
-    /*
-     * TODO:
-     * - check if getting can values from shoulder encoder -> if not reduce speed ->
-     * do later
-     * - sleep (more than 5 hours)
-     * - bleh
-     */
-
     public Arm() {
         // constructs stuff
-        // gripperMotor = new PWMSparkMax(GRIPPER_MOTOR_PWM_PORT);
         telescopeMotor = new NeoMotor(TELESCOPE_MOTOR_CAN_BUS_PORT, false);
         telescopeMotor.setPid(.1, 0.0000, 0);
 
@@ -72,8 +61,6 @@ public class Arm {
 
     public void extend() { // arm telescopes out
         // limit extension distance
-        NtHelper.setBoolean("/robot/telescope/outness", true);
-
         if (telescopeMotor.getDistance() >= TELESCOPE_MAXIMUM) {
             telescopeMotor.setPercent(0);
         } else {
@@ -85,7 +72,6 @@ public class Arm {
         // limit retraction distance
         telescopeMotor.setPercent(TELESCOPE_RETRACTION_POWER);
 
-        // NtHelper.setBoolean("/robot/telescope/outness", false);
         // if (telescopeMotor.getDistance() <= TELESCOPE_MINIMUM) {
         //     telescopeMotor.setPercent(0);
         // } else {
@@ -99,20 +85,15 @@ public class Arm {
         // change)
         telescopeMotor.setDistance(meters);
 
-        // NtHelper.setDouble("/robot/telescope/desired_pos", meters);
         // if (telescopeMotor.getDistance() <= TELESCOPE_MINIMUM || telescopeMotor.getDistance() >= TELESCOPE_MAXIMUM) {
-        //     NtHelper.setBoolean("/robot/telescope/moving", false);
         //     telescopeMotor.setPercent(0);
         // } else {
-        //     NtHelper.setBoolean("/robot/telescope/moving", true);
         //     telescopeMotor.setDistance(meters);
         // }
     }
 
     public double getTelescopePosition() {
-        NtHelper.setDouble("/robot/telescope/dist", telescopeMotor.getDistance());
         return telescopeMotor.getDistance();
-
     }
 
     public void resetTelescopeEncoder() {
@@ -127,7 +108,6 @@ public class Arm {
     // moves the shoulder angle towards the front of the robot
     // limit shoulder angle
     public void shoulderForward() {
-        NtHelper.setDouble("/robot/shoulder/speed", SHOULDER_FORWARD_POWER);
         setShoulderSetpoint(shoulderSetpoint.plus(Rotation2d.fromDegrees(5)));
     }
 
@@ -148,7 +128,6 @@ public class Arm {
 
     public void shoulderStop() {
         setShoulderSetpoint(getShoulderAngle());
-        NtHelper.setDouble("/robot/shoulder/speed", 0);
     }
     // this function is to give a certain degrees int and this function will set the
     // motor to the desired location.
@@ -178,10 +157,12 @@ public class Arm {
 
     public void openGripper() {
         // pneumatics (no input)
+        gripper.set(DoubleSolenoid.Value.kForward);
     }
 
     public void closeGripper() {
         // pneumatics (no input)
+        gripper.set(DoubleSolenoid.Value.kReverse);
     }
 
     public void intakeBelt() {
@@ -233,7 +214,6 @@ public class Arm {
         }
 
         if (telescopeMotor.getDistance() <= TELESCOPE_MINIMUM || telescopeMotor.getDistance() >= TELESCOPE_MAXIMUM) {
-            NtHelper.setBoolean("/robot/telescope/moving", false);
             telescopeMotor.setPercent(0);
         }
     }
@@ -242,5 +222,6 @@ public class Arm {
         NtHelper.setDouble("/arm/telescopeDistance", telescopeMotor.getDistance());
         NtHelper.setDouble("/arm/shoulderAngle", getShoulderAngle().getDegrees());
         NtHelper.setDouble("/arm/beltMotor", beltoMotor.get());
+        
     }
 }
