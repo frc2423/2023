@@ -89,6 +89,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    telemtry();
     m_drive.periodic();
     arm.periodic();
     field.setRobotPose(m_drive.getPose());
@@ -225,5 +226,10 @@ public class Robot extends TimedRobot {
   public void testInit() {
     NtHelper.setDouble("/test/speed", 0);
     NtHelper.setDouble("/test/angle", 0);
+  }
+  public void telemtry() {
+    NtHelper.setDouble("/dashboard/arm/angleMeasured", arm.getShoulderAngle().getDegrees());
+    NtHelper.setDouble("/dashboard/arm/telscopeLenMeasured", arm.getTelescopePosition());
+    //NtHelper.setDouble("/dashboard/arm/angleSetpoint", arm.
   }
 }
