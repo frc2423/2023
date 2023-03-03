@@ -54,31 +54,29 @@ public class Robot extends TimedRobot {
         List.of(),
         new Pose2d(6, 4, new Rotation2d()),
         new TrajectoryConfig(2, 2));
-    NtHelper.setString("/arm/value", "Up");
-    String[] options = { "Front Floor", "Front Score", "Front Score High", "Up", "Back Score High", "Back Score", "Back Floor"};
-    NtHelper.setStringArray("/arm/options", options);
+    NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 5); 
 
-    NtHelper.listen("/arm/value", (entry) -> {
-      var position = NtHelper.getString("/arm/value", "Up");
-      if (position.equals("Up")) {
+    NtHelper.listen("/dashboard/armSetpoint/buttonselected", (entry) -> {
+      var position = NtHelper.getDouble("/dashboard/armSetpoint/buttonselected", 5);
+      if (position == 5) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(5)));
         arm.telescopeToSetpoint(0);
-      } else if (position.equals("Front Score")) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57))); // 57 but 59 good
+      } else if (position == 2) {
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57))); 
         arm.telescopeToSetpoint(51);
-      } else if (position.equals("Front Floor")) {
+      } else if (position == 1) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
         arm.telescopeToSetpoint(10);
-      } else if (position.equals("Back Floor")) {
+      } else if (position == 9) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-110)));
         arm.telescopeToSetpoint(10);
-      } else if (position.equals("Back Score")) {
+      } else if (position == 8) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-57)));
         arm.telescopeToSetpoint(51);
-      } else if (position.equals("Front Score High")){
+      } else if (position == 3) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(30)));
         arm.telescopeToSetpoint(60);
-      } else if (position.equals("Back Score High")){
+      } else if (position == 7) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-30)));
         arm.telescopeToSetpoint(60);
 
@@ -141,6 +139,30 @@ public class Robot extends TimedRobot {
 
     m_drive.drive(xSpeed, ySpeed, rot, true);
 
+    switch (m_controller.getPOV()) {
+      case 0:
+        NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 5);
+        break;
+      case 45:
+        NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 3);
+        break;
+      case 90:
+        NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 2);
+        break;
+      case 135:
+        NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 1);
+        break;
+      case 225:
+        NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 9);
+        break;
+      case 270:
+        NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 8);
+        break;
+      case 315:
+        NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 7);
+        break;
+    }
+
     if (m_controller.getXButton()) {
       arm.extend();
     } else if (m_controller.getBButton()) { // double check this
@@ -169,11 +191,9 @@ public class Robot extends TimedRobot {
       arm.shoulderBack();
     }
 
-
-    if (m_controller_right.getLeftBumperPressed()){
+    if (m_controller_right.getLeftBumperPressed()) {
       arm.openGripper();
-    }
-    else if (m_controller_right.getRightBumperPressed()){
+    } else if (m_controller_right.getRightBumperPressed()) {
       arm.closeGripper();
     }
 
@@ -186,13 +206,7 @@ public class Robot extends TimedRobot {
     }
     NtHelper.setDouble("/test/shoulderPosition", arm.getShoulderEncoderPosition());
     double radians = Units.degreesToRadians(5);
-    // if (m_controller.getYButton()){
-    // arm.setShoulderVelocity(radians);
-    // } else if (m_controller.getAButton()) {
-    // arm.setShoulderVelocity(-radians);
-    // } else {
-    // arm.setShoulderVelocity(0);
-    // }
+
     double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3
     double manualAngle = NtHelper.getDouble("/test/angle", 0);
     SwerveModuleState bloB = new SwerveModuleState(manualSpeed,
@@ -215,11 +229,18 @@ public class Robot extends TimedRobot {
     m_drive.m_frontRight.setDesiredState(bloB);
     m_drive.m_backLeft.setDesiredState(bloB);
     m_drive.m_backRight.setDesiredState(bloB);
-    // if (m_controller_right.getBackButton()) {
-    // arm.resetTelescopeEncoder();
-    // } else {
-    // arm.stopTelescopeMotor();
-    // } // :P
+
+    if (m_controller.getXButton()) {
+      arm.extend();
+    } else if (m_controller.getBButton()) { // double check this
+      arm.retract();
+    }
+
+    if (m_controller_right.getBackButton()) {
+      arm.resetTelescopeEncoder();
+    } else {
+      arm.stopTelescopeMotor();
+    } // :P
   }
 
   @Override
@@ -227,9 +248,11 @@ public class Robot extends TimedRobot {
     NtHelper.setDouble("/test/speed", 0);
     NtHelper.setDouble("/test/angle", 0);
   }
+
   public void telemtry() {
-    NtHelper.setDouble("/dashboard/arm/angleMeasured", arm.getShoulderAngle().getDegrees());
+    NtHelper.setDouble("/dashboard/arm/angleMeasured", -arm.getShoulderAngle().getDegrees()+90);
     NtHelper.setDouble("/dashboard/arm/telscopeLenMeasured", arm.getTelescopePosition());
-    //NtHelper.setDouble("/dashboard/arm/angleSetpoint", arm.
+    NtHelper.setDouble("/dashboard/arm/angleSetpoint", -arm.getShoulderSetpoint().getDegrees()+90);
+    NtHelper.setDouble("/dashboard/arm/telescopeLenSetpoint",arm.getTelescopeSetpoint()); 
   }
 }
