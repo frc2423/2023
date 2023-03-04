@@ -1,0 +1,31 @@
+{
+  "name": "custom-components",
+  "private": true,
+  "version": "0.0.0",
+  "description": "description",
+  "author": "",
+  "email": "",
+  "type": "module",
+  "main": "plugin/index.js",
+  "exports": {
+    ".": "./plugin/index.js"
+  },
+  "types": "types/plugin.d.ts",
+  "files": [
+    "plugin",
+    "types"
+  ],
+  "scripts": {
+    "start": "vite",
+    "build": "tsc && vite build && node ./scripts/create-plugin-json.cjs"
+  },
+  "dependencies": {
+    "lit": "^2.2.7",
+    "@frc-web-components/fwc": "^1.0.3"
+  },
+  "devDependencies": {
+    "typescript": "^4.6.4",
+    "vite": "^3.0.0"
+  },
+  "license": "MIT"
+}
