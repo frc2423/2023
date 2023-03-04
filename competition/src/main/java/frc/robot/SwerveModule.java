@@ -68,8 +68,6 @@ public class SwerveModule {
   private final boolean invertDriveEncoderRate;
   private final boolean invertDriveEncoderDistance;
 
-  private boolean optimizeState = false;
-
   // private final SimpleMotorFeedforward m_turnFeedforward = new
   // SimpleMotorFeedforward(1, 0.5);
 
