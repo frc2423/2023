@@ -32,6 +32,12 @@
   },
   "NetworkTables": {
     "transitory": {
+      "SmartDashboard": {
+        "Field": {
+          "open": true
+        },
+        "open": true
+      },
       "angle": {
         "open": true
       },
@@ -50,8 +56,7 @@
         },
         "FR": {
           "open": true
-        },
-        "open": true
+        }
       },
       "robot": {
         "arm": {

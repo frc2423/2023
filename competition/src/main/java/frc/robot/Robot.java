@@ -7,11 +7,9 @@ package frc.robot;
 import java.util.List;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -42,6 +40,8 @@ public class Robot extends TimedRobot {
   public static final Field2d field = new Field2d();
   public static Trajectories trajectories = new Trajectories();
 
+  private AutoAlign autoAlign = new AutoAlign();
+
   public static Arm arm = new Arm();
 
   private Auto auto = new Auto();
@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
         List.of(),
         new Pose2d(6, 4, new Rotation2d()),
         new TrajectoryConfig(2, 2));
-    NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 5); 
+    NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 5);
 
     NtHelper.listen("/dashboard/armSetpoint/buttonselected", (entry) -> {
       var position = NtHelper.getDouble("/dashboard/armSetpoint/buttonselected", 5);
@@ -62,7 +62,7 @@ public class Robot extends TimedRobot {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(5)));
         arm.telescopeToSetpoint(0);
       } else if (position == 2) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57))); 
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57)));
         arm.telescopeToSetpoint(51);
       } else if (position == 1) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
@@ -117,27 +117,31 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
-    double maxSpeed = Drivetrain.kMaxSpeed * (isSlowMode ? .55 : .75);
-    double maxRotation = Drivetrain.kMaxAngularSpeed * (isSlowMode ? .55 : 1);
+    if (m_controller.getStartButton()) {
+      autoAlign.autoRotate();
+    } else {
+      boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
+      double maxSpeed = Drivetrain.kMaxSpeed * (isSlowMode ? .55 : .75);
+      double maxRotation = Drivetrain.kMaxAngularSpeed * (isSlowMode ? .55 : 1);
 
-    double deadband = 0.2;
+      double deadband = 0.2;
 
-    // Get the y speed. We are inverting this because Xbox controllers return
-    // negative values when we push forward.
-    double xInput = -MathUtil.applyDeadband(m_controller.getLeftY(), deadband);
-    double yInput = -MathUtil.applyDeadband(m_controller.getLeftX(), deadband);
-    // Get the rate of angular rotation. We are inverting this because we want a
-    // positive value when we pull to the left (remember, CCW is positive in
-    // mathematics). Xbox controllers return positive values when you pull to
-    // the right by default.
-    double rotInput = -MathUtil.applyDeadband(m_controller.getRightX(), deadband);
+      // Get the y speed. We are inverting this because Xbox controllers return
+      // negative values when we push forward.
+      double xInput = -MathUtil.applyDeadband(m_controller.getLeftY(), deadband);
+      double yInput = -MathUtil.applyDeadband(m_controller.getLeftX(), deadband);
+      // Get the rate of angular rotation. We are inverting this because we want a
+      // positive value when we pull to the left (remember, CCW is positive in
+      // mathematics). Xbox controllers return positive values when you pull to
+      // the right by default.
+      double rotInput = -MathUtil.applyDeadband(m_controller.getRightX(), deadband);
 
-    double xSpeed = m_xspeedLimiter.calculate(xInput) * maxSpeed;
-    double ySpeed = m_yspeedLimiter.calculate(yInput) * maxSpeed;
-    double rot = m_rotLimiter.calculate(rotInput) * maxRotation;
+      double xSpeed = m_xspeedLimiter.calculate(xInput) * maxSpeed;
+      double ySpeed = m_yspeedLimiter.calculate(yInput) * maxSpeed;
+      double rot = m_rotLimiter.calculate(rotInput) * maxRotation;
 
-    m_drive.drive(xSpeed, ySpeed, rot, true);
+      m_drive.drive(xSpeed, ySpeed, rot, true);
+    }
 
     switch (m_controller.getPOV()) {
       case 0:
@@ -250,9 +254,9 @@ public class Robot extends TimedRobot {
   }
 
   public void telemtry() {
-    NtHelper.setDouble("/dashboard/arm/angleMeasured", -arm.getShoulderAngle().getDegrees()+90);
+    NtHelper.setDouble("/dashboard/arm/angleMeasured", -arm.getShoulderAngle().getDegrees() + 90);
     NtHelper.setDouble("/dashboard/arm/telscopeLenMeasured", arm.getTelescopePosition());
-    NtHelper.setDouble("/dashboard/arm/angleSetpoint", -arm.getShoulderSetpoint().getDegrees()+90);
-    NtHelper.setDouble("/dashboard/arm/telescopeLenSetpoint",arm.getTelescopeSetpoint()); 
+    NtHelper.setDouble("/dashboard/arm/angleSetpoint", -arm.getShoulderSetpoint().getDegrees() + 90);
+    NtHelper.setDouble("/dashboard/arm/telescopeLenSetpoint", arm.getTelescopeSetpoint());
   }
 }

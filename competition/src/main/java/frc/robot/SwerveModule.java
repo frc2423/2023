@@ -149,7 +149,6 @@ public class SwerveModule {
     final double turnOutput = m_turningPIDController.calculate(turnEncoderDistance, state.angle.getRadians());
 
     final double turnFeedforward = 0;
-    // m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
     driveMotorVoltage = (driveOutput + driveFeedforward);
     turnMotorVoltage = (turnOutput + turnFeedforward);
     // driveMotorVoltage = 0;
@@ -182,9 +181,6 @@ public class SwerveModule {
 
     turnEncoderRate = m_turnSim.getAngularVelocityRadPerSec();
     turnEncoderDistance = (turnEncoderDistance + (m_turnSim.getAngularVelocityRadPerSec() * dtSeconds));
-
-    NtHelper.setDouble("/rates/" + name + "/speed", driveEncoderRate);
-    NtHelper.setDouble("/rates/" + name + "/distance", driveEncoderDistance);
   }
 
   public double getDistance() {
@@ -204,8 +200,6 @@ public class SwerveModule {
     turnEncoderRate = m_turningMotor.getSpeed();
     turnEncoderDistance = (RobotBase.isSimulation() ? 1 : -1) * m_turningMotor.getDistance();
 
-    NtHelper.setDouble("/rates/" + name + "/speed", driveEncoderRate);
-    NtHelper.setDouble("/rates/" + name + "/distance", driveEncoderDistance);
   }
 
   public void update() {

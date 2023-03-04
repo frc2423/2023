@@ -60,6 +60,7 @@ public class Drivetrain {
           m_backRight.getPosition()
       });
 
+
   /** Subsystem constructor. */
   public Drivetrain() {
     m_gyro.reset();
@@ -135,10 +136,14 @@ public class Drivetrain {
             m_frontRight.getPosition(), m_backLeft.getPosition(), m_backRight.getPosition() },
         pose);
   }
-
+  
   public void resetAngle() {
     m_gyro.reset();
     angle = new Rotation2d();
+  }
+
+  public Rotation2d getAngle(){
+    return angle;
   }
 
   /** Check the current robot pose. */
