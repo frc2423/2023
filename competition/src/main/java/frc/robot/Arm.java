@@ -293,6 +293,11 @@ public class Arm {
         return telescopeSetPoint;
     }
 
+    public void setEnabled(boolean isEnabled){
+        shoulderMotor.setEnabled(isEnabled);
+        telescopeMotor.setEnabled(isEnabled);
+    }
+
     private void telemtry() {
         NtHelper.setDouble("/arm/telescopeDistance", telescopeDist);
         NtHelper.setDouble("/arm/shoulderAngle", getShoulderAngle().getDegrees());
