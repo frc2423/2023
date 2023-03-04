@@ -47,8 +47,9 @@ public class Robot extends TimedRobot {
   private final Camera camera = new Camera(null);
 
   private final LinearScale objectalignment = new LinearScale(.1, 1, 5, 15);
-  private final LinearScale robotRotate = new LinearScale(0, Math.PI, Rotation2d.fromDegrees(10).getRadians(),
-      Rotation2d.fromDegrees(100).getRadians());
+  private final LinearScale robotRotate = new LinearScale(Rotation2d.fromDegrees(25).getRadians(), Math.PI,
+      Rotation2d.fromDegrees(5).getRadians(),
+      Rotation2d.fromDegrees(50).getRadians());
   public static Arm arm = new Arm();
 
   private Auto auto = new Auto();
@@ -61,7 +62,7 @@ public class Robot extends TimedRobot {
         List.of(),
         new Pose2d(6, 4, new Rotation2d()),
         new TrajectoryConfig(2, 2));
-    NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 5); 
+    NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 5);
 
     NtHelper.listen("/dashboard/armSetpoint/buttonselected", (entry) -> {
       var position = NtHelper.getDouble("/dashboard/armSetpoint/buttonselected", 5);
@@ -69,7 +70,7 @@ public class Robot extends TimedRobot {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(5)));
         arm.telescopeToSetpoint(0);
       } else if (position == 2) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57))); 
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57)));
         arm.telescopeToSetpoint(51);
       } else if (position == 1) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
@@ -128,20 +129,17 @@ public class Robot extends TimedRobot {
     String AutoPos = NtHelper.getString("/robot/score/AutoPos", "low");
     if (AutoPos.equals("low")) {
       frontFloor();
-    }else if (AutoPos.equals("mid")){
+    } else if (AutoPos.equals("mid")) {
       frontScoreMid();
+    } else if (AutoPos.equals("high")) {
+      // make a function for high score
+    } else {
     }
-    else if (AutoPos.equals("high")) {
-      //make a function for high score
-    }
-    else {
-    }
-    }
-  
+  }
 
   public void autoAlign() {
     if (camera.seesTarget()) {
-      var tapeX = camera.getTapeX();
+      var tapeX = camera.getTapeX() + 8;
       if (!objectalignment.isDone(tapeX)) {
         var speed = objectalignment.calculate(tapeX);
         m_drive.drive(0, -speed, 0, false);
@@ -149,7 +147,8 @@ public class Robot extends TimedRobot {
         NtHelper.setDouble("/autoAlign/speed", speed);
         NtHelper.setDouble("/autoAlign/tapeX", tapeX);
       } else {
-        autoScore();
+       // autoScore();
+       m_drive.drive(0, 0, 0, false);
       }
     } else {
       m_drive.drive(0, 0, 0, false);
@@ -157,13 +156,16 @@ public class Robot extends TimedRobot {
   }
 
   public void autoRotate() {
-    var angleError = MathUtil.angleModulus(m_drive.getAngle().getRadians());
-    NtHelper.setDouble("/robot/score/angleEroor", angleError);
+    var angleError = MathUtil.angleModulus(Math.PI - m_drive.getAngle().getRadians());
+    NtHelper.setDouble("/robot/score/angleError", angleError);
     if (!robotRotate.isDone(angleError)) {
       var rotationSpeed = robotRotate.calculate(angleError);
-      m_drive.drive(0, 0, rotationSpeed / 4, false);
+      m_drive.drive(0, 0, rotationSpeed, false);
+      NtHelper.setDouble("/robot/angle/angularpVelocity", Math.toDegrees(rotationSpeed));
+
     } else {
       autoAlign();
+      //m_drive.drive(0, 0, 0, false);
     }
   }
 
@@ -315,9 +317,9 @@ public class Robot extends TimedRobot {
   }
 
   public void telemtry() {
-    NtHelper.setDouble("/dashboard/arm/angleMeasured", -arm.getShoulderAngle().getDegrees()+90);
+    NtHelper.setDouble("/dashboard/arm/angleMeasured", -arm.getShoulderAngle().getDegrees() + 90);
     NtHelper.setDouble("/dashboard/arm/telscopeLenMeasured", arm.getTelescopePosition());
-    NtHelper.setDouble("/dashboard/arm/angleSetpoint", -arm.getShoulderSetpoint().getDegrees()+90);
-    NtHelper.setDouble("/dashboard/arm/telescopeLenSetpoint",arm.getTelescopeSetpoint()); 
+    NtHelper.setDouble("/dashboard/arm/angleSetpoint", -arm.getShoulderSetpoint().getDegrees() + 90);
+    NtHelper.setDouble("/dashboard/arm/telescopeLenSetpoint", arm.getTelescopeSetpoint());
   }
 }
