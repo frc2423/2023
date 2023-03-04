@@ -8,6 +8,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.util.NtHelper;
+import frc.robot.util.TrajectoryGeneration;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -44,6 +45,13 @@ public class Trajectories {
 
     public void setNewTrajectoryGroup(String newName) {
         setNewTrajectoryGroup(newName, false);
+    }
+
+    public void setNewTrajectoryGroup(Pose2d start, Pose2d end, boolean isReversed){
+        next_path = TrajectoryGeneration.generate(start, end, isReversed);
+        Robot.field.getObject("trajectory").setTrajectory(getTrajectory());
+        timer.reset();
+        timer.start();
     }
 
     public void setNewTrajectoryGroup(String newName, boolean isReversed) {
