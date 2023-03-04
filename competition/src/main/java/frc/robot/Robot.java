@@ -7,11 +7,9 @@ package frc.robot;
 import java.util.List;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -22,8 +20,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.util.Camera;
-import frc.robot.util.LinearScale;
 import frc.robot.util.NtHelper;
 import frc.robot.auto.Auto;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -44,12 +40,8 @@ public class Robot extends TimedRobot {
   public static final Field2d field = new Field2d();
   public static Trajectories trajectories = new Trajectories();
 
-  private final Camera camera = new Camera(null);
+  private AutoAlign autoAlign = new AutoAlign();
 
-  private final LinearScale objectalignment = new LinearScale(.1, 1, 5, 15);
-  private final LinearScale robotRotate = new LinearScale(Rotation2d.fromDegrees(25).getRadians(), Math.PI,
-      Rotation2d.fromDegrees(5).getRadians(),
-      Rotation2d.fromDegrees(50).getRadians());
   public static Arm arm = new Arm();
 
   private Auto auto = new Auto();
@@ -114,61 +106,6 @@ public class Robot extends TimedRobot {
     auto.run();
   }
 
-  public void frontFloor() {
-    arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
-    arm.telescopeToSetpoint(10);
-  }
-
-  public void frontScoreMid() {
-    arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57))); // 57 but 59 good
-    arm.telescopeToSetpoint(51);
-  }
-
-  public void autoScore() {
-    m_drive.drive(0, 0, 0, false);
-    String AutoPos = NtHelper.getString("/robot/score/AutoPos", "low");
-    if (AutoPos.equals("low")) {
-      frontFloor();
-    } else if (AutoPos.equals("mid")) {
-      frontScoreMid();
-    } else if (AutoPos.equals("high")) {
-      // make a function for high score
-    } else {
-    }
-  }
-
-  public void autoAlign() {
-    if (camera.seesTarget()) {
-      var tapeX = camera.getTapeX() + 8;
-      if (!objectalignment.isDone(tapeX)) {
-        var speed = objectalignment.calculate(tapeX);
-        m_drive.drive(0, -speed, 0, false);
-
-        NtHelper.setDouble("/autoAlign/speed", speed);
-        NtHelper.setDouble("/autoAlign/tapeX", tapeX);
-      } else {
-       // autoScore();
-       m_drive.drive(0, 0, 0, false);
-      }
-    } else {
-      m_drive.drive(0, 0, 0, false);
-    }
-  }
-
-  public void autoRotate() {
-    var angleError = MathUtil.angleModulus(Math.PI - m_drive.getAngle().getRadians());
-    NtHelper.setDouble("/robot/score/angleError", angleError);
-    if (!robotRotate.isDone(angleError)) {
-      var rotationSpeed = robotRotate.calculate(angleError);
-      m_drive.drive(0, 0, rotationSpeed, false);
-      NtHelper.setDouble("/robot/angle/angularpVelocity", Math.toDegrees(rotationSpeed));
-
-    } else {
-      autoAlign();
-      //m_drive.drive(0, 0, 0, false);
-    }
-  }
-
   @Override
   public void teleopInit() {
     m_drive.resetAngle();
@@ -181,7 +118,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     if (m_controller.getStartButton()) {
-      autoRotate();
+      autoAlign.autoRotate();
     } else {
       boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
       double maxSpeed = Drivetrain.kMaxSpeed * (isSlowMode ? .55 : .75);
