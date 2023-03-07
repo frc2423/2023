@@ -63,22 +63,22 @@ public class Robot extends TimedRobot {
         arm.telescopeToSetpoint(0);
       } else if (position == 2) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57)));
-        arm.telescopeToSetpoint(51);
+        arm.telescopeToSetpoint(20);
       } else if (position == 1) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
-        arm.telescopeToSetpoint(10);
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(122)));
+        arm.telescopeToSetpoint(0);
       } else if (position == 9) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-110)));
-        arm.telescopeToSetpoint(10);
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-122)));
+        arm.telescopeToSetpoint(0);
       } else if (position == 8) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-57)));
-        arm.telescopeToSetpoint(51);
+        arm.telescopeToSetpoint(20);
       } else if (position == 3) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(30)));
-        arm.telescopeToSetpoint(60);
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57)));
+        arm.telescopeToSetpoint(43);
       } else if (position == 7) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-30)));
-        arm.telescopeToSetpoint(60);
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-57)));
+        arm.telescopeToSetpoint(43);
 
       }
     });
@@ -135,41 +135,50 @@ public class Robot extends TimedRobot {
       // mathematics). Xbox controllers return positive values when you pull to
       // the right by default.
       double rotInput = -MathUtil.applyDeadband(m_controller.getRightX(), deadband);
-
+      
       double xSpeed = m_xspeedLimiter.calculate(xInput) * maxSpeed;
       double ySpeed = m_yspeedLimiter.calculate(yInput) * maxSpeed;
       double rot = m_rotLimiter.calculate(rotInput) * maxRotation;
-
+      
       m_drive.drive(xSpeed, ySpeed, rot, true);
     }
 
-    switch (m_controller.getPOV()) {
-      case 0:
-        NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 5);
-        break;
-      case 45:
-        NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 3);
-        break;
-      case 90:
-        NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 2);
-        break;
-      case 135:
-        NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 1);
-        break;
-      case 225:
-        NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 9);
-        break;
-      case 270:
-        NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 8);
-        break;
-      case 315:
-        NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 7);
-        break;
-    }
+int buttonindex = -1;
 
+    boolean shiftUp = m_controller_right.getLeftTriggerAxis() > 0.2;
+    boolean shiftDown = m_controller_right.getRightTriggerAxis() > 0.2;
+    
+    switch (m_controller_right.getPOV()) {
+      case 0:
+      buttonindex = 5;
+      break;
+      case 90:
+      if (shiftUp) {
+        buttonindex = 3;
+      } else if (shiftDown) {
+        buttonindex = 1;
+      } else {
+        buttonindex = 2;
+      }
+      break;
+      case 270:
+      if (shiftUp) {
+        buttonindex = 7;
+      } else if (shiftDown) {
+        buttonindex = 9;
+      } else {
+        buttonindex = 8;
+      }
+      break;
+    }
+      
+      if (buttonindex != -1) {
+        NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", buttonindex);
+      }
+      
     if (m_controller.getXButton()) {
       arm.extend();
-    } else if (m_controller.getBButton()) { // double check this
+    } else if (m_controller.getAButton()) { // double check this
       arm.retract();
     }
 
@@ -183,22 +192,22 @@ public class Robot extends TimedRobot {
 
     if (m_controller.getYButton() || m_controller_right.getYButton()) {
       arm.intakeBelt();
-    } else if (m_controller.getAButton() || m_controller_right.getAButton()) {
-      arm.outtakeBelt();
+    } else if (m_controller_right.getAButton()) {
+      arm.closeGripper();
     } else {
       arm.beltStop();
     }
 
-    if (m_controller.getLeftBumperReleased()) { // TODO: revisit this
+    if (m_controller_right.getLeftBumperReleased()) { // TODO: revisit this
       arm.shoulderForward();
-    } else if (m_controller.getRightBumperReleased()) {
+    } else if (m_controller_right.getRightBumperReleased()) {
       arm.shoulderBack();
     }
 
-    if (m_controller_right.getLeftBumperPressed()) {
+    if (m_controller_right.getXButton()) {
       arm.openGripper();
-    } else if (m_controller_right.getRightBumperPressed()) {
-      arm.closeGripper();
+    } else if (m_controller_right.getBButton() || m_controller.getBButton()) {
+      arm.outtakeBelt();
     }
 
   }
@@ -258,5 +267,8 @@ public class Robot extends TimedRobot {
     NtHelper.setDouble("/dashboard/arm/telscopeLenMeasured", arm.getTelescopePosition());
     NtHelper.setDouble("/dashboard/arm/angleSetpoint", -arm.getShoulderSetpoint().getDegrees() + 90);
     NtHelper.setDouble("/dashboard/arm/telescopeLenSetpoint", arm.getTelescopeSetpoint());
+    NtHelper.setDouble("/dashboard/robot/roll", m_drive.m_gyro.getRoll());
+    NtHelper.setDouble("/dashboard/robot/pitch", m_drive.m_gyro.getPitch());
   }
+
 }

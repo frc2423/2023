@@ -33,8 +33,8 @@ public class Arm {
     private static final double TELESCOPE_RETRACTION_POWER = -TELESCOPE_EXTENSION_POWER;
     public static final double DISTANCE = 0;
     private double SHOULDER_CONVERSION_FACTOR = 1; // Calculate later (motor is 80:1)
-    private double SHOULDER_MINIMUM = -110; // calculate later ;)
-    private double SHOULDER_MAXIMUM = 110; // calculate later :)
+    private double SHOULDER_MINIMUM = -125; // calculate later ;)
+    private double SHOULDER_MAXIMUM = 125; // calculate later :)
     private double TELESCOPE_MINIMUM = 0;
     private double TELESCOPE_MAXIMUM = 97;
     private CANCoder shoulderEncoder = new CANCoder(25);

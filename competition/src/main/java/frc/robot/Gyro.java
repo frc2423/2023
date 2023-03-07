@@ -22,6 +22,14 @@ public class Gyro {
         gyro = new AHRS(channel);
     }
 
+    public double getPitch() {
+        return gyro.getPitch();
+    }
+
+    public double getRoll() {
+        return gyro.getRoll();
+    }
+
     public void reset(){
         gyro.reset();
     }
