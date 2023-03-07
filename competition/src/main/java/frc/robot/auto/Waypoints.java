@@ -12,7 +12,7 @@ public class Waypoints {
     private static final Rotation2d blueGridRot = new Rotation2d(0);
     private static final Rotation2d redGridRot = new Rotation2d();
 
-    private static final double xBlueGP = 6.03;
+    private static final double xBlueGP = 6.51;
     private static final double xRedGP = 0;
 
     //positions
