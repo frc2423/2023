@@ -31,6 +31,9 @@ public class Trajectories {
     private Drivetrain drivetrain = Robot.m_drive;
     private Timer timer = new Timer();
 
+    public Trajectories() {
+    }
+
     public void update_current_path() {
         // PathPlanner.loadPath(name, null, false)
         next_path = move_steps.get(0);
@@ -70,7 +73,10 @@ public class Trajectories {
         var currTime = timer.get();
         System.out.println(timer.get());
         var desiredState = next_path.sample(currTime);
-        Robot.field.getObject("ghost").setPose(desiredState.poseMeters);
+        Robot.field.getObject("ghost/pose").setPose(desiredState.poseMeters);
+        NtHelper.setDouble("/SmartDashboard/Field/ghost/opacity", 50);
+
+
         // System.out.println(desiredState.poseMeters);
         NtHelper.setDouble("/auto/desiredX", desiredState.poseMeters.getX());
         NtHelper.setDouble("/auto/desiredY", desiredState.poseMeters.getY());
