@@ -14,24 +14,21 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 
 public class TrajectoryGeneration {
-    private static TrajectoryConfig config = new TrajectoryConfig(2, 1);
-
+    static PathConstraints path = new PathConstraints(2, 2);
     public static Trajectory generate(Pose2d start, Pose2d end, boolean isReversed){
-        config.setReversed(isReversed);
         List<PathPoint> waypoints = new ArrayList<>();
         waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
         waypoints.add(new PathPoint(end.getTranslation(), end.getRotation(), end.getRotation()));
-        Trajectory trajectory = PathPlanner.generatePath(new PathConstraints(2, 2), isReversed, waypoints);
+        Trajectory trajectory = PathPlanner.generatePath(path, isReversed, waypoints);
         return trajectory;
     }
 
     public static Trajectory generate(Pose2d start, Pose2d middle, Pose2d end, boolean isReversed){
-        config.setReversed(isReversed);
         List<PathPoint> waypoints = new ArrayList<>();
         waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
         waypoints.add(new PathPoint(middle.getTranslation(), middle.getRotation(), middle.getRotation()));
         waypoints.add(new PathPoint(end.getTranslation(), end.getRotation(), end.getRotation()));
-        Trajectory trajectory = PathPlanner.generatePath(new PathConstraints(2, 2), isReversed, waypoints);
+        Trajectory trajectory = PathPlanner.generatePath(path, isReversed, waypoints);
         return trajectory;
     }
 }
