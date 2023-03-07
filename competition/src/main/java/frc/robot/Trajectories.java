@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.util.NtHelper;
@@ -71,7 +72,6 @@ public class Trajectories {
     public void follow_current_path() {
         drivetrain.updateOdometry();
         var currTime = timer.get();
-        System.out.println(timer.get());
         var desiredState = next_path.sample(currTime);
         Robot.field.getObject("ghost/pose").setPose(desiredState.poseMeters);
         NtHelper.setDouble("/SmartDashboard/Field/ghost/opacity", 50);
@@ -82,6 +82,7 @@ public class Trajectories {
         NtHelper.setDouble("/auto/desiredY", desiredState.poseMeters.getY());
         NtHelper.setDouble("/auto/actualX", drivetrain.getPose().getX());
         NtHelper.setDouble("/auto/actualY", drivetrain.getPose().getY());
+        
         ChassisSpeeds refChassisSpeeds = m_holonomicController.calculate(drivetrain.getPose(),
                 (PathPlannerState) desiredState);
         // double vy = RobotBase.isSimulation() ? -refChassisSpeeds.vyMetersPerSecond
