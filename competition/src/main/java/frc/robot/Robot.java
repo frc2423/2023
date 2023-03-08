@@ -95,6 +95,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     telemtry();
+    arm.isSafeMode(!isTest());
     m_drive.periodic();
     arm.periodic();
     field.setRobotPose(m_drive.getPose());
@@ -254,17 +255,16 @@ int buttonindex = -1;
       arm.extend();
     } else if (m_controller.getBButton()) { // double check this
       arm.retract();
-    }
-
-    if (m_controller_right.getBackButton()) {
-      arm.resetTelescopeEncoder();
     } else {
       arm.stopTelescopeMotor();
-    } // :P
+    }
+
+    
   }
 
   @Override
   public void testInit() {
+    
     NtHelper.setDouble("/test/speed", 0);
     NtHelper.setDouble("/test/angle", 0);
   }

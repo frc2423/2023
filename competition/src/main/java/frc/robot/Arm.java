@@ -63,6 +63,8 @@ public class Arm {
 
     private final FlywheelSim shoulderSimMotor = new FlywheelSim(DCMotor.getNEO(1), 6.75, 0.025);
 
+    private boolean isSafeMode = true;
+
     public Arm() {
         // constructs stuff
         telescopeMotor = new NeoMotor(TELESCOPE_MOTOR_CAN_BUS_PORT, false);
@@ -101,12 +103,12 @@ public class Arm {
     public void extend() { // arm telescopes out
         // limit extension distance
         NtHelper.setBoolean("/robot/telescope/outness", true);
-        telescopeToSetpoint(telescopeSetPoint + 1  * 0.02);   //0.02 subject to change
+        telescopeToSetpoint(telescopeSetPoint + 3  * 0.02);   //0.02 subject to change
     }
 
     public void retract() { // arm un-telescopes
         // limit retraction distance
-        telescopeToSetpoint(telescopeSetPoint - 1  * 0.02);   //0.02 subject to change
+        telescopeToSetpoint(telescopeSetPoint - 3  * 0.02);   //0.02 subject to change
 
     }
 
@@ -241,8 +243,12 @@ public class Arm {
         // mechanism2d :/
         telescope.setLength(telescopeDist / 25);
         shoulder.setAngle(-shoulderAngle.getDegrees() + 90);
+
     }
 
+    public void isSafeMode(boolean safeMode){
+        isSafeMode = safeMode;
+ }
     public void realPeriodic(double shoulderMotorPercent, double telescopeMotorPercent) {
         // Update real robot inputs
         shoulderMotor.setPercent(-shoulderMotorPercent);
@@ -268,9 +274,8 @@ public class Arm {
             shoulderMotorPercent = (voltage / RobotController.getBatteryVoltage());
         }
 
-        if (telescopeDist < TELESCOPE_MINIMUM && telescopeMotorPercent < 0){
+        if (isSafeMode && telescopeDist < TELESCOPE_MINIMUM && telescopeMotorPercent < 0){
             telescopeMotorPercent = 0;
-            resetShoulder();
         }
         
         if (telescopeDist > TELESCOPE_MAXIMUM && telescopeMotorPercent > 0){

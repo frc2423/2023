@@ -13,6 +13,7 @@ public class Auto extends StateMachine {
     StateMachine yoyo;
     StateMachine testauto;
     StateMachine balanceauto;
+    StateMachine gyroauto;
     private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
     public Auto() {
@@ -20,12 +21,14 @@ public class Auto extends StateMachine {
         taxi = new BasedAuto();
         yoyo = new YoYoAuto();
         testauto = new TestAuto();
-        balanceauto = new BalanceAuto();
+        balanceauto = new GyroAuto();
+        gyroauto = new GyroAuto();
 
         m_chooser.setDefaultOption("taxi", "taxi");
         m_chooser.addOption("yoyo", "yoyo");
         m_chooser.addOption("testauto", "testauto");
         m_chooser.addOption("balanceauto", "balanceauto");
+        m_chooser.addOption("gyroauto", "gyroauto");
 
         SmartDashboard.putData("Auto choices", m_chooser);
     }
@@ -46,6 +49,9 @@ public class Auto extends StateMachine {
                 break;
             case "balanceauto":
                 selectedAutonomous = balanceauto;
+                break;
+            case "gyroauto":
+                selectedAutonomous = gyroauto;
                 break;
             default:
                 selectedAutonomous = taxi;
