@@ -82,6 +82,13 @@ public class Robot extends TimedRobot {
 
       }
     });
+    
+    String DASHBOARD_DISABLED_ARM_KEY = "/dashboard/disabled/arm";
+    NtHelper.listen(DASHBOARD_DISABLED_ARM_KEY, (entry) ->{
+      boolean armDisabled = NtHelper.getBoolean(DASHBOARD_DISABLED_ARM_KEY, false);
+      arm.setEnabled(armDisabled);
+
+    });
     SmartDashboard.putData("Field", field);
   }
 

@@ -44,7 +44,8 @@ public class Arm {
     private double beltoSpeedo = .5;
     private double outtakeBeltoSpeedo = -0.35;
     // Create a new ArmFeedforward with gains kS, kG, kV, and kA
-    private ArmFeedforward feedforward = new ArmFeedforward(0.16623, 0.39399, 17.022, 1.7561);
+    private final double kg = RobotBase.isSimulation() ? 0 : 0.39399;
+    private ArmFeedforward feedforward = new ArmFeedforward(0.16623, kg, 17.022, 1.7561);
     public DoubleSolenoid gripper = new DoubleSolenoid(22, PneumaticsModuleType.REVPH, 1, 0);
     private double shoulderVoltage = 0;
     private double telescopeVoltage = 0;
@@ -75,7 +76,7 @@ public class Arm {
         _canCoderConfiguration.magnetOffsetDegrees = -78;
         shoulderEncoder.configAllSettings(_canCoderConfiguration);
         beltoMotor = new PWMSparkMax(0);
-        shoulder_PID.setTolerance(5);
+        shoulder_PID.setTolerance(RobotBase.isSimulation() ? 5 : 5);
         NtHelper.setDouble("/sim/shoulderAngle", 0);
         NtHelper.setDouble("/sim/telescopeDist", 0);
 
@@ -291,6 +292,11 @@ public class Arm {
     }
     public double getTelescopeSetpoint() {
         return telescopeSetPoint;
+    }
+
+    public void setEnabled(boolean isEnabled){
+        shoulderMotor.setEnabled(isEnabled);
+        telescopeMotor.setEnabled(isEnabled);
     }
 
     private void telemtry() {

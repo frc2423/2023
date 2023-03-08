@@ -32,7 +32,7 @@ public class YoYoAuto extends StateMachine {
             Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
             Robot.arm.telescopeToSetpoint(0);
             Robot.arm.beltStop();
-            Robot.trajectories.setNewTrajectoryGroup("FirstYo");
+            Robot.trajectories.setNewTrajectoryGroup(Waypoints.BLUE_GRID_1, Waypoints.BLUE_GP_1, false);
             Robot.trajectories.resetOdometry();
         }
     }

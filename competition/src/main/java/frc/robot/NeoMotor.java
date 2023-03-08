@@ -16,6 +16,7 @@ public class NeoMotor {
     private double motorValue = 0.0;
     private CANSparkMax.ControlType motorControlType = CANSparkMax.ControlType.kDutyCycle;
     private NeoMotor followerMotor;
+    private boolean enabled = true;
 
     // These are needed because getting these values from the PIDController
     // takes an excessively long time for some reason
@@ -154,6 +155,9 @@ public class NeoMotor {
     }
 
     private void updateMotor(double newValue, CANSparkMax.ControlType newControlType) {
+        if (enabled == false){
+            return;
+        }
         boolean hasChanged = newValue != motorValue || newControlType != motorControlType;
         if (hasChanged) {
             motorValue = newValue;
@@ -174,4 +178,15 @@ public class NeoMotor {
         return motor.getOutputCurrent();
     }
 
+    public boolean getEnabled(){
+        return enabled;
+    }
+
+    public void setEnabled(boolean isEnabled){
+        if(!isEnabled){
+            setPercent(0);
+        }
+        enabled = isEnabled;
+    }
+    
 }
