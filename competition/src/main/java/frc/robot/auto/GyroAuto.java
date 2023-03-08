@@ -65,7 +65,7 @@ public class GyroAuto extends StateMachine{
 
     @State(name = "Balance")
     public void balance(StateContext ctx) {
-        Robot.m_drive.drive(-0.4, 0, 0, true);
+        // Robot.m_drive.drive(-0.4, 0, 0, true);
         if (Robot.m_drive.m_gyro.getPitch() < -3) {
             Robot.m_drive.drive(-0.4, 0, 0, true);
         }
