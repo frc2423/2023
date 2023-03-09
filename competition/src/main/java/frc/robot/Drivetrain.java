@@ -142,6 +142,13 @@ public class Drivetrain {
     angle = new Rotation2d();
   }
 
+  public void setBrake(boolean brake) {
+    m_frontLeft.setBrake(brake);
+    m_frontRight.setBrake(brake);
+    m_backLeft.setBrake(brake);
+    m_backRight.setBrake(brake);
+  }
+
   public Rotation2d getAngle(){
     return angle;
   }
