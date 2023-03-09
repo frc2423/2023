@@ -48,6 +48,7 @@ public class Robot extends TimedRobot {
 
   @Override // is society
   public void robotInit() {
+    m_drive.setBrake(false);
     CameraServer.startAutomaticCapture();
     m_trajectory = TrajectoryGenerator.generateTrajectory(
         new Pose2d(2, 2, new Rotation2d()),
@@ -103,6 +104,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    m_drive.setBrake(false);
     m_timer.reset();
     m_timer.start();
     m_drive.resetOdometry(m_trajectory.getInitialPose());
@@ -116,6 +118,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    m_drive.setBrake(false);
     m_drive.resetAngle();
     NtHelper.setDouble("/robot/shoulder/set_angle", 0);
     arm.resetTelescopeEncoder();
@@ -264,7 +267,7 @@ int buttonindex = -1;
 
   @Override
   public void testInit() {
-    
+    m_drive.setBrake(false);
     NtHelper.setDouble("/test/speed", 0);
     NtHelper.setDouble("/test/angle", 0);
   }

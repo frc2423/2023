@@ -78,7 +78,7 @@ public class GyroAuto extends StateMachine{
         else {
             Robot.m_drive.drive(0, 0, 0, false);
             // setState("stop");
-
+            
         }
     }
 
