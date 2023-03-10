@@ -41,10 +41,12 @@ public class YoYoAuto extends StateMachine {
     public void moove(StateContext ctx) {
 
         Robot.trajectories.follow_current_path();
+        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
+        Robot.arm.telescopeToSetpoint(10);
+        Robot.arm.intakeBelt();
         if (Robot.trajectories.isFinished()) {
             setState("Stahp");
         }
-
     }
 
     @State(name = "Stahp")
@@ -73,7 +75,8 @@ public class YoYoAuto extends StateMachine {
                 Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
                 Robot.arm.telescopeToSetpoint(0);
                 setState("Yo2");
-                Robot.trajectories.setNewTrajectoryGroup("SecondYo", true);
+               //  Robot.trajectories.setNewTrajectoryGroup("SecondYo", true);
+                Robot.trajectories.setNewTrajectoryGroup(Waypoints.BLUE_GP_1, Waypoints.BLUE_GRID_1, true);
             }
         } else {
             Robot.m_drive.drive(0, 0, 0, false);
@@ -85,6 +88,8 @@ public class YoYoAuto extends StateMachine {
     public void yo2(StateContext ctx) {
         // head the back
         Robot.trajectories.follow_current_path();
+        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-110)));
+        Robot.arm.telescopeToSetpoint(10);
         if (Robot.trajectories.isFinished()) {
             setState("TryScoreLow");
         }

@@ -9,8 +9,10 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.NtHelper;
@@ -260,6 +262,7 @@ int buttonindex = -1;
     NtHelper.setDouble("/dashboard/arm/telescopeLenSetpoint", arm.getTelescopeSetpoint());
     NtHelper.setDouble("/dashboard/robot/roll", m_drive.m_gyro.getRoll());
     NtHelper.setDouble("/dashboard/robot/pitch", m_drive.m_gyro.getPitch());
+    NtHelper.setBoolean("/SmartDashboard/Field/flip", Alliance.Red.equals(DriverStation.getAlliance()));
   }
 
 }

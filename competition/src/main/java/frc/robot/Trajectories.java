@@ -49,8 +49,8 @@ public class Trajectories {
         setNewTrajectoryGroup(newName, false);
     }
 
-    public void setNewTrajectoryGroup(Pose2d start, Pose2d end, boolean isReversed) {
-        next_path = TrajectoryGeneration.generate(start, end, isReversed);
+    public void setNewTrajectoryGroup(Pose2d start, Pose2d end, boolean isDrivingBackwards) {
+        next_path = TrajectoryGeneration.generate(start, end, isDrivingBackwards);
         Robot.field.getObject("trajectory").setTrajectory(getTrajectory());
         timer.reset();
         timer.start();
