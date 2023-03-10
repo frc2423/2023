@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import frc.robot.util.NtHelper;
+import frc.robot.util.RateChecker;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -64,6 +65,8 @@ public class Arm {
     private final FlywheelSim shoulderSimMotor = new FlywheelSim(DCMotor.getNEO(1), 6.75, 0.025);
 
     private boolean isSafeMode = true;
+
+    private RateChecker telescopeRateChecker = new RateChecker(0.5);
 
     public Arm() {
         // constructs stuff
@@ -272,6 +275,19 @@ public class Arm {
         } else {
             var voltage = MathUtil.clamp(shoulderVoltage, -MAX_SHOULDER_VOLTAGE, MAX_SHOULDER_VOLTAGE);
             shoulderMotorPercent = (voltage / RobotController.getBatteryVoltage());
+        }
+
+        if (telescopeMotorPercent < 0) {
+            telescopeRateChecker.update(telescopeDist);
+            if (telescopeMotor.getPercent() >= 0) {
+                telescopeRateChecker.startTimer();
+            }
+
+            var rate = telescopeRateChecker.getRate();
+
+            if (rate != null && Math.abs(rate) < 1) {
+                resetTelescopeEncoder();
+            }
         }
 
         if (isSafeMode && telescopeDist < TELESCOPE_MINIMUM && telescopeMotorPercent < 0){
