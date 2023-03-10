@@ -15,14 +15,14 @@ public class GyroAuto extends StateMachine {
     Timer timer = new Timer();
 
     public GyroAuto() {
-        super("Start");
+        super("Score");
         Robot.arm.beltStop();
     }
 
     @State(name = "Score")
     public void taxiRun(StateContext ctx) {
 
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-67)));
+        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-115)));
         Robot.arm.telescopeToSetpoint(51);
 
         if (ctx.getTime() > 2) {
@@ -56,6 +56,8 @@ public class GyroAuto extends StateMachine {
 
         } else {
             Robot.m_drive.drive(1.05, 0, 0, true);
+            Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
+
             if (Robot.m_drive.m_gyro.getPitch() > 3) {
                 setState("Reached");
             }

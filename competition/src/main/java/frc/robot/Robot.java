@@ -66,10 +66,10 @@ public class Robot extends TimedRobot {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57)));
         arm.telescopeToSetpoint(20);
       } else if (position == 1) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(122)));
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(115))); // 122
         arm.telescopeToSetpoint(0);
       } else if (position == 9) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-122)));
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-115)));
         arm.telescopeToSetpoint(0);
       } else if (position == 8) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-57)));

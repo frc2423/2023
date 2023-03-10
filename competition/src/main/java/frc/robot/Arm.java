@@ -42,8 +42,8 @@ public class Arm {
     CANCoderConfiguration _canCoderConfiguration = new CANCoderConfiguration();
     PIDController shoulder_PID = new PIDController((Robot.isSimulation()) ? .001 : .005, 0, 0);
     private double TELESCOPE_CONVERSION_FACTOR = 1; // gear ratio
-    private double beltoSpeedo = .5;
-    private double outtakeBeltoSpeedo = -0.35;
+    private double beltoSpeedo = 0.8;
+    private double outtakeBeltoSpeedo = -1;
     // Create a new ArmFeedforward with gains kS, kG, kV, and kA
     private final double kg = RobotBase.isSimulation() ? 0 : 0.39399;
     private ArmFeedforward feedforward = new ArmFeedforward(0.16623, kg, 17.022, 1.7561);
