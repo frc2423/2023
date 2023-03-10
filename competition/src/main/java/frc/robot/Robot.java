@@ -4,19 +4,12 @@
 
 package frc.robot;
 
-import java.util.List;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,11 +28,8 @@ public class Robot extends TimedRobot {
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
   public static Drivetrain m_drive = new Drivetrain();
-  private final Timer m_timer = new Timer();
-  private Trajectory m_trajectory;
-  public static final Field2d field = new Field2d();
   public static Trajectories trajectories = new Trajectories();
-
+  public static final Field2d field = new Field2d();
   private AutoAlign autoAlign = new AutoAlign();
 
   public static Arm arm = new Arm();
@@ -50,11 +40,6 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_drive.setBrake(false);
     CameraServer.startAutomaticCapture();
-    m_trajectory = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(2, 2, new Rotation2d()),
-        List.of(),
-        new Pose2d(6, 4, new Rotation2d()),
-        new TrajectoryConfig(2, 2));
     NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 5);
 
     NtHelper.listen("/dashboard/armSetpoint/buttonselected", (entry) -> {
@@ -105,9 +90,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_drive.setBrake(false);
-    m_timer.reset();
-    m_timer.start();
-    m_drive.resetOdometry(m_trajectory.getInitialPose());
     auto.restart();
   }
 
@@ -229,7 +211,6 @@ int buttonindex = -1;
       arm.resetShoulder();
     }
     NtHelper.setDouble("/test/shoulderPosition", arm.getShoulderEncoderPosition());
-    double radians = Units.degreesToRadians(5);
 
     double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3
     double manualAngle = NtHelper.getDouble("/test/angle", 0);
