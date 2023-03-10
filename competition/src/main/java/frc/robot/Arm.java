@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import frc.robot.util.NtHelper;
+import frc.robot.util.RateChecker;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -33,16 +34,16 @@ public class Arm {
     private static final double TELESCOPE_RETRACTION_POWER = -TELESCOPE_EXTENSION_POWER;
     public static final double DISTANCE = 0;
     private double SHOULDER_CONVERSION_FACTOR = 1; // Calculate later (motor is 80:1)
-    private double SHOULDER_MINIMUM = -110; // calculate later ;)
-    private double SHOULDER_MAXIMUM = 110; // calculate later :)
+    private double SHOULDER_MINIMUM = -125; // calculate later ;)
+    private double SHOULDER_MAXIMUM = 125; // calculate later :)
     private double TELESCOPE_MINIMUM = 0;
     private double TELESCOPE_MAXIMUM = 97;
     private CANCoder shoulderEncoder = new CANCoder(25);
     CANCoderConfiguration _canCoderConfiguration = new CANCoderConfiguration();
     PIDController shoulder_PID = new PIDController((Robot.isSimulation()) ? .001 : .005, 0, 0);
     private double TELESCOPE_CONVERSION_FACTOR = 1; // gear ratio
-    private double beltoSpeedo = .5;
-    private double outtakeBeltoSpeedo = -0.35;
+    private double beltoSpeedo = 0.8;
+    private double outtakeBeltoSpeedo = -1;
     // Create a new ArmFeedforward with gains kS, kG, kV, and kA
     private final double kg = RobotBase.isSimulation() ? 0 : 0.39399;
     private ArmFeedforward feedforward = new ArmFeedforward(0.16623, kg, 17.022, 1.7561);
@@ -62,6 +63,10 @@ public class Arm {
     private final FlywheelSim telescopeSimMotor = new FlywheelSim(DCMotor.getNEO(1), 150.0 / 7.0, 0.004096955);
 
     private final FlywheelSim shoulderSimMotor = new FlywheelSim(DCMotor.getNEO(1), 6.75, 0.025);
+
+    private boolean isSafeMode = true;
+
+    private RateChecker telescopeRateChecker = new RateChecker(0.5);
 
     public Arm() {
         // constructs stuff
@@ -101,12 +106,12 @@ public class Arm {
     public void extend() { // arm telescopes out
         // limit extension distance
         NtHelper.setBoolean("/robot/telescope/outness", true);
-        telescopeToSetpoint(telescopeSetPoint + 1  * 0.02);   //0.02 subject to change
+        telescopeToSetpoint(telescopeSetPoint + 3  * 0.02);   //0.02 subject to change
     }
 
     public void retract() { // arm un-telescopes
         // limit retraction distance
-        telescopeToSetpoint(telescopeSetPoint - 1  * 0.02);   //0.02 subject to change
+        telescopeToSetpoint(telescopeSetPoint - 3  * 0.02);   //0.02 subject to change
 
     }
 
@@ -241,8 +246,12 @@ public class Arm {
         // mechanism2d :/
         telescope.setLength(telescopeDist / 25);
         shoulder.setAngle(-shoulderAngle.getDegrees() + 90);
+
     }
 
+    public void isSafeMode(boolean safeMode){
+        isSafeMode = safeMode;
+ }
     public void realPeriodic(double shoulderMotorPercent, double telescopeMotorPercent) {
         // Update real robot inputs
         shoulderMotor.setPercent(-shoulderMotorPercent);
@@ -268,9 +277,21 @@ public class Arm {
             shoulderMotorPercent = (voltage / RobotController.getBatteryVoltage());
         }
 
-        if (telescopeDist < TELESCOPE_MINIMUM && telescopeMotorPercent < 0){
+        if (telescopeMotorPercent < 0) {
+            telescopeRateChecker.update(telescopeDist);
+            if (telescopeMotor.getPercent() >= 0) {
+                telescopeRateChecker.startTimer();
+            }
+
+            var rate = telescopeRateChecker.getRate();
+
+            if (rate != null && Math.abs(rate) < 1) {
+                resetTelescopeEncoder();
+            }
+        }
+
+        if (isSafeMode && telescopeDist < TELESCOPE_MINIMUM && telescopeMotorPercent < 0){
             telescopeMotorPercent = 0;
-            resetShoulder();
         }
         
         if (telescopeDist > TELESCOPE_MAXIMUM && telescopeMotorPercent > 0){

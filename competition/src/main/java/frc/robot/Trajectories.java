@@ -97,7 +97,10 @@ public class Trajectories {
     }
 
     public Boolean isFinished() {
-        if (timer.get() > next_path.getTotalTimeSeconds()) {
+        var robotPosition = drivetrain.getPose().getTranslation();
+        var robotLastPos = next_path.sample(next_path.getTotalTimeSeconds()).poseMeters.getTranslation();
+        var distFinal = robotLastPos.getDistance(robotPosition);
+        if (timer.get() > next_path.getTotalTimeSeconds() + 1.5 || distFinal < 0.1) {
             return true;
         } else {
             return false;

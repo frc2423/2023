@@ -6,7 +6,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.SPI.Port;
 
+
+
 public class Gyro {
+    private double zeroRoll = 0;
+    private double zeroPitch = 0;
 
     private AHRS gyro;
 
@@ -22,7 +26,17 @@ public class Gyro {
         gyro = new AHRS(channel);
     }
 
+    public double getPitch() {
+        return gyro.getPitch()-zeroPitch;
+    }
+
+    public double getRoll() {
+        return gyro.getRoll()-zeroRoll;
+    }
+
     public void reset(){
+        zeroPitch = gyro.getPitch();
+        zeroRoll = gyro.getRoll();
         gyro.reset();
     }
 

@@ -202,6 +202,10 @@ public class SwerveModule {
 
   }
 
+  public void setBrake(boolean brake) {
+    m_driveMotor.setBrakeMode(brake);
+  }
+
   public void update() {
     if (RobotBase.isSimulation()) {
       updateSimulation(0.02);

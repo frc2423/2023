@@ -37,7 +37,7 @@ public class Drivetrain {
       !RobotBase.isSimulation());
   public final SwerveModule m_backRight = new SwerveModule(1, 2, "BR", false, false);
 
-  private final Gyro m_gyro = new Gyro();
+  public final Gyro m_gyro = new Gyro();
 
   private ChassisSpeeds speeds = new ChassisSpeeds();
   Rotation2d angle = new Rotation2d();
@@ -140,6 +140,13 @@ public class Drivetrain {
   public void resetAngle() {
     m_gyro.reset();
     angle = new Rotation2d();
+  }
+
+  public void setBrake(boolean brake) {
+    m_frontLeft.setBrake(brake);
+    m_frontRight.setBrake(brake);
+    m_backLeft.setBrake(brake);
+    m_backRight.setBrake(brake);
   }
 
   public Rotation2d getAngle(){
