@@ -28,12 +28,9 @@ public class Arm {
     private NeoMotor telescopeMotor;
     private NeoMotor shoulderMotor;
     private PWMSparkMax beltoMotor;
-    private PIDController telescopePIDController = new PIDController(1, 0, 0);
+    private PIDController telescopePIDController = new PIDController(.6, 0, 0); // 1
     private static final int TELESCOPE_MOTOR_CAN_BUS_PORT = 9;
-    private static final double TELESCOPE_EXTENSION_POWER = -0.2;
-    private static final double TELESCOPE_RETRACTION_POWER = -TELESCOPE_EXTENSION_POWER;
     public static final double DISTANCE = 0;
-    private double SHOULDER_CONVERSION_FACTOR = 1; // Calculate later (motor is 80:1)
     private double SHOULDER_MINIMUM = -125; // calculate later ;)
     private double SHOULDER_MAXIMUM = 125; // calculate later :)
     private double TELESCOPE_MINIMUM = 0;
@@ -75,8 +72,7 @@ public class Arm {
 
         shoulderMotor = new NeoMotor(15, true);
         // TODO: These conversion factors need to be fixed
-        shoulderMotor.setConversionFactor(SHOULDER_CONVERSION_FACTOR);
-        shoulderMotor.setConversionFactor(TELESCOPE_CONVERSION_FACTOR);
+        // shoulderMotor.setConversionFactor(TELESCOPE_CONVERSION_FACTOR);
         _canCoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
         _canCoderConfiguration.magnetOffsetDegrees = -78;
         shoulderEncoder.configAllSettings(_canCoderConfiguration);
@@ -106,12 +102,12 @@ public class Arm {
     public void extend() { // arm telescopes out
         // limit extension distance
         NtHelper.setBoolean("/robot/telescope/outness", true);
-        telescopeToSetpoint(telescopeSetPoint + 3  * 0.02);   //0.02 subject to change
+        telescopeToSetpoint(telescopeSetPoint + 3 * 0.02); // 0.02 subject to change
     }
 
     public void retract() { // arm un-telescopes
         // limit retraction distance
-        telescopeToSetpoint(telescopeSetPoint - 3  * 0.02);   //0.02 subject to change
+        telescopeToSetpoint(telescopeSetPoint - 3 * 0.02); // 0.02 subject to change
 
     }
 
@@ -119,7 +115,11 @@ public class Arm {
         // setpoint is in meters instead of inches or an encoder value (subject to
         // change)
         NtHelper.setBoolean("/sim/telescopeToSetpoint", true);
-        telescopeSetPoint = meters;
+        if (isSafeMode) {
+            telescopeSetPoint = Math.max(0, meters);
+        } else {
+            telescopeSetPoint = meters;
+        }
     }
 
     public double getTelescopePosition() {
@@ -161,8 +161,9 @@ public class Arm {
     // this function is to give a certain degrees int and this function will set the
     // motor to the desired location.
 
-    public void setShoulderSetpoint(Rotation2d shoulderAngle) { //to spin comment out the if statement around ahoulder setpoint stuff
-        if (shoulderAngle.getDegrees() >= SHOULDER_MINIMUM && shoulderAngle.getDegrees() <= SHOULDER_MAXIMUM){
+    public void setShoulderSetpoint(Rotation2d shoulderAngle) { // to spin comment out the if statement around ahoulder
+                                                                // setpoint stuff
+        if (shoulderAngle.getDegrees() >= SHOULDER_MINIMUM && shoulderAngle.getDegrees() <= SHOULDER_MAXIMUM) {
             shoulderSetpoint = shoulderAngle;
         }
     }
@@ -242,21 +243,22 @@ public class Arm {
         telescopeDist += telescopeRate * 0.02;
         var shoulderRate = shoulderSimMotor.getAngularVelocityRadPerSec() * encoderRateSign;
         shoulderAngle = shoulderAngle.plus(Rotation2d.fromRadians(shoulderRate * 0.02));
-        
+
         // mechanism2d :/
         telescope.setLength(telescopeDist / 25);
         shoulder.setAngle(-shoulderAngle.getDegrees() + 90);
 
     }
 
-    public void isSafeMode(boolean safeMode){
+    public void isSafeMode(boolean safeMode) {
         isSafeMode = safeMode;
- }
+    }
+
     public void realPeriodic(double shoulderMotorPercent, double telescopeMotorPercent) {
         // Update real robot inputs
         shoulderMotor.setPercent(-shoulderMotorPercent);
         telescopeMotor.setPercent(telescopeMotorPercent);
-    
+
         telescopeDist = telescopeMotor.getDistance();
         shoulderAngle = Rotation2d.fromDegrees(shoulderEncoder.getAbsolutePosition());
     }
@@ -265,8 +267,8 @@ public class Arm {
         telemtry();
         double shoulderMotorPercent = shoulderMotor.getPercent();
         double telescopeMotorPercent = (telescopeVoltage / RobotController.getBatteryVoltage());
-            telescopeMotorPercent = telescopePIDController.calculate(telescopeDist, telescopeSetPoint)
-                    / RobotController.getBatteryVoltage();
+        telescopeMotorPercent = telescopePIDController.calculate(telescopeDist, telescopeSetPoint)
+                / RobotController.getBatteryVoltage();
         setShoulderVelocity(calculatePid(shoulderSetpoint));
         if (shoulderAngle.getDegrees() >= SHOULDER_MAXIMUM && shoulderVoltage > 0) {
             shoulderMotorPercent = 0;
@@ -286,15 +288,15 @@ public class Arm {
             var rate = telescopeRateChecker.getRate();
 
             if (rate != null && Math.abs(rate) < 1) {
-                resetTelescopeEncoder();
+                // resetTelescopeEncoder();
             }
         }
 
-        if (isSafeMode && telescopeDist < TELESCOPE_MINIMUM && telescopeMotorPercent < 0){
+        if (isSafeMode && telescopeDist < TELESCOPE_MINIMUM && telescopeMotorPercent < 0) {
             telescopeMotorPercent = 0;
         }
-        
-        if (telescopeDist > TELESCOPE_MAXIMUM && telescopeMotorPercent > 0){
+
+        if (telescopeDist > TELESCOPE_MAXIMUM && telescopeMotorPercent > 0) {
             telescopeMotorPercent = 0;
         }
 
@@ -308,14 +310,16 @@ public class Arm {
             realPeriodic(shoulderMotorPercent, telescopeMotorPercent);
         }
     }
+
     public Rotation2d getShoulderSetpoint() {
         return shoulderSetpoint;
     }
+
     public double getTelescopeSetpoint() {
         return telescopeSetPoint;
     }
 
-    public void setEnabled(boolean isEnabled){
+    public void setEnabled(boolean isEnabled) {
         shoulderMotor.setEnabled(isEnabled);
         telescopeMotor.setEnabled(isEnabled);
     }

@@ -31,6 +31,7 @@ public class Trajectories {
     private Timer timer = new Timer();
 
     public Trajectories() {
+        
     }
 
     public void update_current_path() {
@@ -56,6 +57,13 @@ public class Trajectories {
         timer.start();
     }
 
+    public void setNewTrajectoryGroup(Pose2d start, Pose2d middle, Pose2d end, boolean isDrivingBackwards) {
+        next_path = TrajectoryGeneration.generate(start, middle, end, isDrivingBackwards);
+        Robot.field.getObject("trajectory").setTrajectory(getTrajectory());
+        timer.reset();
+        timer.start();
+    }
+
     public void setNewTrajectoryGroup(String newName, boolean isReversed) {
         name = newName;
         move_steps = PathPlanner.loadPathGroup(name, 2.269, 3, isReversed);// 2.5, 3
@@ -76,6 +84,7 @@ public class Trajectories {
 
         ChassisSpeeds refChassisSpeeds = m_holonomicController.calculate(drivetrain.getPose(),
                 (PathPlannerState) desiredState);
+
 
         drivetrain.drive(refChassisSpeeds.vxMetersPerSecond, refChassisSpeeds.vyMetersPerSecond,
                 refChassisSpeeds.omegaRadiansPerSecond, false);

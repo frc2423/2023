@@ -91,6 +91,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    m_drive.resetAngle();
+    arm.resetTelescopeEncoder();
     m_drive.setBrake(false);
     auto.restart();
   }
@@ -103,9 +105,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     m_drive.setBrake(false);
-    m_drive.resetAngle();
     NtHelper.setDouble("/robot/shoulder/set_angle", 0);
-    arm.resetTelescopeEncoder();
     NtHelper.setString("/robot/arm/setsolenoid", "off");
   }
 
@@ -239,7 +239,7 @@ int buttonindex = -1;
 
     if (m_controller.getXButton()) {
       arm.extend();
-    } else if (m_controller.getBButton()) { // double check this
+    } else if (m_controller.getAButton()) { // double check this
       arm.retract();
     } else {
       arm.stopTelescopeMotor();
@@ -251,15 +251,17 @@ int buttonindex = -1;
   @Override
   public void testInit() {
     m_drive.setBrake(false);
+    m_drive.resetAngle();
+    arm.resetTelescopeEncoder();
     NtHelper.setDouble("/test/speed", 0);
     NtHelper.setDouble("/test/angle", 0);
   }
 
   public void telemtry() {
     NtHelper.setDouble("/dashboard/arm/angleMeasured", -arm.getShoulderAngle().getDegrees() + 90);
-    NtHelper.setDouble("/dashboard/arm/telscopeLenMeasured", arm.getTelescopePosition());
+    NtHelper.setDouble("/dashboard/arm/telscopeLenMeasured", arm.getTelescopePosition() * 5);
     NtHelper.setDouble("/dashboard/arm/angleSetpoint", -arm.getShoulderSetpoint().getDegrees() + 90);
-    NtHelper.setDouble("/dashboard/arm/telescopeLenSetpoint", arm.getTelescopeSetpoint());
+    NtHelper.setDouble("/dashboard/arm/telescopeLenSetpoint", arm.getTelescopeSetpoint() * 5);
     NtHelper.setDouble("/dashboard/robot/roll", m_drive.m_gyro.getRoll());
     NtHelper.setDouble("/dashboard/robot/pitch", m_drive.m_gyro.getPitch());
     NtHelper.setBoolean("/SmartDashboard/Field/flip", Alliance.Red.equals(DriverStation.getAlliance()));

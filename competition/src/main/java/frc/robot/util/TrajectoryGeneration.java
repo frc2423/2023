@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class TrajectoryGeneration {
-    static PathConstraints path = new PathConstraints(2, 2);
+    static PathConstraints constraints = new PathConstraints(2, 3);
 
     public static Trajectory generate(Pose2d start, Pose2d end, boolean isDrivingBackwards) {
         List<PathPoint> waypoints = new ArrayList<>();
@@ -31,7 +31,7 @@ public class TrajectoryGeneration {
             waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
             waypoints.add(new PathPoint(end.getTranslation(), end.getRotation(), end.getRotation()));
         }
-        Trajectory trajectory = PathPlanner.generatePath(path, false, waypoints);
+        Trajectory trajectory = PathPlanner.generatePath(constraints, false, waypoints);
         if (Alliance.Red.equals(DriverStation.getAlliance())) {
             return PathPlannerTrajectory.transformTrajectoryForAlliance((PathPlannerTrajectory) trajectory,
                     DriverStation.getAlliance());
@@ -50,7 +50,7 @@ public class TrajectoryGeneration {
             waypoints.add(new PathPoint(middle.getTranslation(), middle.getRotation(), middle.getRotation()));
             waypoints.add(new PathPoint(end.getTranslation(), end.getRotation(), end.getRotation()));
         }
-        Trajectory trajectory = PathPlanner.generatePath(path, false, waypoints);
+        Trajectory trajectory = PathPlanner.generatePath(constraints, false, waypoints);
         if (Alliance.Red.equals(DriverStation.getAlliance())) {
             return PathPlannerTrajectory.transformTrajectoryForAlliance((PathPlannerTrajectory) trajectory,
                     DriverStation.getAlliance());
