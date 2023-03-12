@@ -40,18 +40,61 @@ public class Robot extends TimedRobot {
 
   @Override // is society
   public void robotInit() {
+    NtHelper.setBoolean("/dashboard/arm/isCubes", false);
+    NtHelper.setBoolean("/robot/arm/telescopeoveride", true); 
     m_drive.setBrake(false);
     CameraServer.startAutomaticCapture();
     NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 5);
 
     NtHelper.listen("/dashboard/armSetpoint/buttonselected", (entry) -> {
+      updateArmSetpoint();
+
+    });
+
+    NtHelper.listen("/dashboard/arm/isCubes", (entry) -> {
+      updateArmSetpoint();
+
+    });
+
+    String DASHBOARD_DISABLED_ARM_KEY = "/dashboard/disabled/arm";
+    NtHelper.listen(DASHBOARD_DISABLED_ARM_KEY, (entry) ->{
+      boolean armDisabled = NtHelper.getBoolean(DASHBOARD_DISABLED_ARM_KEY, false);
+      arm.setEnabled(armDisabled);
+
+    });
+    NtHelper.listen("/robot/arm/telescopeoveride", (entry)->{
+      boolean safeMode = NtHelper.getBoolean("/robot/arm/telescopeoveride", true);
+      if (safeMode && isTeleop()) {
+        arm.resetTelescopeEncoder();
+      }
+    });
+    SmartDashboard.putData("Field", field);
+  }
+
+  @Override
+  public void robotPeriodic() {
+    telemtry();
+    if (!isTeleop()) {
+      arm.isSafeMode(!isTest());
+    }
+    m_drive.periodic();
+    arm.periodic();
+    field.setRobotPose(m_drive.getPose());
+  }
+
+  public void updateArmSetpoint() {
       var position = NtHelper.getDouble("/dashboard/armSetpoint/buttonselected", 5);
+
+      boolean isCubes = NtHelper.getBoolean("/dashboard/arm/isCubes", false);
+      var midTeleSetPoint = (isCubes ? 0 : 20);
+
+      
       if (position == 5) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(5)));
         arm.telescopeToSetpoint(0);
       } else if (position == 2) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57)));
-        arm.telescopeToSetpoint(20);
+        arm.telescopeToSetpoint(midTeleSetPoint);
       } else if (position == 1) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(115))); // 122
         arm.telescopeToSetpoint(0);
@@ -60,7 +103,7 @@ public class Robot extends TimedRobot {
         arm.telescopeToSetpoint(0);
       } else if (position == 8) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-57)));
-        arm.telescopeToSetpoint(20);
+        arm.telescopeToSetpoint(midTeleSetPoint);
       } else if (position == 3) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57)));
         arm.telescopeToSetpoint(43);
@@ -69,24 +112,7 @@ public class Robot extends TimedRobot {
         arm.telescopeToSetpoint(43);
 
       }
-    });
     
-    String DASHBOARD_DISABLED_ARM_KEY = "/dashboard/disabled/arm";
-    NtHelper.listen(DASHBOARD_DISABLED_ARM_KEY, (entry) ->{
-      boolean armDisabled = NtHelper.getBoolean(DASHBOARD_DISABLED_ARM_KEY, false);
-      arm.setEnabled(armDisabled);
-
-    });
-    SmartDashboard.putData("Field", field);
-  }
-
-  @Override
-  public void robotPeriodic() {
-    telemtry();
-    arm.isSafeMode(!isTest());
-    m_drive.periodic();
-    arm.periodic();
-    field.setRobotPose(m_drive.getPose());
   }
 
   @Override
@@ -107,6 +133,7 @@ public class Robot extends TimedRobot {
     m_drive.setBrake(false);
     NtHelper.setDouble("/robot/shoulder/set_angle", 0);
     NtHelper.setString("/robot/arm/setsolenoid", "off");
+    
   }
 
   @Override
@@ -116,8 +143,8 @@ public class Robot extends TimedRobot {
       autoAlign.autoRotate();
     } else {
       boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
-      double maxSpeed = Drivetrain.kMaxSpeed * (isSlowMode ? .55 : .75);
-      double maxRotation = Drivetrain.kMaxAngularSpeed * (isSlowMode ? .55 : 1);
+      double maxSpeed = Drivetrain.kMaxSpeed * (isSlowMode ? .55 : 1);
+      double maxRotation = Drivetrain.kMaxAngularSpeed * (isSlowMode ? .55 : 1.4);
 
       double deadband = 0.2;
 
@@ -193,9 +220,9 @@ int buttonindex = -1;
       arm.beltStop();
     }
 
-    if (m_controller_right.getLeftBumperReleased()) { // TODO: revisit this
+    if (m_controller.getLeftBumperReleased()) { // TODO: revisit this
       arm.shoulderForward();
-    } else if (m_controller_right.getRightBumperReleased()) {
+    } else if (m_controller.getRightBumperReleased()) {
       arm.shoulderBack();
     }
 
@@ -204,6 +231,10 @@ int buttonindex = -1;
     } else if (m_controller_right.getBButton() || m_controller.getBButton()) {
       arm.outtakeBelt();
     }
+
+    
+     arm.isSafeMode(NtHelper.getBoolean("/robot/arm/telescopeoveride", true)); 
+    
 
   }
 

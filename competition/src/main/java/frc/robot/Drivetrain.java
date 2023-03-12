@@ -16,7 +16,7 @@ import frc.robot.util.NtHelper;
 
 public class Drivetrain {
   // Constants
-  public static final double kMaxSpeed = 3.1; // 3 meters per second
+  public static final double kMaxSpeed = 2.7; // 3 meters per second
   public static final double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second
 
   // State from robot logic

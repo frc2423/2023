@@ -28,10 +28,18 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/Mech2d": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },
   "NetworkTables": {
+    "Transitory Values": {
+      "open": false
+    },
     "transitory": {
       "SmartDashboard": {
         "Field": {

@@ -12,9 +12,10 @@ public class Auto extends StateMachine {
     StateMachine taxi;
     StateMachine yoyo;
     StateMachine testauto;
-    StateMachine balanceauto;
+    // StateMachine balanceauto;
     StateMachine gyroauto;
     StateMachine yoyoyo;
+    StateMachine scoreonly; 
     private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
     public Auto() {
@@ -22,16 +23,18 @@ public class Auto extends StateMachine {
         taxi = new BasedAuto();
         yoyo = new YoYoAuto();
         testauto = new TestAuto();
-        balanceauto = new GyroAuto();
+        // balanceauto = new GyroAuto();
         gyroauto = new GyroAuto();
         yoyoyo = new YoYoYoAuto();
+        scoreonly = new ScoreOnly();
 
         m_chooser.setDefaultOption("taxi", "taxi");
         m_chooser.addOption("yoyo", "yoyo");
         m_chooser.addOption("testauto", "testauto");
-        m_chooser.addOption("balanceauto", "balanceauto");
+        // m_chooser.addOption("balanceauto", "balanceauto");
         m_chooser.addOption("gyroauto", "gyroauto");
         m_chooser.addOption("YoYoYoAuto" , "YoYoYoAuto");
+        m_chooser.addOption("scoreonly", "scoreonly");
 
         SmartDashboard.putData("Auto choices", m_chooser);
     }
@@ -53,11 +56,14 @@ public class Auto extends StateMachine {
             case "testauto":
                 selectedAutonomous = testauto;
                 break;
-            case "balanceauto":
-                selectedAutonomous = balanceauto;
-                break;
+            // case "balanceauto":
+            //     selectedAutonomous = balanceauto;
+            //     break;
             case "gyroauto":
                 selectedAutonomous = gyroauto;
+                break;
+            case "scoreonly":
+                selectedAutonomous = scoreonly;
                 break;
             default:
                 selectedAutonomous = taxi;

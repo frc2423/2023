@@ -28,7 +28,7 @@ public class Arm {
     private NeoMotor telescopeMotor;
     private NeoMotor shoulderMotor;
     private PWMSparkMax beltoMotor;
-    private PIDController telescopePIDController = new PIDController(.6, 0, 0); // 1
+    private PIDController telescopePIDController = new PIDController(.4, 0, 0); // 1
     private static final int TELESCOPE_MOTOR_CAN_BUS_PORT = 9;
     public static final double DISTANCE = 0;
     private double SHOULDER_MINIMUM = -125; // calculate later ;)
@@ -107,8 +107,14 @@ public class Arm {
 
     public void retract() { // arm un-telescopes
         // limit retraction distance
-        telescopeToSetpoint(telescopeSetPoint - 3 * 0.02); // 0.02 subject to change
-
+        
+        if (isSafeMode) {
+    
+            telescopeToSetpoint(telescopeSetPoint - 3 * 0.02); 
+        }
+        else {
+            telescopeToSetpoint(telescopeSetPoint - 6 * 0.02); 
+        }
     }
 
     public void telescopeToSetpoint(double meters) {
@@ -299,6 +305,11 @@ public class Arm {
         if (telescopeDist > TELESCOPE_MAXIMUM && telescopeMotorPercent > 0) {
             telescopeMotorPercent = 0;
         }
+
+        if (telescopeMotorPercent < 0 && isSafeMode) {
+            telescopeMotorPercent = telescopeMotorPercent * 0.5;
+        }
+
 
         NtHelper.setDouble("/robot/telescopeMotorPercent", telescopeMotorPercent);
         NtHelper.setDouble("/robot/shoulderMotorPercent", shoulderMotorPercent);

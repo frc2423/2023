@@ -16,8 +16,8 @@ public class YoYoYoAuto extends StateMachine {
 
     @State(name = "Score")
     public void taxiRun(StateContext ctx) {
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-67)));
-        Robot.arm.telescopeToSetpoint(35);
+        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-115)));
+        Robot.arm.telescopeToSetpoint(0);
 
         if (ctx.getTime() > 1) {
             setState("Spit");
@@ -41,8 +41,8 @@ public class YoYoYoAuto extends StateMachine {
     public void moove(StateContext ctx) {
 
         Robot.trajectories.follow_current_path();
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
-        Robot.arm.telescopeToSetpoint(10);
+        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(115)));
+        Robot.arm.telescopeToSetpoint(0);
         Robot.arm.intakeBelt();
         if (Robot.trajectories.isFinished()) {
             setState("Stahp");
@@ -64,8 +64,8 @@ public class YoYoYoAuto extends StateMachine {
          * move forward for 1/2 second
          * 
          */
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
-        Robot.arm.telescopeToSetpoint(10);
+        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(115)));
+        Robot.arm.telescopeToSetpoint(0);
         Robot.arm.intakeBelt();
 
         Robot.m_drive.drive(0.1, 0, 0, false);
@@ -84,8 +84,8 @@ public class YoYoYoAuto extends StateMachine {
     public void yo2(StateContext ctx) {
         // head the back
         Robot.trajectories.follow_current_path();
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-110)));
-        Robot.arm.telescopeToSetpoint(10);
+        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-115)));
+        Robot.arm.telescopeToSetpoint(0);
         if (Robot.trajectories.isFinished()) {
             setState("TryScoreLow");
         }
@@ -94,8 +94,8 @@ public class YoYoYoAuto extends StateMachine {
     @State(name = "TryScoreLow")
     public void tryScoreLow(StateContext ctx) {
         // try score low :P
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-110)));
-        Robot.arm.telescopeToSetpoint(10);
+        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-115)));
+        Robot.arm.telescopeToSetpoint(0);
         Robot.m_drive.drive(0, 0, 0, false);
         Robot.arm.outtakeBelt();
 
@@ -112,8 +112,8 @@ public class YoYoYoAuto extends StateMachine {
                     Waypoints.BLUE_GP_2, false);
         }
         Robot.trajectories.follow_current_path();
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(110)));
-        Robot.arm.telescopeToSetpoint(10);
+        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(115)));
+        Robot.arm.telescopeToSetpoint(0);
         Robot.arm.intakeBelt();
         if (Robot.trajectories.isFinished()) {
             setState("akwaia2");
@@ -140,8 +140,8 @@ public class YoYoYoAuto extends StateMachine {
     public void yo3(StateContext ctx) {
         // head the back
         Robot.trajectories.follow_current_path();
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-110)));
-        Robot.arm.telescopeToSetpoint(10);
+        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-115)));
+        Robot.arm.telescopeToSetpoint(0);
         if (Robot.trajectories.isFinished()) {
             setState("TryScoreLow2");
         }
@@ -150,8 +150,8 @@ public class YoYoYoAuto extends StateMachine {
     @State(name = "TryScoreLow2")
     public void tryScoreLow2(StateContext ctx) {
         // try score low :P
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-110)));
-        Robot.arm.telescopeToSetpoint(10);
+        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-115)));
+        Robot.arm.telescopeToSetpoint(0);
         Robot.m_drive.drive(0, 0, 0, false);
         Robot.arm.outtakeBelt();
     }
