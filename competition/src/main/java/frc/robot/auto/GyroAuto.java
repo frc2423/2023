@@ -25,7 +25,7 @@ public class GyroAuto extends StateMachine {
         Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-115)));
         Robot.arm.telescopeToSetpoint(0);
 
-        if (ctx.getTime() > 2) {
+        if (ctx.getTime() > 1.5) {
             setState("Spit");
         }
     }
@@ -33,7 +33,7 @@ public class GyroAuto extends StateMachine {
     @State(name = "Spit")
     public void spit(StateContext ctx) {
         Robot.arm.outtakeBelt();
-        if (ctx.getTime() > 1) {
+        if (ctx.getTime() > .5) {
             setState("Start");
         }
     }
@@ -96,12 +96,12 @@ public class GyroAuto extends StateMachine {
     @State(name = "KeepGoing")
     public void KeepGoing(StateContext ctx) {
         Robot.m_drive.drive(-1.05, 0, 0, true);
-        if (ctx.getTime() > 2.25) {
+        if (ctx.getTime() > 2.4) {
             setState("Balance");
         }
     }
 
-    double maxSpeed = 0.4;
+    double maxSpeed = 0.5;
     double minSpeed = 0;
     double slowDownAngle = 10;
     double stopAngle = 1;

@@ -34,7 +34,7 @@ public class Arm {
     private double SHOULDER_MINIMUM = -125; // calculate later ;)
     private double SHOULDER_MAXIMUM = 125; // calculate later :)
     private double TELESCOPE_MINIMUM = 0;
-    private double TELESCOPE_MAXIMUM = 97;
+    private double TELESCOPE_MAXIMUM = 30;//97;
     private CANCoder shoulderEncoder = new CANCoder(25);
     CANCoderConfiguration _canCoderConfiguration = new CANCoderConfiguration();
     PIDController shoulder_PID = new PIDController((Robot.isSimulation()) ? .001 : .005, 0, 0);

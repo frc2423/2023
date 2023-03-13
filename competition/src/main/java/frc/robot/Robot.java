@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
 
   @Override // is society
   public void robotInit() {
-    NtHelper.setBoolean("/dashboard/arm/isCubes", false);
+    NtHelper.setBoolean("/dashboard/arm/isCubes", true);
     NtHelper.setBoolean("/robot/arm/telescopeoveride", true); 
     m_drive.setBrake(false);
     CameraServer.startAutomaticCapture();
@@ -87,22 +87,23 @@ public class Robot extends TimedRobot {
 
       boolean isCubes = NtHelper.getBoolean("/dashboard/arm/isCubes", false);
       var midTeleSetPoint = (isCubes ? 0 : 20);
+      var midShoulderSetPoint = (isCubes ? 52 : 57);
 
       
       if (position == 5) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(5)));
         arm.telescopeToSetpoint(0);
       } else if (position == 2) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57)));
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(midShoulderSetPoint)));
         arm.telescopeToSetpoint(midTeleSetPoint);
       } else if (position == 1) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(115))); // 122
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(122))); // 122
         arm.telescopeToSetpoint(0);
       } else if (position == 9) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-115)));
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-122)));
         arm.telescopeToSetpoint(0);
       } else if (position == 8) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-57)));
+        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-midShoulderSetPoint)));
         arm.telescopeToSetpoint(midTeleSetPoint);
       } else if (position == 3) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57)));
@@ -138,12 +139,33 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+      final double kMaxSpeed = 3;
 
+      if (m_controller.getStartButtonReleased()) {
+        Robot.m_drive.setBrake(false);
+      }
+
+      if (m_controller.getStartButtonPressed()) {
+        Robot.m_drive.setBrake(true);
+      }
+      
     if (m_controller.getStartButton()) {
-      autoAlign.autoRotate();
+      // autoAlign.autoRotate();
+      
+      SwerveModuleState brflSTATE = new SwerveModuleState(0,
+                Rotation2d.fromDegrees(0));
+      SwerveModuleState frblSTATE = new SwerveModuleState(0,
+                Rotation2d.fromDegrees(90));
+
+        Robot.m_drive.m_frontLeft.setDesiredState(brflSTATE);
+        Robot.m_drive.m_frontRight.setDesiredState(frblSTATE);
+        Robot.m_drive.m_backLeft.setDesiredState(frblSTATE);
+        Robot.m_drive.m_backRight.setDesiredState(brflSTATE);
+        
+          
     } else {
       boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
-      double maxSpeed = Drivetrain.kMaxSpeed * (isSlowMode ? .55 : 1);
+      double maxSpeed = kMaxSpeed * (isSlowMode ? .495 : 1);
       double maxRotation = Drivetrain.kMaxAngularSpeed * (isSlowMode ? .55 : 1.4);
 
       double deadband = 0.2;
