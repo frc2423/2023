@@ -2,10 +2,9 @@ package frc.robot;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.Trajectory.State;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.util.NtHelper;
@@ -14,7 +13,6 @@ import frc.robot.util.TrajectoryGeneration;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
-import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import java.util.List;
 
@@ -33,6 +31,7 @@ public class Trajectories {
     private Timer timer = new Timer();
 
     public Trajectories() {
+        
     }
 
     public void update_current_path() {
@@ -43,7 +42,7 @@ public class Trajectories {
         timer.start();
     }
 
-    public void resetOdometry(){
+    public void resetOdometry() {
         drivetrain.resetOdometry(next_path.getInitialPose());
     }
 
@@ -51,8 +50,15 @@ public class Trajectories {
         setNewTrajectoryGroup(newName, false);
     }
 
-    public void setNewTrajectoryGroup(Pose2d start, Pose2d end, boolean isReversed){
-        next_path = TrajectoryGeneration.generate(start, end, isReversed);
+    public void setNewTrajectoryGroup(Pose2d start, Pose2d end, boolean isDrivingBackwards) {
+        next_path = TrajectoryGeneration.generate(start, end, isDrivingBackwards);
+        Robot.field.getObject("trajectory").setTrajectory(getTrajectory());
+        timer.reset();
+        timer.start();
+    }
+
+    public void setNewTrajectoryGroup(Pose2d start, Pose2d middle, Pose2d end, boolean isDrivingBackwards) {
+        next_path = TrajectoryGeneration.generate(start, middle, end, isDrivingBackwards);
         Robot.field.getObject("trajectory").setTrajectory(getTrajectory());
         timer.reset();
         timer.start();
@@ -76,22 +82,10 @@ public class Trajectories {
         Robot.field.getObject("ghost/pose").setPose(desiredState.poseMeters);
         NtHelper.setDouble("/SmartDashboard/Field/ghost/opacity", 50);
 
-
-        // System.out.println(desiredState.poseMeters);
-        NtHelper.setDouble("/auto/desiredX", desiredState.poseMeters.getX());
-        NtHelper.setDouble("/auto/desiredY", desiredState.poseMeters.getY());
-        NtHelper.setDouble("/auto/actualX", drivetrain.getPose().getX());
-        NtHelper.setDouble("/auto/actualY", drivetrain.getPose().getY());
-        
         ChassisSpeeds refChassisSpeeds = m_holonomicController.calculate(drivetrain.getPose(),
                 (PathPlannerState) desiredState);
-        // double vy = RobotBase.isSimulation() ? -refChassisSpeeds.vyMetersPerSecond
-        //         : -refChassisSpeeds.vyMetersPerSecond; // if not sim, negetive?
 
-        // double radiansPerSecond = (RobotBase.isSimulation() ? -1 : 1) * refChassisSpeeds.omegaRadiansPerSecond;
 
-        NtHelper.setDouble("/auto/vx", refChassisSpeeds.vxMetersPerSecond);
-        NtHelper.setDouble("/auto/vy", refChassisSpeeds.vyMetersPerSecond);
         drivetrain.drive(refChassisSpeeds.vxMetersPerSecond, refChassisSpeeds.vyMetersPerSecond,
                 refChassisSpeeds.omegaRadiansPerSecond, false);
     }

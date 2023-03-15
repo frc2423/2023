@@ -2,17 +2,18 @@
     tab-name="TeleOperated"
     slot="tab"
     source-provider="NetworkTables"
+    selected=""
 >
     <kwarqs-arm-base
         source-provider="NetworkTables"
         count="0"
-        style="transform: translate(622.671px, 102.666px); width: 327.333px; height: 291.333px;"
+        style="transform: translate(776.671px, 143.999px); width: 327.333px; height: 291.333px;"
         source-key="/dashboard/arm"
     ></kwarqs-arm-base>
     <frc-field
         source-key="/SmartDashboard/Field"
         source-provider="NetworkTables"
-        style="transform: translate(5px, 108.307px); width: 497.656px; height: 237.818px;"
+        style="transform: translate(5px, 108.302px); width: 622.312px; height: 371.146px;"
         width="54.27083"
         height="26.2916"
         image="/field-images/2023-field.jpg"
@@ -24,22 +25,27 @@
         <frc-field-robot
             source-key="/SmartDashboard/Field/Robot"
             source-provider="NetworkTables"
-            style="width: 0px; height: 0px; transform: translate(0px, 0px) rotate(90deg);"
+            style="width: 20.7412px; height: 31.1117px; transform: translate(88.437px, 40.3103px) rotate(89.9934deg);"
             opacity="100"
             pose="[0,0,0]"
         ></frc-field-robot>
         <frc-field-trajectory
             source-key="/SmartDashboard/Field/trajectory"
             source-provider="NetworkTables"
-            style="width: 0px; height: 0px; transform: translate(0px, 0px) rotate(90deg);"
+            style="width: 34.5686px; height: 34.5686px; transform: translate(7.95942px, 279.493px) rotate(90deg);"
         ></frc-field-trajectory>
         <frc-field-robot
             source-key="/SmartDashboard/Field/ghost"
             source-provider="NetworkTables"
-            style="width: 0px; height: 0px; transform: translate(0px, 0px) rotate(79.7872deg);"
+            style="width: 20.7412px; height: 31.1117px; transform: translate(86.6884px, 40.2782px) rotate(269.715deg);"
             opacity="100"
             pose="[0,0,0]"
         ></frc-field-robot>
+        <frc-field-trajectory
+            source-key="/SmartDashboard/Field/flip"
+            source-provider="NetworkTables"
+            style="width: 34.5686px; height: 34.5686px; transform: translate(7.95942px, 279.493px) rotate(90deg);"
+        ></frc-field-trajectory>
     </frc-field>
     <frc-sendable-chooser
         source-key="/SmartDashboard/Auto choices"
@@ -57,7 +63,6 @@
     tab-name="Tab 2"
     slot="tab"
     source-provider="NetworkTables"
-    selected=""
 >
     <frc-swerve-drivebase
         source-provider="NetworkTables"

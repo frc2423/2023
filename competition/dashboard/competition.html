@@ -10,13 +10,7 @@
         style="transform: translate(93.3334px, 48.6667px);"
         options="[]"
     ></frc-sendable-chooser>
-    <frc-toggle-group
-        source-provider="NetworkTables"
-        style="transform: translate(363.8px, 20.6562px); width: 519.333px; height: 429.323px;"
-        source-key="/arm"
-        options="[&quot;Back Floor&quot;,&quot;Back Score&quot;,&quot;Up&quot;,&quot;Front Score&quot;,&quot;Front Floor&quot;]"
-        value="Back Floor"
-    ></frc-toggle-group>
+
     <vaadin-number-field
         label="Shoulder Angle"
         value="0"
@@ -89,23 +83,23 @@
         source-provider="NetworkTables"
         style="transform: translate(47.2px, 164.8px);"
         source-key="/arm/beltMotor"
-        placeholder=""
         min="NaN"
         max="NaN"
+        placeholder=""
     ><input
             slot="input"
             value="0"
             type="number"
-            id="vaadin-number-field-14"
+            id="vaadin-number-field-4"
             aria-labelledby="label-vaadin-number-field-14"
             aria-describedby=""
-            min="undefined"
-            max="undefined"
+            min="NaN"
+            max="NaN"
             step="any"
         ><label
             slot="label"
             id="label-vaadin-number-field-14"
-            for="vaadin-number-field-14"
+            for="vaadin-number-field-4"
         >Belt Motor</label>
         <div
             slot="error-message"
@@ -113,4 +107,32 @@
             hidden=""
         ></div>
     </vaadin-number-field>
+    <kwarqs-arm-base
+        source-provider="NetworkTables"
+        count="0"
+        style="transform: translate(375.333px, 294.656px); width: 500px; height: 236px;"
+        source-key="/dashboard/arm"
+    ></kwarqs-arm-base>
+    <kwarqs-arm-setpoints
+        source-provider="NetworkTables"
+        buttonselected="2"
+        style="transform: translate(380.667px, 12.6667px);"
+        source-key="/dashboard/armSetpoint"
+    ></kwarqs-arm-setpoints>
+    <frc-toggle-button
+        source-provider="NetworkTables"
+        style="transform: translate(86px, 502px); width: 150px; height: 51.3333px;"
+        source-key="/robot/arm/telescopeoveride"
+        label="Is Safe Mode"
+    ></frc-toggle-button>
+    <frc-toggle-switch
+        source-provider="NetworkTables"
+        style="transform: translate(942px, 146.333px);"
+        source-key="/dashboard/arm/isCubes"
+    ></frc-toggle-switch>
+    <frc-label
+        text="CUBES??????"
+        source-provider="NetworkTables"
+        style="transform: translate(946px, 110.667px);"
+    ></frc-label>
 </dashboard-tab>
