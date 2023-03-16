@@ -50,8 +50,8 @@ public class PoseEstimation {
           new SwerveModulePosition(0, new Rotation2d()),
       },
       new Pose2d(),
-      VecBuilder.fill(1000, 1000, Units.degreesToRadians(5)),
-      VecBuilder.fill(0.00001, 0.00001, Units.degreesToRadians(30)));
+      VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+      VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
 
   public void updateOdometry(PhotonCamera cam) {
     m_poseEstimator.update(new Rotation2d(0, 0), placeholderposition);

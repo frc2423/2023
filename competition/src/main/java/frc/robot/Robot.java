@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.NtHelper;
 import frc.robot.auto.Auto;
 import edu.wpi.first.cameraserver.CameraServer;
+import frc.robot.util.Camera; 
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
@@ -32,6 +33,7 @@ public class Robot extends TimedRobot {
   public static Drivetrain m_drive = new Drivetrain();
   public static Trajectories trajectories = new Trajectories();
   public static final Field2d field = new Field2d();
+  public static final Camera m_camera= new Camera("driverCamera");
   private AutoAlign autoAlign = new AutoAlign();
 
   public static Arm arm = new Arm();

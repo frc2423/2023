@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -11,8 +13,18 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.util.Camera;
 import frc.robot.util.NtHelper;
+
+import java.lang.annotation.Target;
+
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
+import frc.robot.constants.CameraConstants;
+
 
 public class Drivetrain {
   // Constants
@@ -50,7 +62,7 @@ public class Drivetrain {
   // new SwerveDriveKinematics(m_frontLeftLocation, m_frontRightLocation,
   // m_backLeftLocation, m_backRightLocation);
 
-  private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
+  private final SwerveDrivePoseEstimator m_odometry = new SwerveDrivePoseEstimator(
       m_kinematics,
       angle,
       new SwerveModulePosition[] {
@@ -58,7 +70,10 @@ public class Drivetrain {
           m_frontRight.getPosition(),
           m_backLeft.getPosition(),
           m_backRight.getPosition()
-      });
+      },
+      new Pose2d(),
+      VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+      VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
 
 
   /** Subsystem constructor. */
@@ -106,15 +121,6 @@ public class Drivetrain {
 
   /** Updates the field relative position of the robot. */
   public void updateOdometry() {
-    NtHelper.setDouble("/pos/fl", m_frontLeft.getPosition().distanceMeters);
-    NtHelper.setDouble("/pos/fr", m_frontRight.getPosition().distanceMeters);
-    NtHelper.setDouble("/pos/bl", m_backLeft.getPosition().distanceMeters);
-    NtHelper.setDouble("/pos/br", m_backRight.getPosition().distanceMeters);
-
-    NtHelper.setDouble("/angle/fl", m_frontLeft.getPosition().angle.getDegrees());
-    NtHelper.setDouble("/angle/fr", m_frontRight.getPosition().angle.getDegrees());
-    NtHelper.setDouble("/angle/bl", m_backLeft.getPosition().angle.getDegrees());
-    NtHelper.setDouble("/angle/br", m_backRight.getPosition().angle.getDegrees());
     m_odometry.update(
         angle,
         new SwerveModulePosition[] {
@@ -124,6 +130,48 @@ public class Drivetrain {
             m_backRight.getPosition()
         });
   }
+
+  public void updateOdometry(Camera m_Camera){
+    updateOdometry();
+
+    var res = m_Camera.returnCamera().getLatestResult();
+    var imageCaptureTime = res.getTimestampSeconds();
+
+    var targetlist = res.getTargets();
+    // for (int i = 0; i < targetlist.size(); i++) {
+    //   var target = targetlist.get(i);
+    //   addVisionMeasurement(target, imageCaptureTime);
+    // }
+
+    if (res.hasTargets()){
+      addVisionMeasurement(res.getBestTarget(), imageCaptureTime);
+    }
+  }
+
+  public void addVisionMeasurement(PhotonTrackedTarget target, double imageCaptureTime){
+    
+    var targetid = target.getFiducialId();
+    var hasPose = CameraConstants.aprilTags.containsKey(targetid);
+
+    if (!hasPose) {
+      return;
+    }
+    // System.out.println("hasPose:" + camPose);
+
+    var camToTargetTrans = target.getBestCameraToTarget();
+
+    var camPose = CameraConstants.aprilTags.get(targetid).transformBy(camToTargetTrans.inverse());
+
+    var measurement = camPose.transformBy(CameraConstants.cameraToRobot).toPose2d();
+    m_odometry.addVisionMeasurement(
+        measurement, imageCaptureTime);
+    // m_poseEstimator.
+    var position = m_odometry.getEstimatedPosition();
+    
+    // System.out.println("robot pose: (" + position.getX() + ", " + position.getY() + ")");
+  }
+
+
 
   /** Resets robot odometry. */
   public void resetOdometry(Pose2d pose) {
@@ -155,7 +203,7 @@ public class Drivetrain {
 
   /** Check the current robot pose. */
   public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
+    return m_odometry.getEstimatedPosition();
   }
 
   private void realPeriodic() {
@@ -172,7 +220,7 @@ public class Drivetrain {
   public void periodic() {
     telemetry();
     NtHelper.setDouble("/robot/angle", angle.getDegrees());
-    updateOdometry();
+    updateOdometry(Robot.m_camera);
     m_frontLeft.update();
     m_frontRight.update();
     m_backLeft.update();
