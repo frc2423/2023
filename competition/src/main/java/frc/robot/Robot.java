@@ -86,8 +86,10 @@ public class Robot extends TimedRobot {
       var position = NtHelper.getDouble("/dashboard/armSetpoint/buttonselected", 5);
 
       boolean isCubes = NtHelper.getBoolean("/dashboard/arm/isCubes", false);
-      var midTeleSetPoint = (isCubes ? 0 : 20);
+      var midTeleSetPoint = (isCubes ? 0 : 10);
       var midShoulderSetPoint = (isCubes ? 52 : 57);
+      var highTeleSetPoint = (isCubes ? 20 : 30);
+      
 
       
       if (position == 5) {
@@ -107,10 +109,10 @@ public class Robot extends TimedRobot {
         arm.telescopeToSetpoint(midTeleSetPoint);
       } else if (position == 3) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57)));
-        arm.telescopeToSetpoint(43);
+        arm.telescopeToSetpoint(highTeleSetPoint);
       } else if (position == 7) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-57)));
-        arm.telescopeToSetpoint(43);
+        arm.telescopeToSetpoint(highTeleSetPoint);
 
       }
     
