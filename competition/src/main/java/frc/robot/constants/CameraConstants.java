@@ -22,7 +22,7 @@ public class CameraConstants {
             Units.inchesToMeters(610.77),
             Units.inchesToMeters(42.19),
             Units.inchesToMeters(18.22),
-            new Rotation3d(0.0, 0.0, Math.PI)),
+            new Rotation3d(0.0, 0.0, Math.PI /*3.1415926535697932384626433 */)),
         2,
         new Pose3d(
             Units.inchesToMeters(610.77),

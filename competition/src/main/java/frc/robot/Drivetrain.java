@@ -25,7 +25,6 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import frc.robot.constants.CameraConstants;
 
-
 public class Drivetrain {
   // Constants
   public static final double kMaxSpeed = 2.7; // 3 meters per second
@@ -74,7 +73,6 @@ public class Drivetrain {
       new Pose2d(),
       VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
       VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
-
 
   /** Subsystem constructor. */
   public Drivetrain() {
@@ -131,7 +129,7 @@ public class Drivetrain {
         });
   }
 
-  public void updateOdometry(Camera m_Camera){
+  public void updateOdometry(Camera m_Camera) {
     updateOdometry();
 
     var res = m_Camera.returnCamera().getLatestResult();
@@ -139,24 +137,23 @@ public class Drivetrain {
 
     var targetlist = res.getTargets();
     // for (int i = 0; i < targetlist.size(); i++) {
-    //   var target = targetlist.get(i);
-    //   addVisionMeasurement(target, imageCaptureTime);
+    // var target = targetlist.get(i);
+    // addVisionMeasurement(target, imageCaptureTime);
     // }
 
-    if (res.hasTargets()){
+    if (res.hasTargets()) {
       addVisionMeasurement(res.getBestTarget(), imageCaptureTime);
     }
   }
 
-  public void addVisionMeasurement(PhotonTrackedTarget target, double imageCaptureTime){
-    
+  public void addVisionMeasurement(PhotonTrackedTarget target, double imageCaptureTime) {
+
     var targetid = target.getFiducialId();
     var hasPose = CameraConstants.aprilTags.containsKey(targetid);
 
     if (!hasPose) {
       return;
     }
-    // System.out.println("hasPose:" + camPose);
 
     var camToTargetTrans = target.getBestCameraToTarget();
 
@@ -165,13 +162,7 @@ public class Drivetrain {
     var measurement = camPose.transformBy(CameraConstants.cameraToRobot).toPose2d();
     m_odometry.addVisionMeasurement(
         measurement, imageCaptureTime);
-    // m_poseEstimator.
-    var position = m_odometry.getEstimatedPosition();
-    
-    // System.out.println("robot pose: (" + position.getX() + ", " + position.getY() + ")");
   }
-
-
 
   /** Resets robot odometry. */
   public void resetOdometry(Pose2d pose) {
@@ -184,7 +175,7 @@ public class Drivetrain {
             m_frontRight.getPosition(), m_backLeft.getPosition(), m_backRight.getPosition() },
         pose);
   }
-  
+
   public void resetAngle() {
     m_gyro.reset();
     angle = new Rotation2d();
@@ -197,7 +188,7 @@ public class Drivetrain {
     m_backRight.setBrake(brake);
   }
 
-  public Rotation2d getAngle(){
+  public Rotation2d getAngle() {
     return angle;
   }
 
