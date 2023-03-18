@@ -9,10 +9,10 @@ import java.util.Map;
 
 public class CameraConstants {
     /** the accurate map of the field (use for the actual game) */
-    public final static double CAMERA_HEIGHT_METERS = Units.inchesToMeters(38);
+    public final static double CAMERA_HEIGHT_METERS = Units.inchesToMeters(28);
     public static double TARGET_HEIGHT_METERS = Units.feetToMeters(5);
-    public final static double CAMERA_PITCH_RADIANS = Units.degreesToRadians(2.5);
-    public final static double CAMERA_X_METERS = Units.inchesToMeters(5);
+    public final static double CAMERA_PITCH_RADIANS = Units.degreesToRadians(-12);
+    public final static double CAMERA_X_METERS = Units.inchesToMeters(-5);
     public final static double CAMERA_Y_METERS = Units.inchesToMeters(5);
 
     public static final Map<Integer, Pose3d> aprilTags = 
