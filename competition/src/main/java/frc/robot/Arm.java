@@ -7,8 +7,10 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -28,16 +30,15 @@ public class Arm {
     private NeoMotor telescopeMotor;
     private NeoMotor shoulderMotor;
     private PWMSparkMax beltoMotor;
-    private PIDController telescopePIDController = new PIDController(.4, 0, 0); // 1
+    private ProfiledPIDController telescopePIDController = new ProfiledPIDController(0.8, 0, 0, new TrapezoidProfile.Constraints(60, 80));
     private static final int TELESCOPE_MOTOR_CAN_BUS_PORT = 9;
     public static final double DISTANCE = 0;
-    private double SHOULDER_MINIMUM = -125; // calculate later ;)
     private double SHOULDER_MAXIMUM = 125; // calculate later :)
     private double TELESCOPE_MINIMUM = 0;
     private double TELESCOPE_MAXIMUM = 30;//97;
     private CANCoder shoulderEncoder = new CANCoder(25);
     CANCoderConfiguration _canCoderConfiguration = new CANCoderConfiguration();
-    PIDController shoulder_PID = new PIDController((Robot.isSimulation()) ? .001 : .005, 0, 0);
+    ProfiledPIDController shoulder_PID = new ProfiledPIDController((Robot.isSimulation()) ? .001 : .005, 0, 0, new TrapezoidProfile.Constraints(360, 420));//noice
     private double TELESCOPE_CONVERSION_FACTOR = 1; // gear ratio
     private double beltoSpeedo = 0.8;
     private double outtakeBeltoSpeedo = -1;
@@ -169,7 +170,7 @@ public class Arm {
 
     public void setShoulderSetpoint(Rotation2d shoulderAngle) { // to spin comment out the if statement around ahoulder
                                                                 // setpoint stuff
-        if (shoulderAngle.getDegrees() >= SHOULDER_MINIMUM && shoulderAngle.getDegrees() <= SHOULDER_MAXIMUM) {
+        if (shoulderAngle.getDegrees() >= -SHOULDER_MAXIMUM && shoulderAngle.getDegrees() <= SHOULDER_MAXIMUM) {
             shoulderSetpoint = shoulderAngle;
         }
     }
@@ -276,9 +277,9 @@ public class Arm {
         telescopeMotorPercent = telescopePIDController.calculate(telescopeDist, telescopeSetPoint)
                 / RobotController.getBatteryVoltage();
         setShoulderVelocity(calculatePid(shoulderSetpoint));
-        if (shoulderAngle.getDegrees() >= SHOULDER_MAXIMUM && shoulderVoltage > 0) {
+        if (shoulderAngle.getDegrees() >= getMaxShoulderAngle() && shoulderVoltage > 0) {
             shoulderMotorPercent = 0;
-        } else if (shoulderAngle.getDegrees() <= SHOULDER_MINIMUM && shoulderVoltage < 0) {
+        } else if (shoulderAngle.getDegrees() <= -getMaxShoulderAngle() && shoulderVoltage < 0) {
             shoulderMotorPercent = 0;
         } else {
             var voltage = MathUtil.clamp(shoulderVoltage, -MAX_SHOULDER_VOLTAGE, MAX_SHOULDER_VOLTAGE);
@@ -310,6 +311,7 @@ public class Arm {
             telescopeMotorPercent = telescopeMotorPercent * 0.5;
         }
 
+        
 
         NtHelper.setDouble("/robot/telescopeMotorPercent", telescopeMotorPercent);
         NtHelper.setDouble("/robot/shoulderMotorPercent", shoulderMotorPercent);
@@ -322,6 +324,14 @@ public class Arm {
         }
     }
 
+    public double getMaxShoulderAngle() {
+        if (telescopeDist > 2){
+            return 60;
+        } else {
+            return SHOULDER_MAXIMUM;
+        }
+
+    }
     public Rotation2d getShoulderSetpoint() {
         return shoulderSetpoint;
     }
