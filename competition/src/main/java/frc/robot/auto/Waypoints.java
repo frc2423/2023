@@ -61,17 +61,17 @@ public class Waypoints {
     public static final Map<Integer, Pose2d> aprilTagsScorePoses = // Poses Moses
             Map.of(
                     1,
-                    RED_GRID_2.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-6), 0) ,new Rotation2d(Math.PI))),
+                    RED_GRID_2.plus(new Transform2d(new Translation2d(Units.inchesToMeters(4), 0) ,new Rotation2d(Math.PI))),
                     2,
-                    RED_GRID_5.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-6), 0) ,new Rotation2d(Math.PI))),
+                    RED_GRID_5.plus(new Transform2d(new Translation2d(Units.inchesToMeters(4), 0) ,new Rotation2d(Math.PI))),
                     3,
-                    RED_GRID_8.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-6), 0) ,new Rotation2d(Math.PI))),
+                    RED_GRID_8.plus(new Transform2d(new Translation2d(Units.inchesToMeters(4), 0) ,new Rotation2d(Math.PI))),
                     6,
-                    BLUE_GRID_8.plus(new Transform2d(new Translation2d(Units.inchesToMeters(6), 0) ,new Rotation2d(Math.PI))),
+                    BLUE_GRID_8.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0) ,new Rotation2d(Math.PI))),
                     7,
-                    BLUE_GRID_5.plus(new Transform2d(new Translation2d(Units.inchesToMeters(6), 0) ,new Rotation2d(Math.PI))),
+                    BLUE_GRID_5.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0) ,new Rotation2d(Math.PI))),
                     8,
-                    BLUE_GRID_2.plus(new Transform2d(new Translation2d(Units.inchesToMeters(6), 0) ,new Rotation2d(Math.PI)))
+                    BLUE_GRID_2.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0) ,new Rotation2d(Math.PI)))
                     );
 
 }

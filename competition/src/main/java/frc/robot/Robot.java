@@ -157,7 +157,12 @@ public class Robot extends TimedRobot {
     }
     
     if (m_controller.getBackButtonPressed()) {
+      Robot.m_drive.setBrake(true);
       autoScoreCube.setState(autoScoreCube.getDefaultState());
+    }
+
+    if (m_controller.getBackButtonReleased()) {
+      Robot.m_drive.setBrake(false);
     }
 
     if (m_controller.getStartButton()) {
