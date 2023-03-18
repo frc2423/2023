@@ -6,25 +6,32 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class. Runs the motors with
  * arcade steering.
  */
 public class Robot extends TimedRobot {
-  private final PWMSparkMax m_leftMotor = new PWMSparkMax(0);
-  private final PWMSparkMax m_rightMotor = new PWMSparkMax(1);
-  private final DifferentialDrive m_robotDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
-  private final Joystick m_stick = new Joystick(0);
+  private final Spark m_left1Motor = new Spark(0);
+  private final Spark m_left2Motor = new Spark(1);
+  private final Spark m_right1Motor = new Spark(2);
+  private final Spark m_right2Motor = new Spark(3);
+  private final MotorControllerGroup leftMotors = new MotorControllerGroup(m_left1Motor, m_left2Motor);
+  private final MotorControllerGroup rightMotors = new MotorControllerGroup(m_right1Motor, m_right2Motor);
+  private final DifferentialDrive m_robotDrive = new DifferentialDrive(leftMotors, rightMotors);
+  private final XboxController m_controller = new XboxController(0);
 
   @Override
   public void robotInit() {
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
-    m_rightMotor.setInverted(true);
+    rightMotors.setInverted(true);
   }
 
   @Override
@@ -32,6 +39,6 @@ public class Robot extends TimedRobot {
     // Drive with arcade drive.
     // That means that the Y axis drives forward
     // and backward, and the X turns left and right.
-    m_robotDrive.arcadeDrive(-m_stick.getY(), -m_stick.getX());
+    m_robotDrive.arcadeDrive(-m_controller.getLeftY(), -m_controller.getLeftX());
   }
 }
