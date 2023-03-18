@@ -17,10 +17,10 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
  * arcade steering.
  */
 public class Robot extends TimedRobot {
-  private final Spark m_left1Motor = new Spark(0);
-  private final Spark m_left2Motor = new Spark(1);
-  private final Spark m_right1Motor = new Spark(2);
-  private final Spark m_right2Motor = new Spark(3);
+  private final Spark m_left1Motor = new Spark(3);
+  private final Spark m_left2Motor = new Spark(4);
+  private final Spark m_right1Motor = new Spark(1);
+  private final Spark m_right2Motor = new Spark(2);
   private final MotorControllerGroup leftMotors = new MotorControllerGroup(m_left1Motor, m_left2Motor);
   private final MotorControllerGroup rightMotors = new MotorControllerGroup(m_right1Motor, m_right2Motor);
   private final DifferentialDrive m_robotDrive = new DifferentialDrive(leftMotors, rightMotors);
@@ -31,7 +31,10 @@ public class Robot extends TimedRobot {
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
-    rightMotors.setInverted(true);
+    rightMotors.setInverted(false);
+    m_right2Motor.setInverted(false);
+    m_right1Motor.setInverted(true);
+
   }
 
   @Override
@@ -39,6 +42,6 @@ public class Robot extends TimedRobot {
     // Drive with arcade drive.
     // That means that the Y axis drives forward
     // and backward, and the X turns left and right.
-    m_robotDrive.arcadeDrive(-m_controller.getLeftY(), -m_controller.getLeftX());
+    m_robotDrive.arcadeDrive(-m_controller.getLeftY(), -m_controller.getRightX());
   }
 }
