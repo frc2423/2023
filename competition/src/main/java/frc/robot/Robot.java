@@ -86,8 +86,8 @@ public class Robot extends TimedRobot {
       var position = NtHelper.getDouble("/dashboard/armSetpoint/buttonselected", 5);
 
       boolean isCubes = NtHelper.getBoolean("/dashboard/arm/isCubes", false);
-      var midTeleSetPoint = (isCubes ? 0 : 10);
-      var midShoulderSetPoint = (isCubes ? 52 : 57);
+      var midTeleSetPoint = (isCubes ? 0 : 17);
+      var midShoulderSetPoint = 52;
       var highTeleSetPoint = (isCubes ? 20 : 30);
       
 
