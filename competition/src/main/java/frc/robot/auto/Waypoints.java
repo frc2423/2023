@@ -20,7 +20,7 @@ public class Waypoints {
 
     // positions
     public static final Pose2d BLUE_GRID_1 = new Pose2d(xBlueGrid, 0.48, blueGridRot); // (boring)
-    public static final Pose2d BLUE_GRID_2 = new Pose2d(xBlueGrid, 1.05, blueGridRot);
+    public static final Pose2d BLUE_GRID_2 = new Pose2d(xBlueGrid, 1.05, blueGridRot); // GP = game piece
     public static final Pose2d BLUE_GRID_3 = new Pose2d(xBlueGrid, 1.60, blueGridRot);
     public static final Pose2d BLUE_GRID_4 = new Pose2d(xBlueGrid, 2.20, blueGridRot);
     public static final Pose2d BLUE_GRID_5 = new Pose2d(xBlueGrid, 2.75, blueGridRot);
