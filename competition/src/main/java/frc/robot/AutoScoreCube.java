@@ -39,7 +39,7 @@ public class AutoScoreCube extends StateMachine {
 
             if (isRed && (targetid == 1 || targetid == 2 || targetid == 3)) {
                 return true;
-            } else if (!isRed && (targetid == 4 || targetid == 5 || targetid == 6)) {
+            } else if (!isRed && (targetid == 8 || targetid == 7 || targetid == 6)) {
                 return true; // jejwfnewon
             }
         }
@@ -97,7 +97,7 @@ public class AutoScoreCube extends StateMachine {
         PathConstraints constraints = new PathConstraints(1.69, 1.69); //Nice^2
         List<PathPoint> waypoints = new ArrayList<>();
         Pose2d start = Robot.m_drive.getPose();
-        Pose2d end = start.plus(new Transform2d(new Translation2d(Units.inchesToMeters(7.69), 0) ,new Rotation2d(0)));//noice
+        Pose2d end = start.plus(new Transform2d(new Translation2d(Units.inchesToMeters(7.69), 0) ,new Rotation2d(0)));//noice //X = 7.69
        waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
        waypoints.add(new PathPoint(end.getTranslation(), new Rotation2d(0), end.getRotation()));
        Trajectory trajectory = PathPlanner.generatePath(constraints, false, waypoints);
