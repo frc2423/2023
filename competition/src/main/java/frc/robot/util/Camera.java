@@ -11,6 +11,10 @@ import frc.robot.constants.CameraConstants;
 public class Camera {
     private PhotonCamera camera;
 
+    public PhotonCamera returnCamera(){
+        return camera;
+    }
+
     public Camera(String name) {
         camera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
     }

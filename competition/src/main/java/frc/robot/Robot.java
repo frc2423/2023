@@ -4,20 +4,23 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.util.NtHelper;
 import frc.robot.auto.Auto;
-import edu.wpi.first.cameraserver.CameraServer;
+import frc.robot.util.Camera;
+import frc.robot.util.NtHelper;
+import frc.robot.util.stateMachine.StateMachine; 
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
@@ -32,7 +35,10 @@ public class Robot extends TimedRobot {
   public static Drivetrain m_drive = new Drivetrain();
   public static Trajectories trajectories = new Trajectories();
   public static final Field2d field = new Field2d();
+  public static final Camera m_camera= new Camera("driverCamera");
   private AutoAlign autoAlign = new AutoAlign();
+
+  private StateMachine autoScoreCube = new AutoScoreCube();
 
   public static Arm arm = new Arm();
 
@@ -40,6 +46,7 @@ public class Robot extends TimedRobot {
 
   @Override // is society
   public void robotInit() {
+    DataLogManager.start();
     NtHelper.setBoolean("/dashboard/arm/isCubes", true);
     NtHelper.setBoolean("/robot/arm/telescopeoveride", true); 
     m_drive.setBrake(false);
@@ -113,6 +120,7 @@ public class Robot extends TimedRobot {
       } else if (position == 7) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-57)));
         arm.telescopeToSetpoint(highTeleSetPoint);
+      
 
       }
     
@@ -141,18 +149,30 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-      final double kMaxSpeed = 3;
+    final double kMaxSpeed = 4;
+    
+    if (m_controller.getStartButtonReleased()) {
+      Robot.m_drive.setBrake(false);
+    }
+    
+    if (m_controller.getStartButtonPressed()) {
+      Robot.m_drive.setBrake(true);
+    }
+    
+    if (m_controller.getBackButtonPressed()) {
+      Robot.m_drive.setBrake(true);
+      autoScoreCube.setState(autoScoreCube.getDefaultState());
+    }
 
-      if (m_controller.getStartButtonReleased()) {
-        Robot.m_drive.setBrake(false);
-      }
+    if (m_controller.getBackButtonReleased()) {
+      Robot.m_drive.setBrake(false);
+    }
 
-      if (m_controller.getStartButtonPressed()) {
-        Robot.m_drive.setBrake(true);
-      }
-      
     if (m_controller.getStartButton()) {
       // autoAlign.autoRotate();
+
+    
+     
       
       SwerveModuleState brflSTATE = new SwerveModuleState(0,
                 Rotation2d.fromDegrees(0));
@@ -165,10 +185,13 @@ public class Robot extends TimedRobot {
         Robot.m_drive.m_backRight.setDesiredState(brflSTATE);
         
           
+    }else if (m_controller.getBackButton()){
+      autoScoreCube.run();
+      Robot.m_drive.addBestVisionMeasurement(m_camera);
     } else {
       boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
-      double maxSpeed = kMaxSpeed * (isSlowMode ? .495 : 1);
-      double maxRotation = Drivetrain.kMaxAngularSpeed * (isSlowMode ? .55 : 1.4);
+      double maxSpeed = (isSlowMode ? 1.5 : kMaxSpeed);
+      double maxRotation = (isSlowMode ? Math.PI : Drivetrain.kMaxAngularSpeed);
 
       double deadband = 0.2;
 
@@ -187,6 +210,14 @@ public class Robot extends TimedRobot {
       double rot = m_rotLimiter.calculate(rotInput) * maxRotation;
       
       m_drive.drive(xSpeed, ySpeed, rot, true);
+
+      if (m_controller.getYButton() || m_controller_right.getYButton()) {
+        arm.intakeBelt();
+      } else if (m_controller_right.getAButton()) {
+        arm.closeGripper();
+      } else {
+        arm.beltStop();
+      }
     }
 
 int buttonindex = -1;
@@ -236,13 +267,7 @@ int buttonindex = -1;
       arm.stopTelescopeMotor();
     }
 
-    if (m_controller.getYButton() || m_controller_right.getYButton()) {
-      arm.intakeBelt();
-    } else if (m_controller_right.getAButton()) {
-      arm.closeGripper();
-    } else {
-      arm.beltStop();
-    }
+  
 
     if (m_controller.getLeftBumperReleased()) { // TODO: revisit this
       arm.shoulderForward();
@@ -320,6 +345,7 @@ int buttonindex = -1;
     NtHelper.setDouble("/dashboard/robot/roll", m_drive.m_gyro.getRoll());
     NtHelper.setDouble("/dashboard/robot/pitch", m_drive.m_gyro.getPitch());
     NtHelper.setBoolean("/SmartDashboard/Field/flip", Alliance.Red.equals(DriverStation.getAlliance()));
+    NtHelper.setDouble("/dashboard/robot/velocity", Robot.m_drive.m_backLeft.getState().speedMetersPerSecond);
   }
 
 }
