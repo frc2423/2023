@@ -46,8 +46,11 @@ public class Robot extends TimedRobot {
 
   private Timer timer = new Timer();
 
+  private int prevPosition = 5;
+
   @Override // is society
   public void robotInit() {
+    prevPosition = 5;
     NtHelper.setBoolean("/dashboard/arm/isCubes", true);
     NtHelper.setBoolean("/robot/arm/telescopeoveride", true);
     m_drive.setBrake(false);
@@ -82,7 +85,7 @@ public class Robot extends TimedRobot {
 
   public void checkArmTimer() {
     if (timer.hasElapsed(1)) {
-      arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(5)));
+      arm.telescopeToSetpoint(0);
       timer.stop();
       timer.reset();
     }
@@ -108,33 +111,45 @@ public class Robot extends TimedRobot {
     var highTeleSetPoint = (isCubes ? 20 : 30);
 
     if (position == 5) {
-      timer.start();
-      //arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(5)));
-      arm.telescopeToSetpoint(0);
+      if(prevPosition == 2 || prevPosition == 8){
+        timer.start();
+      }
+      else{
+        arm.telescopeToSetpoint(0);
+      }
+      arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(5)));
     } else if (position == 2) {
       arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(midShoulderSetPoint)));
       arm.telescopeToSetpoint(midTeleSetPoint);
+      prevPosition = 2;
     } else if (position == 1) {
       arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(122))); // 122
       arm.telescopeToSetpoint(0);
+      prevPosition = 1;
     } else if (position == 9) {
       arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-122)));
       arm.telescopeToSetpoint(0);
+      prevPosition = 9;
     } else if (position == 8) {
       arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-midShoulderSetPoint)));
       arm.telescopeToSetpoint(midTeleSetPoint);
+      prevPosition = 8;
     } else if (position == 3) {
       arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57)));
       arm.telescopeToSetpoint(highTeleSetPoint);
+      prevPosition = 3;
     } else if (position == 7) {
       arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-57)));
       arm.telescopeToSetpoint(highTeleSetPoint);
+      prevPosition = 7;
     } else if (position == 4) {
       arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(82)));
       arm.telescopeToSetpoint(0);
+      prevPosition = 4;
     } else if (position == 6) {
       arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-82)));
       arm.telescopeToSetpoint(0);
+      prevPosition = 6;
     }
 
     }
