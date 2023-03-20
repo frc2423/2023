@@ -84,7 +84,7 @@ public class Trajectories {
     }
 
     public void follow_current_path() {
-        drivetrain.updateOdometry(Robot.m_camera);
+        // drivetrain.updateOdometry();
         var currTime = timer.get();
         var desiredState = next_path.sample(currTime);
         Robot.field.getObject("ghost/pose").setPose(desiredState.poseMeters);

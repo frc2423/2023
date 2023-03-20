@@ -27,8 +27,8 @@ import frc.robot.constants.CameraConstants;
 
 public class Drivetrain {
   // Constants
-  public static final double kMaxSpeed = 2.7; // 3 meters per second
-  public static final double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second
+  public static final double kMaxSpeed = 4; // 3 meters per second
+  public static final double kMaxAngularSpeed = 2 * (Math.PI); // 1/2 rotation per second
 
   // State from robot logic
 
@@ -129,22 +129,14 @@ public class Drivetrain {
         });
   }
 
-  public void updateOdometry(Camera m_Camera) {
-    updateOdometry();
-
+  public void addBestVisionMeasurement(Camera m_Camera) {
     var res = m_Camera.returnCamera().getLatestResult();
     var imageCaptureTime = res.getTimestampSeconds();
-
-    var targetlist = res.getTargets();
-    // for (int i = 0; i < targetlist.size(); i++) {
-    // var target = targetlist.get(i);
-    // addVisionMeasurement(target, imageCaptureTime);
-    // }
-
     if (res.hasTargets()) {
       addVisionMeasurement(res.getBestTarget(), imageCaptureTime);
     }
   }
+
 
   public void addVisionMeasurement(PhotonTrackedTarget target, double imageCaptureTime) {
 
@@ -211,7 +203,7 @@ public class Drivetrain {
   public void periodic() {
     telemetry();
     NtHelper.setDouble("/robot/angle", angle.getDegrees());
-    updateOdometry(Robot.m_camera);
+    updateOdometry();
     m_frontLeft.update();
     m_frontRight.update();
     m_backLeft.update();
