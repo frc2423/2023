@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -31,7 +32,7 @@ public class Trajectories {
     private Timer timer = new Timer();
 
     public Trajectories() {
-        
+        m_holonomicController.setTolerance(new Pose2d(0.02, 0.02, Rotation2d.fromDegrees(2.5)));
     }
 
     public void update_current_path() {
@@ -71,12 +72,19 @@ public class Trajectories {
         Robot.field.getObject("trajectory").setTrajectory(getTrajectory());
     }
 
+    public void setNewTrajectoryGroup(Trajectory jort) {
+        next_path = jort;
+        Robot.field.getObject("trajectory").setTrajectory(getTrajectory());
+        timer.reset();
+        timer.start();
+    }
+
     public Trajectory getTrajectory() {
         return next_path;
     }
 
     public void follow_current_path() {
-        drivetrain.updateOdometry();
+        drivetrain.updateOdometry(Robot.m_camera);
         var currTime = timer.get();
         var desiredState = next_path.sample(currTime);
         Robot.field.getObject("ghost/pose").setPose(desiredState.poseMeters);
@@ -85,20 +93,45 @@ public class Trajectories {
         ChassisSpeeds refChassisSpeeds = m_holonomicController.calculate(drivetrain.getPose(),
                 (PathPlannerState) desiredState);
 
-
         drivetrain.drive(refChassisSpeeds.vxMetersPerSecond, refChassisSpeeds.vyMetersPerSecond,
                 refChassisSpeeds.omegaRadiansPerSecond, false);
     }
 
     public Boolean isFinished() {
         var robotPosition = drivetrain.getPose().getTranslation();
-        var robotLastPos = next_path.sample(next_path.getTotalTimeSeconds()).poseMeters.getTranslation();
+        var robotLastPos =
+        next_path.sample(next_path.getTotalTimeSeconds()).poseMeters.getTranslation();
         var distFinal = robotLastPos.getDistance(robotPosition);
-        if (timer.get() > next_path.getTotalTimeSeconds() + 1.5 || distFinal < 0.1) {
-            return true;
+        if (timer.get() > next_path.getTotalTimeSeconds() + 1.5 || distFinal < 0.1
+        ) {
+        return true;
         } else {
-            return false;
+        return false;
         }
+        // // return false;
+        // // if (m_holonomicController.atReference()) {
+        // //     return true;
+        // // } else {
+        // //     return false;
+        // // }
     }
 
+    public Boolean isFinishedWithoutTime() {
+        var robotPosition = drivetrain.getPose().getTranslation();
+        var robotLastPos =
+        next_path.sample(next_path.getTotalTimeSeconds()).poseMeters.getTranslation();
+        var distFinal = robotLastPos.getDistance(robotPosition);
+        if (distFinal < 0.1)
+        {
+        return true;
+        } else {
+        return false;
+        }
+        // // return false;
+        // // if (m_holonomicController.atReference()) {
+        // //     return true;
+        // // } else {
+        // //     return false;
+        // // }
+    }
 }

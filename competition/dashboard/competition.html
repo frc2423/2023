@@ -7,7 +7,7 @@
     <frc-sendable-chooser
         source-key="/SmartDashboard/Auto choices"
         source-provider="NetworkTables"
-        style="transform: translate(93.3334px, 48.6667px);"
+        style="transform: translate(40px, 40px);"
         options="[]"
     ></frc-sendable-chooser>
 
@@ -17,17 +17,16 @@
         has-value=""
         has-label=""
         source-provider="NetworkTables"
-        style="transform: translate(60px, 258px); width: 164.667px; height: 77px;"
+        style="transform: translate(40px, 200px); width: 164.667px; height: 77px;"
         readonly=""
         source-key="/arm/shoulderAngle"
         min="NaN"
         max="NaN"
-        placeholder=""
     ><input
             slot="input"
             value="0"
             type="number"
-            id="vaadin-number-field-63"
+            id="vaadin-number-field-48"
             aria-labelledby="label-vaadin-number-field-88"
             aria-describedby=""
             min="NaN"
@@ -37,7 +36,7 @@
         ><label
             slot="label"
             id="label-vaadin-number-field-88"
-            for="vaadin-number-field-63"
+            for="vaadin-number-field-48"
         >Shoulder Angle</label>
         <div
             slot="error-message"
@@ -51,16 +50,15 @@
         has-value=""
         has-label=""
         source-provider="NetworkTables"
-        style="transform: translate(53.3334px, 359.667px); width: 177.333px; height: 77px;"
+        style="transform: translate(40px, 280px); width: 177.333px; height: 77px;"
         source-key="/arm/telescopeDistance"
         min="NaN"
         max="NaN"
-        placeholder=""
     ><input
             slot="input"
             value="0"
             type="number"
-            id="vaadin-number-field-64"
+            id="vaadin-number-field-49"
             aria-labelledby="label-vaadin-number-field-112"
             aria-describedby=""
             min="NaN"
@@ -69,7 +67,7 @@
         ><label
             slot="label"
             id="label-vaadin-number-field-112"
-            for="vaadin-number-field-64"
+            for="vaadin-number-field-49"
         >Telescope Distance</label>
         <div
             slot="error-message"
@@ -83,15 +81,16 @@
         has-value=""
         has-label=""
         source-provider="NetworkTables"
-        style="transform: translate(47.2px, 164.8px);"
+        style="transform: translate(40px, 120px);"
         source-key="/arm/beltMotor"
         min="NaN"
         max="NaN"
+        placeholder=""
     ><input
             slot="input"
             value="0"
             type="number"
-            id="vaadin-number-field-65"
+            id="vaadin-number-field-50"
             aria-labelledby="label-vaadin-number-field-14"
             aria-describedby=""
             min="NaN"
@@ -100,7 +99,7 @@
         ><label
             slot="label"
             id="label-vaadin-number-field-14"
-            for="vaadin-number-field-65"
+            for="vaadin-number-field-50"
         >Belt Motor</label>
         <div
             slot="error-message"
@@ -122,18 +121,55 @@
     ></kwarqs-arm-setpoints>
     <frc-toggle-button
         source-provider="NetworkTables"
-        style="transform: translate(960.4px, 218.8px); width: 150px; height: 54.525px;"
+        style="transform: translate(920px, 200px); width: 150px; height: 54.525px;"
         source-key="/robot/arm/telescopeoveride"
         label="Is Safe Mode"
     ></frc-toggle-button>
     <frc-toggle-switch
         source-provider="NetworkTables"
-        style="transform: translate(942px, 146.333px);"
+        style="transform: translate(920px, 160px); width: 61.6px; height: 32.075px;"
         source-key="/dashboard/arm/isCubes"
     ></frc-toggle-switch>
     <frc-label
         text="CUBES??????"
         source-provider="NetworkTables"
-        style="transform: translate(946px, 110.667px);"
+        style="transform: translate(918.4px, 136px);"
+    ></frc-label>
+    <vaadin-number-field
+        label="April Tag ID"
+        value="0"
+        has-value=""
+        has-label=""
+        source-provider="NetworkTables"
+        style="transform: translate(40px, 360px);"
+        source-key="/robot/drivetrain/APRIL_TAG_ID"
+        placeholder=""
+        min="NaN"
+        max="NaN"
+    ><input
+            slot="input"
+            value="0"
+            type="number"
+            id="vaadin-number-field-279"
+            aria-labelledby="label-vaadin-number-field-279"
+            aria-describedby=""
+            min="undefined"
+            max="undefined"
+            step="any"
+        ><label
+            slot="label"
+            id="label-vaadin-number-field-279"
+            for="vaadin-number-field-279"
+        >April Tag ID</label>
+        <div
+            slot="error-message"
+            id="error-message-vaadin-number-field-217"
+            hidden=""
+        ></div>
+    </vaadin-number-field>
+    <frc-label
+        text="Tag IDs are not reflected in networktables- fix at some point"
+        source-provider="NetworkTables"
+        style="transform: translate(11.6px, 442.4px);"
     ></frc-label>
 </dashboard-tab>
