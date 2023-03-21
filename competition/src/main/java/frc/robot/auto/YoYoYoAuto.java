@@ -28,7 +28,7 @@ public class YoYoYoAuto extends StateMachine {
     public void spit(StateContext ctx) {
         Robot.arm.outtakeBelt();
         if (ctx.getTime() > .5) {
-            setState("Moove");
+            setState("Move");
             Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
             Robot.arm.telescopeToSetpoint(0);
             Robot.arm.beltStop();
@@ -37,8 +37,8 @@ public class YoYoYoAuto extends StateMachine {
         }
     }
 
-    @State(name = "Moove")
-    public void moove(StateContext ctx) {
+    @State(name = "Move")
+    public void move(StateContext ctx) {
 
         Robot.trajectories.follow_current_path();
         Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(115)));

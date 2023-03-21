@@ -1,13 +1,14 @@
 package frc.robot.auto;
 
-import frc.robot.util.stateMachine.StateContext;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Robot;
+import frc.robot.constants.SetPoints;
 import frc.robot.util.stateMachine.State;
+import frc.robot.util.stateMachine.StateContext;
 import frc.robot.util.stateMachine.StateMachine;
 
-public class YoYoAuto extends StateMachine {
+public class YoYoAuto extends StateMachine { //(YoYoYes)
 
     public YoYoAuto() {
         super("Score");
@@ -16,10 +17,10 @@ public class YoYoAuto extends StateMachine {
 
     @State(name = "Score")
     public void taxiRun(StateContext ctx) {
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-115)));
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_ANGLE);
         Robot.arm.telescopeToSetpoint(0);
 
-        if (ctx.getTime() > 2) {
+        if (ctx.getTime() > 1) {
             setState("Spit");
         }
     }
@@ -27,8 +28,8 @@ public class YoYoAuto extends StateMachine {
     @State(name = "Spit")
     public void spit(StateContext ctx) {
         Robot.arm.outtakeBelt();
-        if (ctx.getTime() > 1) {
-            setState("Moove");
+        if (ctx.getTime() > .5) {
+            setState("Move");
             Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
             Robot.arm.telescopeToSetpoint(0);
             Robot.arm.beltStop();
@@ -37,11 +38,11 @@ public class YoYoAuto extends StateMachine {
         }
     }
 
-    @State(name = "Moove")
-    public void moove(StateContext ctx) {
+    @State(name = "Move")
+    public void move(StateContext ctx) {
 
         Robot.trajectories.follow_current_path();
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(115)));
+        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
         Robot.arm.telescopeToSetpoint(0);
         Robot.arm.intakeBelt();
         if (Robot.trajectories.isFinished()) {
@@ -64,45 +65,45 @@ public class YoYoAuto extends StateMachine {
          * move forward for 1/2 second
          * 
          */
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(115)));
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_FLOOR_ANGLE);
         Robot.arm.telescopeToSetpoint(0);
         Robot.arm.intakeBelt();
 
-        if (Robot.arm.getShoulderAngle().getDegrees() < 113 && Robot.arm.getShoulderAngle().getDegrees() > 107) {
-            Robot.m_drive.drive(0.1, 0, 0, false);
-            if (ctx.getTime() > 2) {
-                Robot.arm.beltStop();
-                Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
-                Robot.arm.telescopeToSetpoint(0);
-                setState("Yo2");
-               //  Robot.trajectories.setNewTrajectoryGroup("SecondYo", true);
-                Robot.trajectories.setNewTrajectoryGroup(Waypoints.BLUE_GP_1, Waypoints.BLUE_GRID_1, true);
-            }
-        } else {
-            Robot.m_drive.drive(0, 0, 0, false);
-
+        Robot.m_drive.drive(0.1, 0, 0, false);
+        if (ctx.getTime() > 2) {
+            //TODO(possibly): Add code to move forward at a low speed for a small amount of time
+            Robot.arm.beltStop();
+            Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
+            Robot.arm.telescopeToSetpoint(0);
+            setState("Yo2");
+            // Robot.trajectories.setNewTrajectoryGroup("SecondYo", true);
+            Robot.trajectories.setNewTrajectoryGroup(Waypoints.BLUE_GP_1, Waypoints.BLUE_GRID_2, true);
         }
+
     }
 
     @State(name = "Yo2")
     public void yo2(StateContext ctx) {
         // head the back
         Robot.trajectories.follow_current_path();
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-115)));
+        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
         Robot.arm.telescopeToSetpoint(0);
         if (Robot.trajectories.isFinished()) {
-            setState("TryScoreLow");
+            setState("TryScoreMid"); //originally TryScoreLow, now after a trajectory leading to the middle grid
         }
     }
 
-    @State(name = "TryScoreLow")
-    public void tryScoreLow(StateContext ctx) {
+    @State(name = "TryScoreMid")
+    public void tryScoreMid(StateContext ctx) {
         // try score low :P
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-115)));
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_ANGLE);
         Robot.arm.telescopeToSetpoint(0);
         Robot.m_drive.drive(0, 0, 0, false);
+        Robot.arm.outtakeBelt();
+
         if (ctx.getTime() > 1) {
-            Robot.arm.outtakeBelt();
+            Robot.arm.beltStop();
+            return;
         }
     }
 }
