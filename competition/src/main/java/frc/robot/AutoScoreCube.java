@@ -56,14 +56,15 @@ public class AutoScoreCube extends StateMachine {
             var res = m_Camera.returnCamera().getLatestResult();
             var bestTarget = res.getBestTarget();
             var isRed = Alliance.Red.equals(DriverStation.getAlliance());
-            var targetID = bestTarget.getFiducialId();
+            var targetID = m_Camera.getBestId(Robot.m_drive.getPose(), res.getTargets());
+            
             NtHelper.setDouble("/robot/drivetrain/APRIL_TAG_ID", targetID);
             PathConstraints constraints = new PathConstraints(1.69, 1.69); //Nice^2
             List<PathPoint> waypoints = new ArrayList<>();
 
             Pose2d start = Robot.m_drive.getPose();
             Pose2d end = Waypoints.aprilTagsScorePoses.get(targetID);
-
+            
             waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
             waypoints.add(new PathPoint(end.getTranslation(), end.getRotation(), end.getRotation()));
             Trajectory trajectory = PathPlanner.generatePath(constraints, false, waypoints);

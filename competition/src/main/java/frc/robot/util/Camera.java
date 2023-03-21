@@ -1,24 +1,47 @@
 package frc.robot.util;
 
+import java.util.List;
+
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.auto.Waypoints;
 import frc.robot.constants.CameraConstants;
 
 public class Camera {
+    
     private PhotonCamera camera;
 
     public PhotonCamera returnCamera(){
         return camera;
     }
-
+    
     public Camera(String name) {
         camera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
     }
+    public double getBestId(Pose2d RoboPose, List < PhotonTrackedTarget > targets) {
+        if (targets.size() > 1) {
+            double smallestdist = 1000000;
+            int bestid = 0;
+            for (int i = 0; i<targets.size(); i++) {
+                var target = targets.get(i);
+                var id = target.getFiducialId();
+                var pose = Waypoints.aprilTagsScorePoses.get(id);
+                var distance = PhotonUtils.getDistanceToPose(pose, RoboPose);
+                if (distance < smallestdist) {
+                    smallestdist = distance;
+                    bestid = id; 
+                }
 
+            }
+            return bestid;
+        }
+        return targets.get(0).getFiducialId();
+    }
     public double getTapeX() {
         // use the getYaw value
         // use a median filter to filter out bad values
