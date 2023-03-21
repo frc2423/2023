@@ -1,0 +1,50 @@
+{
+    "camera": "Microsoft® LifeCam HD-3000 (045e:0779)",
+    "platform": "Windows NT 10.0; Win64; x64",
+    "avg_reprojection_error": 0.15964292353391932,
+    "camera_matrix": {
+        "type_id": "opencv-matrix",
+        "rows": 3,
+        "cols": 3,
+        "dt": "d",
+        "data": [
+            941.9723403994066,
+            0,
+            398.54025819619864,
+            0,
+            942.9787782563471,
+            305.75003013362004,
+            0,
+            0,
+            1
+        ]
+    },
+    "distortion_coefficients": {
+        "type_id": "opencv-matrix",
+        "rows": 5,
+        "cols": 1,
+        "dt": "d",
+        "data": [
+            0.12117660228870875,
+            -0.9623234446599359,
+            0.001150777218828122,
+            -0.0006119545315907749,
+            1.9224884531418156
+        ]
+    },
+    "distortion_model": "rectilinear",
+    "img_size": {
+        "type_id": "opencv-matrix",
+        "rows": 2,
+        "cols": 1,
+        "dt": "d",
+        "data": [
+            800,
+            600
+        ]
+    },
+    "calibration_time": "Mon, 20 Mar 2023 23:45:31 GMT",
+    "caveats": [
+        "cropped"
+    ]
+}
