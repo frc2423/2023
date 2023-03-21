@@ -181,7 +181,13 @@ public class Drivetrain {
   }
 
   public Rotation2d getAngle() {
+    
     return angle;
+  }
+
+  public Rotation2d getOdometryAngle() {
+    
+    return getPose().getRotation();
   }
 
   /** Check the current robot pose. */

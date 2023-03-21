@@ -150,6 +150,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     final double kMaxSpeed = 4;
+
+    Robot.m_drive.addBestVisionMeasurement(m_camera);
+
     
     if (m_controller.getStartButtonReleased()) {
       Robot.m_drive.setBrake(false);
@@ -187,7 +190,6 @@ public class Robot extends TimedRobot {
           
     }else if (m_controller.getBackButton()){
       autoScoreCube.run();
-      Robot.m_drive.addBestVisionMeasurement(m_camera);
     } else {
       boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
       double maxSpeed = (isSlowMode ? 1.5 : kMaxSpeed);
