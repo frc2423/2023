@@ -9,6 +9,14 @@ import frc.robot.util.stateMachine.StateContext;
 import frc.robot.util.stateMachine.StateMachine;
 
 public class YoYoAuto extends StateMachine { //(YoYoYes)
+    /*Things to fix after testing robot irl:
+     * - the scoring for the cone should be extended to actually scor the cone -after fixing:
+     *  maybe put arm down a bit before outtaking because is launching cone
+     * - the intake should only be when aquiring
+     * - when scoring the cube it should outake once at the proper shoulder angle
+     * - meantioned later but: do we want to stop a bit earlier for first yo and go 
+     * slowly in akwire to actually intake stuff 
+     */
 
     public YoYoAuto() {
         super("Score");
@@ -18,7 +26,7 @@ public class YoYoAuto extends StateMachine { //(YoYoYes)
     @State(name = "Score")
     public void taxiRun(StateContext ctx) {
         Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_ANGLE);
-        Robot.arm.telescopeToSetpoint(0);
+        Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_BACK_MID_LENGTH);
 
         if (ctx.getTime() > 1) {
             setState("Spit");
