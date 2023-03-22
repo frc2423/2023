@@ -20,6 +20,7 @@ import frc.robot.util.NtHelper;
 
 import java.lang.annotation.Target;
 
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -128,6 +129,14 @@ public class Drivetrain {
             m_backRight.getPosition()
         });
   }
+
+  public void addVisionMeasurement(EstimatedRobotPose robotpose){
+    if (robotpose != null) {
+      // New pose from vision
+      var pose2d = robotpose.estimatedPose.toPose2d();
+      m_odometry.addVisionMeasurement(pose2d, robotpose.timestampSeconds);
+    }
+  };
 
   public void addBestVisionMeasurement(Camera m_Camera) {
     var res = m_Camera.returnCamera().getLatestResult();
