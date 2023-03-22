@@ -15,7 +15,7 @@ public class Waypoints {
     private static final Rotation2d blueGridRot = new Rotation2d(0);
     private static final Rotation2d redGridRot = Rotation2d.fromDegrees(180);
 
-    private static final double xBlueGP = 6.3;
+    private static final double xBlueGP = 6.7;
     private static final double xRedGP = 10.46;
 
     // positions
@@ -29,7 +29,7 @@ public class Waypoints {
     public static final Pose2d BLUE_GRID_8 = new Pose2d(xBlueGrid, 4.40, blueGridRot);
     public static final Pose2d BLUE_GRID_9 = new Pose2d(xBlueGrid, 4.97, blueGridRot);
 
-    public static final Pose2d BLUE_GP_1 = new Pose2d(xBlueGP, 0.93, new Rotation2d());
+    public static final Pose2d BLUE_GP_1 = new Pose2d(xBlueGP, .93, new Rotation2d());
     public static final Pose2d BLUE_GP_2 = new Pose2d(xBlueGP, 1.74, Rotation2d.fromDegrees(28.64));
     public static final Pose2d BLUE_GP_3 = new Pose2d(xBlueGP, 3.93, Rotation2d.fromDegrees(-29.29));
     public static final Pose2d BLUE_GP_4 = new Pose2d(xBlueGP, 4.62, new Rotation2d());
@@ -47,7 +47,7 @@ public class Waypoints {
     public static final Pose2d RED_GRID_8 = new Pose2d(xRedGrid, 4.40, redGridRot);
     public static final Pose2d RED_GRID_9 = new Pose2d(xRedGrid, 4.97, redGridRot);
 
-    public static final Pose2d RED_GP_1 = new Pose2d(xRedGP, 0.93, Rotation2d.fromDegrees(180));
+    public static final Pose2d RED_GP_1 = new Pose2d(xRedGP, 0.96, Rotation2d.fromDegrees(180));
     public static final Pose2d RED_GP_2 = new Pose2d(xRedGP, 1.74, Rotation2d.fromDegrees(155.11));
     public static final Pose2d RED_GP_3 = new Pose2d(xRedGP, 3.93, Rotation2d.fromDegrees(-163.74));
     public static final Pose2d RED_GP_4 = new Pose2d(xRedGP, 4.62, Rotation2d.fromDegrees(180));
