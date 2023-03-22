@@ -33,7 +33,7 @@ public class YoYoYoAuto extends StateMachine {
     @State(name = "Score")
     public void taxiRun(StateContext ctx) {
         Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_CONE_ANGLE);
-        Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_BACK_MID_CONE_LENGTH);
+        Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_MID_CONE_LENGTH);
 
         if (ctx.getTime() > 1) {
             setState("Spit");

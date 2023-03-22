@@ -102,32 +102,33 @@ public class Robot extends TimedRobot {
       var position = NtHelper.getDouble("/dashboard/armSetpoint/buttonselected", 5);
 
       boolean isCubes = NtHelper.getBoolean("/dashboard/arm/isCubes", false);
-      var midTeleSetPoint = (isCubes ? 0 : 17);
-      var midShoulderSetPoint = 52;
-      var highTeleSetPoint = (isCubes ? 20 : 30);
+      var midTeleSetPoint = (isCubes ? SetPoints.TELESCOPE_MID_CUBE_LENGTH : SetPoints.TELESCOPE_MID_CONE_LENGTH);
+      var midFrontShoulderSetPoint = (isCubes ? SetPoints.SHOULDER_FRONT_MID_CUBE_ANGLE : SetPoints.SHOULDER_FRONT_MID_CONE_ANGLE);
+      var midBackShoulderSetPoint = (isCubes ? SetPoints.SHOULDER_BACK_MID_CUBE_ANGLE : SetPoints.SHOULDER_BACK_MID_CONE_ANGLE);
+      var highTeleSetPoint = (isCubes ? SetPoints.TELESCOPE_HIGH_CUBE_LENGTH : SetPoints.TELESCOPE_HIGH_CONE_LENGTH);
+      var highFrontShoulderSetPoint = (isCubes ? SetPoints.SHOULDER_FRONT_HIGH_CUBE_ANGLE : SetPoints.SHOULDER_FRONT_HIGH_CONE_ANGLE);
+      var highBackShoulderSetPoint = (isCubes ? SetPoints.SHOULDER_BACK_HIGH_CUBE_ANGLE : SetPoints.SHOULDER_BACK_HIGH_CONE_ANGLE);
       
-
-      
-      if (position == 5) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(5)));
+      if (position == SetPoints.ARM.UP) { //5
+        arm.setShoulderSetpoint(SetPoints.SHOULDER_UP_ANGLE);
         arm.telescopeToSetpoint(0);
-      } else if (position == 2) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(midShoulderSetPoint)));
+      } else if (position == SetPoints.ARM.FRONT_MID) { //2
+        arm.setShoulderSetpoint(midFrontShoulderSetPoint);
         arm.telescopeToSetpoint(midTeleSetPoint);
-      } else if (position == 1) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(122))); // 122
+      } else if (position == SetPoints.ARM.FRONT_FLOOR) { //1
+        arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_FLOOR_ANGLE); // 122
         arm.telescopeToSetpoint(0);
-      } else if (position == 9) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-122)));
+      } else if (position == SetPoints.ARM.BACK_FLOOR) { //9
+        arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_FLOOR_ANGLE);
         arm.telescopeToSetpoint(0);
-      } else if (position == 8) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-midShoulderSetPoint)));
+      } else if (position == SetPoints.ARM.BACK_MID) { //8
+        arm.setShoulderSetpoint(midBackShoulderSetPoint);
         arm.telescopeToSetpoint(midTeleSetPoint);
-      } else if (position == 3) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(57)));
+      } else if (position == SetPoints.ARM.FRONT_HIGH) { //3
+        arm.setShoulderSetpoint(highFrontShoulderSetPoint);
         arm.telescopeToSetpoint(highTeleSetPoint);
-      } else if (position == 7) {
-        arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-57)));
+      } else if (position == SetPoints.ARM.BACK_HIGH) { //7
+        arm.setShoulderSetpoint(highBackShoulderSetPoint);
         arm.telescopeToSetpoint(highTeleSetPoint);
       } else if (position == 20) {
         arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_HP_ANLGE);
