@@ -98,11 +98,17 @@ public class Trajectories {
     }
 
     public Boolean isFinished() {
-        var robotPosition = drivetrain.getPose().getTranslation();
-        var robotLastPos =
-        next_path.sample(next_path.getTotalTimeSeconds()).poseMeters.getTranslation();
+        var robotPose =  drivetrain.getPose();
+        var robotAngle = robotPose.getRotation();
+        var robotPosition = robotPose.getTranslation();
+        var  robotLastPose = next_path.sample(next_path.getTotalTimeSeconds()).poseMeters;
+        var robotLastPos = robotLastPose.getTranslation();
+        var robotLastAngle = robotLastPose.getRotation();
         var distFinal = robotLastPos.getDistance(robotPosition);
-        if (timer.get() > next_path.getTotalTimeSeconds() + 1.5 || distFinal < 0.1
+        var angleDif = robotLastAngle.minus(robotAngle);
+
+        if (timer.get() > next_path.getTotalTimeSeconds() + 1.5 || distFinal < 0.1 && Math.abs(angleDif.getDegrees())< 5
+
         ) {
         return true;
         } else {
@@ -117,12 +123,18 @@ public class Trajectories {
     }
 
     public Boolean isFinishedWithoutTime() {
-        var robotPosition = drivetrain.getPose().getTranslation();
-        var robotLastPos =
-        next_path.sample(next_path.getTotalTimeSeconds()).poseMeters.getTranslation();
+        var robotPose =  drivetrain.getPose();
+        var robotAngle = robotPose.getRotation();
+        var robotPosition = robotPose.getTranslation();
+        var  robotLastPose = next_path.sample(next_path.getTotalTimeSeconds()).poseMeters;
+        var robotLastPos = robotLastPose.getTranslation();
+        var robotLastAngle = robotLastPose.getRotation();
         var distFinal = robotLastPos.getDistance(robotPosition);
-        if (distFinal < 0.1)
-        {
+        var angleDif = robotLastAngle.minus(robotAngle);
+
+        if ( distFinal < 0.1 && Math.abs(angleDif.getDegrees())< 5
+
+        ) {
         return true;
         } else {
         return false;
