@@ -13,12 +13,12 @@ public class SetPoints {
     // public final static Rotation2d SHOULDER_FRONT_FLOOR_ANGLE = new Rotation2d(Units.degreesToRadians(115));
     // public final static Rotation2d SHOULDER_BACK_FLOOR_ANGLE = new Rotation2d(Units.degreesToRadians(-115));
 
-    public final static Rotation2d SHOULDER_FRONT_MID_CONE_ANGLE = new Rotation2d(Units.degreesToRadians(53));
-    public final static Rotation2d SHOULDER_BACK_MID_CONE_ANGLE = new Rotation2d(Units.degreesToRadians(-53));
+    public final static Rotation2d SHOULDER_FRONT_MID_CONE_ANGLE = new Rotation2d(Units.degreesToRadians(52.6));
+    public final static Rotation2d SHOULDER_BACK_MID_CONE_ANGLE = new Rotation2d(Units.degreesToRadians(-52.6));
     public final static Rotation2d SHOULDER_FRONT_MID_CUBE_ANGLE = new Rotation2d(Units.degreesToRadians(57));
     public final static Rotation2d SHOULDER_BACK_MID_CUBE_ANGLE = new Rotation2d(Units.degreesToRadians(-57));
-    public final static Rotation2d SHOULDER_FRONT_HIGH_CONE_ANGLE = new Rotation2d(Units.degreesToRadians(45));
-    public final static Rotation2d SHOULDER_BACK_HIGH_CONE_ANGLE = new Rotation2d(Units.degreesToRadians(-45));
+    public final static Rotation2d SHOULDER_FRONT_HIGH_CONE_ANGLE = new Rotation2d(Units.degreesToRadians(44.3));
+    public final static Rotation2d SHOULDER_BACK_HIGH_CONE_ANGLE = new Rotation2d(Units.degreesToRadians(-44.3));
     public final static Rotation2d SHOULDER_FRONT_HIGH_CUBE_ANGLE = new Rotation2d(Units.degreesToRadians(58));
     public final static Rotation2d SHOULDER_BACK_HIGH_CUBE_ANGLE = new Rotation2d(Units.degreesToRadians(-58));
     public final static Rotation2d SHOULDER_FRONT_DUNK_ANGLE = new Rotation2d(Units.degreesToRadians(67));
@@ -36,10 +36,10 @@ public class SetPoints {
     // public final static double TELESCOPE_BACK_FLOOR_LENGTH = 0;
 
     public final static double TELESCOPE_UP_LENGTH = 0;
-    public final static double TELESCOPE_MID_CONE_LENGTH = 21;
-    public final static double TELESCOPE_MID_CUBE_LENGTH = 20;
+    public final static double TELESCOPE_MID_CONE_LENGTH = 20;
+    public final static double TELESCOPE_MID_CUBE_LENGTH = 0;
     public final static double TELESCOPE_HIGH_CONE_LENGTH = 30;
-    public final static double TELESCOPE_HIGH_CUBE_LENGTH = 24;
+    public final static double TELESCOPE_HIGH_CUBE_LENGTH = 23;
 
 
 
