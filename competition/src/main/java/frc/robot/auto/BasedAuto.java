@@ -4,6 +4,7 @@ import frc.robot.util.stateMachine.StateContext;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Robot;
+import frc.robot.constants.SetPoints;
 import frc.robot.util.stateMachine.State;
 import frc.robot.util.stateMachine.StateMachine;
 public class BasedAuto extends StateMachine {
@@ -16,8 +17,8 @@ public class BasedAuto extends StateMachine {
     @State(name = "Score")
     public void taxiRun(StateContext ctx){
         var angle = -115; //-67;
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(angle)));
-        Robot.arm.telescopeToSetpoint(0);
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_ANGLE);
+        Robot.arm.telescopeToSetpoint(0); // CUBE
 
         if (ctx.getTime() > 2){
             setState("Spit");

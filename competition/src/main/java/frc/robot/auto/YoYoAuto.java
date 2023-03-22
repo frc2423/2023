@@ -5,11 +5,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import frc.robot.Robot;
 import frc.robot.constants.SetPoints;
 import frc.robot.util.stateMachine.State;
@@ -56,8 +51,8 @@ public class YoYoAuto extends StateMachine { //(YoYoYes)
     @State(name = "Move")
     public void move(StateContext ctx) {
         Robot.trajectories.follow_current_path();
-        // Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
-        // Robot.arm.telescopeToSetpoint(0);
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_MID_ANGLE);
+        Robot.arm.telescopeToSetpoint(0);
         if (Robot.trajectories.isFinished()) {
             setState("Stahp");
         }
@@ -82,7 +77,7 @@ public class YoYoAuto extends StateMachine { //(YoYoYes)
         Robot.arm.telescopeToSetpoint(0);
         Robot.arm.intakeBelt();
 
-        Robot.m_drive.drive(0.1, 0, 0, false); //edit this?
+        Robot.m_drive.drive(0.25, 0, 0, false); //edit this?
         if (ctx.getTime() > 2) {//adjust time here too?
             Robot.arm.beltStop();
             Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
@@ -98,8 +93,8 @@ public class YoYoAuto extends StateMachine { //(YoYoYes)
     public void yo2(StateContext ctx) {
         // head the back
         Robot.trajectories.follow_current_path();
-        // Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
-        // Robot.arm.telescopeToSetpoint(0);
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_ANGLE);
+        Robot.arm.telescopeToSetpoint(0);
         if (Robot.trajectories.isFinished()) {
             setState("TryScoreMid"); //originally TryScoreLow, now after a trajectory leading to the middle grid
         }
@@ -112,7 +107,7 @@ public class YoYoAuto extends StateMachine { //(YoYoYes)
         Robot.arm.telescopeToSetpoint(0);
         Robot.m_drive.drive(0, 0, 0, false);
 
-        if (ctx.getTime() > 1) { //time?
+        if (ctx.getTime() > .2) { //time?
            setState("TryScoreMidPart2");
         }
     }

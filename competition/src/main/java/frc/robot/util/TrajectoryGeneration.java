@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class TrajectoryGeneration {
-    static PathConstraints constraints = new PathConstraints(1, 1);
+    static PathConstraints constraints = new PathConstraints(2, 2);
 
     public static Trajectory generate(Pose2d start, Pose2d end, boolean isDrivingBackwards) {
         List<PathPoint> waypoints = new ArrayList<>();
