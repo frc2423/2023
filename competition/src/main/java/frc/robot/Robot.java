@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.auto.Auto;
+import frc.robot.constants.SetPoints;
 import frc.robot.util.Camera;
 import frc.robot.util.NtHelper;
 import frc.robot.util.PhotonRunnable;
@@ -128,8 +129,12 @@ public class Robot extends TimedRobot {
       } else if (position == 7) {
         arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-57)));
         arm.telescopeToSetpoint(highTeleSetPoint);
-      
-
+      } else if (position == 20) {
+        arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_HP_ANLGE);
+        arm.telescopeToSetpoint(SetPoints.TELESCOPE_UP_LENGTH);
+      } else if (position == 21) {
+        arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_HP_ANLGE);
+        arm.telescopeToSetpoint(SetPoints.TELESCOPE_UP_LENGTH);
       }
     
   }
@@ -180,6 +185,15 @@ public class Robot extends TimedRobot {
 
     if (m_controller.getStartButton()) {
       // autoAlign.autoRotate();
+
+    if (m_controller_right.getStartButton()) {
+      if (Robot.arm.getShoulderAngle().getDegrees() < 0) {
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_DUNK_ANGLE);
+      } else {
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_DUNK_ANGLE);
+      }
+
+    }
 
     
      
@@ -246,6 +260,13 @@ int buttonindex = -1;
         buttonindex = 1;
       } else {
         buttonindex = 2;
+      }
+      break;
+      case 180:
+      if(shiftUp) {
+        buttonindex = 20; //back hp
+      } else if(shiftDown) {
+        buttonindex = 21; //front hp
       }
       break;
       case 270:

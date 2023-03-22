@@ -32,8 +32,8 @@ public class YoYoYoAuto extends StateMachine {
 
     @State(name = "Score")
     public void taxiRun(StateContext ctx) {
-        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_ANGLE);
-        Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_BACK_MID_LENGTH);
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_CONE_ANGLE);
+        Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_BACK_MID_CONE_LENGTH);
 
         if (ctx.getTime() > 1) {
             setState("Spit");
@@ -98,7 +98,7 @@ public class YoYoYoAuto extends StateMachine {
     public void yo2(StateContext ctx) {
         // head the back
         Robot.trajectories.follow_current_path();
-        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_ANGLE);
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_CUBE_ANGLE);
         Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_UP_LENGTH);
         if (Robot.trajectories.isFinished()) {
             setState("TryScoreLow");
@@ -108,7 +108,7 @@ public class YoYoYoAuto extends StateMachine {
     @State(name = "TryScoreLow")
     public void tryScoreLow(StateContext ctx) {
         // try score mid :P
-        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_ANGLE);
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_CUBE_ANGLE);
         Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_UP_LENGTH);
         Robot.m_drive.drive(0, 0, 0, false);
         Robot.arm.outtakeBelt();

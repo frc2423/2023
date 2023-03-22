@@ -23,7 +23,7 @@ public class GyroAuto extends StateMachine {
     @State(name = "Score")
     public void taxiRun(StateContext ctx) {
 
-        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_ANGLE);
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_CUBE_ANGLE);
         Robot.arm.telescopeToSetpoint(0); //CUBE (if uses cube this fine)
 
         if (ctx.getTime() > 1.5) {

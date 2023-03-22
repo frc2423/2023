@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Robot;
 import frc.robot.constants.SetPoints;
+import frc.robot.util.NtHelper;
 import frc.robot.util.stateMachine.State;
 import frc.robot.util.stateMachine.StateContext;
 import frc.robot.util.stateMachine.StateMachine;
@@ -17,18 +18,28 @@ public class YoYoAuto extends StateMachine { //(YoYoYes)
     private Pose2d gridEndPose;
     private Pose2d gpPose;
 
+public boolean isWallSide = true;
+
     public YoYoAuto() {
         super("Score");
         Robot.arm.beltStop();
-        gridPose =  Waypoints.BLUE_GRID_1;
-        gridEndPose = Waypoints.BLUE_GRID_2;
-        gpPose = Waypoints.BLUE_GP_1.transformBy(new Transform2d(new Translation2d(-.3,0), new Rotation2d()));
+            gridPose =  Waypoints.BLUE_GRID_1;
+            gridEndPose = Waypoints.BLUE_GRID_2;
+            gpPose = Waypoints.BLUE_GP_1.transformBy(new Transform2d(new Translation2d(-.3,0), new Rotation2d()));
     }
 
     @State(name = "Score")
     public void taxiRun(StateContext ctx) {
-        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_ANGLE);
-        Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_BACK_MID_LENGTH);
+        if (ctx.isInit()) {
+        isWallSide = NtHelper.getBoolean("/auto/isWallSide/", true);
+        if (!isWallSide) {
+            gridPose =  Waypoints.BLUE_GRID_9;
+            gridEndPose = Waypoints.BLUE_GRID_8;
+            gpPose = Waypoints.BLUE_GP_4.transformBy(new Transform2d(new Translation2d(-.3,0), new Rotation2d()));
+        }
+        }
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_CONE_ANGLE);
+        Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_BACK_MID_CONE_LENGTH);
 
         if (ctx.getTime() > 1) { //probably want to reduce the time
             setState("Spit");
@@ -51,7 +62,7 @@ public class YoYoAuto extends StateMachine { //(YoYoYes)
     public void move(StateContext ctx) {
         Robot.trajectories.follow_current_path();
         if (ctx.getTime() > .5) {
-            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_MID_ANGLE);
+            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_MID_CUBE_ANGLE);
             Robot.arm.telescopeToSetpoint(0);
         }
         if (Robot.trajectories.isFinished()) {
@@ -94,7 +105,7 @@ public class YoYoAuto extends StateMachine { //(YoYoYes)
     public void yo2(StateContext ctx) {
         // head the back
         Robot.trajectories.follow_current_path();
-        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_ANGLE);
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_CUBE_ANGLE);
         Robot.arm.telescopeToSetpoint(0);
         if (Robot.trajectories.isFinished()) {
             setState("TryScoreMid"); //originally TryScoreLow, now after a trajectory leading to the middle grid
@@ -104,7 +115,7 @@ public class YoYoAuto extends StateMachine { //(YoYoYes)
     @State(name = "TryScoreMid")
     public void tryScoreMid(StateContext ctx) {
         // try score mid :P
-        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_ANGLE);
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_CUBE_ANGLE);
         Robot.arm.telescopeToSetpoint(0);
         Robot.m_drive.drive(0, 0, 0, false);
 

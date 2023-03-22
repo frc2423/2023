@@ -17,7 +17,7 @@ public class BasedAuto extends StateMachine {
     @State(name = "Score")
     public void taxiRun(StateContext ctx){
         var angle = -115; //-67;
-        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_ANGLE);
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_CONE_ANGLE);
         Robot.arm.telescopeToSetpoint(0); // CUBE
 
         if (ctx.getTime() > 2){
