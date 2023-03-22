@@ -185,16 +185,7 @@ public class Robot extends TimedRobot {
     }
 
     if (m_controller.getStartButton()) {
-      // autoAlign.autoRotate();
-
-    if (m_controller_right.getStartButton()) {
-      if (Robot.arm.getShoulderAngle().getDegrees() < 0) {
-        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_DUNK_ANGLE);
-      } else {
-        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_DUNK_ANGLE);
-      }
-
-    }
+      // autoAlign.autoRotate()
 
     
      
@@ -243,6 +234,15 @@ public class Robot extends TimedRobot {
       } else {
         arm.beltStop();
       }
+    }
+
+    if (m_controller_right.getStartButton()) {
+      if (Robot.arm.getShoulderAngle().getDegrees() < 0) {
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_DUNK_ANGLE);
+      } else {
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_DUNK_ANGLE);
+      }
+
     }
 
 int buttonindex = -1;

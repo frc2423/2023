@@ -31,20 +31,29 @@ public boolean isWallSide = true;
     @State(name = "Score")
     public void taxiRun(StateContext ctx) {
         if (ctx.isInit()) {
-        isWallSide = NtHelper.getBoolean("/auto/isWallSide/", true);
+      //  isWallSide = NtHelper.getBoolean("/auto/isWallSide/", false);
         if (!isWallSide) {
             gridPose =  Waypoints.BLUE_GRID_9;
             gridEndPose = Waypoints.BLUE_GRID_8;
-            gpPose = Waypoints.BLUE_GP_4.transformBy(new Transform2d(new Translation2d(-.3,0), new Rotation2d()));
+            gpPose = Waypoints.BLUE_GP_4;//.transformBy(new Transform2d(new Translation2d(-.3,0), new Rotation2d()));
         }
         }
         Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_CONE_ANGLE);
         Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_MID_CONE_LENGTH);
 
         if (ctx.getTime() > 1) { //probably want to reduce the time
-            setState("Spit");
+            setState("dunk");
         }
     }
+    @State(name = "dunk")
+    public void dunk(StateContext ctx) {
+        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-71)));
+        if( ctx.getTime() > 1) { //noice
+            setState("Spit");
+        }
+
+    }
+
 
     @State(name = "Spit")
     public void spit(StateContext ctx) {
@@ -62,7 +71,7 @@ public boolean isWallSide = true;
     public void move(StateContext ctx) {
         Robot.trajectories.follow_current_path();
         if (ctx.getTime() > .5) {
-            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_MID_CUBE_ANGLE);
+            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_UP_ANGLE);
             Robot.arm.telescopeToSetpoint(0);
         }
         if (Robot.trajectories.isFinished()) {
