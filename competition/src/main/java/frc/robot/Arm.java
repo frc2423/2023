@@ -30,7 +30,7 @@ public class Arm {
     private NeoMotor telescopeMotor;
     private NeoMotor shoulderMotor;
     private PWMSparkMax beltoMotor;
-    private ProfiledPIDController telescopePIDController = new ProfiledPIDController(0.8, 0, 0, new TrapezoidProfile.Constraints(60, 80));
+    private ProfiledPIDController telescopePIDController = new ProfiledPIDController(0.7, 0, 0, new TrapezoidProfile.Constraints(60, 80));
     private static final int TELESCOPE_MOTOR_CAN_BUS_PORT = 9;
     public static final double DISTANCE = 0;
     private double SHOULDER_MAXIMUM = 125; // calculate later :)
