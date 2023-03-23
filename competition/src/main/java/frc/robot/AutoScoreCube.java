@@ -59,7 +59,7 @@ public class AutoScoreCube extends StateMachine {
         // Set telescope and shoulder to position
         if (position.equals("high")) {
             Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_HIGH_CUBE_ANGLE);
-            Robot.arm.telescopeToSetpoint(0);
+            Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_HIGH_CUBE_LENGTH);
         }
 
         if (position.equals("mid")) {
@@ -116,7 +116,7 @@ public class AutoScoreCube extends StateMachine {
             setState("scahr");
         }
         else {
-            setState("moofawad");
+            setState("mooofawad");
         }
     }
     
