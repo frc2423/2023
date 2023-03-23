@@ -17,6 +17,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.auto.Waypoints;
+import frc.robot.constants.SetPoints;
 import frc.robot.util.NtHelper;
 import frc.robot.util.stateMachine.State;
 import frc.robot.util.stateMachine.StateContext;
@@ -26,6 +27,7 @@ public class AutoScoreCube extends StateMachine {
     // dw jacob we made it specific just fpr you
     public AutoScoreCube() {
         super("createPath"); // so rad
+        NtHelper.setString("/dashboard/autoScorePosition", "mid");
     }
 
     public boolean scoringTag() {
@@ -47,6 +49,28 @@ public class AutoScoreCube extends StateMachine {
         return false;
 
         // don't want to go to the wrong april tag now do we
+    }
+
+    public void setScorePosition() {
+        // get value from networktables
+        // value is "high", "mid", or "low"
+        var position = NtHelper.getString("/dashboard/autoScorePosition", "mid");
+
+        // Set telescope and shoulder to position
+        if (position.equals("high")) {
+            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_HIGH_CUBE_ANGLE);
+            Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_HIGH_CUBE_LENGTH);
+        }
+
+        if (position.equals("mid")) {
+            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_MID_CUBE_ANGLE);
+            Robot.arm.telescopeToSetpoint(0);
+        }
+
+        if (position.equals("low")) {
+            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_FLOOR_ANGLE);
+            Robot.arm.telescopeToSetpoint(0);
+        }
     }
 
     @State(name = "createPath")
@@ -87,10 +111,15 @@ public class AutoScoreCube extends StateMachine {
     @State(name = "stahp")
     public void stahp(StateContext ctx) {
         Robot.m_drive.drive(0, 0, 0, false);
-        setState("mooofawad");
         // when stop :P
+        if (NtHelper.getString("/dashboard/autoScorePosition", "mid").equals ("low")) {
+            setState("scahr");
+        }
+        else {
+            setState("mooofawad");
+        }
     }
-
+    
     @State(name = "mooofawad")
     public void mooofawad(StateContext ctx) {
         // Robot.m_drive.drive(0, 0.2, 0, false);
@@ -127,8 +156,7 @@ public class AutoScoreCube extends StateMachine {
     @State(name = "scahr")
     public void scahr(StateContext ctx) {
         Robot.m_drive.drive(0, 0, 0, false);
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(52)));
-        Robot.arm.telescopeToSetpoint(0);
+        setScorePosition();
         if (ctx.getTime() > 0.69){  //noice
         Robot.arm.outtakeBelt();
         }
