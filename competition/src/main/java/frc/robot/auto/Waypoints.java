@@ -65,7 +65,7 @@ public class Waypoints {
                     2,
                     RED_GRID_5.plus(new Transform2d(new Translation2d(Units.inchesToMeters(4), 0) ,new Rotation2d(Math.PI))),
                     3,
-                    RED_GRID_8.plus(new Transform2d(new Translation2d(Units.inchesToMeters(4), 0) ,new Rotation2d(Math.PI))),
+                    RED_GRID_9.plus(new Transform2d(new Translation2d(Units.inchesToMeters(4), 0) ,new Rotation2d(Math.PI))), //this is changed for cones 
                     6,
                     BLUE_GRID_8.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0) ,new Rotation2d(Math.PI))),
                     7,

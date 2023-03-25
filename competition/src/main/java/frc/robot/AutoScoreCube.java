@@ -56,21 +56,39 @@ public class AutoScoreCube extends StateMachine {
         // get value from networktables
         // value is "high", "mid", or "low"
         var position = NtHelper.getString("/dashboard/autoScorePosition", "mid");
+        boolean isCubes = NtHelper.getBoolean("/dashboard/arm/isCubes", false);
+        if  (isCubes) {
 
-        // Set telescope and shoulder to position
-        if (position.equals("high")) {
-            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_HIGH_CUBE_ANGLE);
-            Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_HIGH_CUBE_LENGTH);
-        }
-
-        if (position.equals("mid")) {
-            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_MID_CUBE_ANGLE);
-            Robot.arm.telescopeToSetpoint(0);
-        }
-
-        if (position.equals("low")) {
-            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_FLOOR_ANGLE);
-            Robot.arm.telescopeToSetpoint(0);
+            // Set telescope and shoulder to position
+            if (position.equals("high")) {
+                Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_HIGH_CUBE_ANGLE);
+                Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_HIGH_CUBE_LENGTH);
+            }
+    
+            if (position.equals("mid")) {
+                Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_MID_CUBE_ANGLE);
+                Robot.arm.telescopeToSetpoint(0);
+            }
+    
+            if (position.equals("low")) {
+                Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_FLOOR_ANGLE);
+                Robot.arm.telescopeToSetpoint(0);
+            }
+        } else {
+            if (position.equals("high")) {
+                Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_HIGH_CONE_ANGLE);
+                Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_HIGH_CONE_LENGTH);
+            }
+    
+            if (position.equals("mid")) {
+                Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_MID_CONE_ANGLE);
+                Robot.arm.telescopeToSetpoint(0);
+            }
+    
+            if (position.equals("low")) {
+                Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_FLOOR_ANGLE);
+                Robot.arm.telescopeToSetpoint(0);
+            }
         }
     }
 
