@@ -51,9 +51,9 @@ public class SwerveModule {
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final PIDController m_turningPIDController = new PIDController(
-      RobotBase.isSimulation() ? 23 : 1.8, // kp
-      0,
-      0/*
+      RobotBase.isSimulation() ? 23 : 2, // kp
+      0.2,
+      0.06/*
         * ,
         * new TrapezoidProfile.Constraints(
         * kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration)
@@ -98,7 +98,7 @@ public class SwerveModule {
     // Limit the PID Controller's input range between -pi and pi and set the input
     // to be continuous.
     m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
-    m_turningPIDController.setTolerance(.2);
+    m_turningPIDController.setTolerance(0);
 
     this.invertDriveEncoderRate = invertDriveEncoderRate;
     this.invertDriveEncoderDistance = false; // invertDriveEncoderDistance;

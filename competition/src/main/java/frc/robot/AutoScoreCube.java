@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.auto.Waypoints;
 import frc.robot.constants.SetPoints;
 import frc.robot.util.NtHelper;
+import frc.robot.util.PhotonRunnable;
 import frc.robot.util.stateMachine.State;
 import frc.robot.util.stateMachine.StateContext;
 import frc.robot.util.stateMachine.StateMachine;
@@ -73,6 +74,17 @@ public class AutoScoreCube extends StateMachine {
         }
     }
 
+    public Pose2d transformRedPose(Pose2d startPose) {
+        if (Alliance.Red.equals(DriverStation.getAlliance())) {
+            double realX = PhotonRunnable.FIELD_LENGTH_METERS - startPose.getX();
+            double realY = PhotonRunnable.FIELD_WIDTH_METERS - startPose.getY();
+            Rotation2d realANGLE = startPose.getRotation().plus(new Rotation2d(Math.PI));
+            Pose2d transformedPose = new Pose2d(realX, realY, realANGLE);
+            return transformedPose;
+          } else {
+            return startPose;
+          }
+    }
     @State(name = "createPath")
     public void createPath(StateContext ctx) {
         if (scoringTag()) {
@@ -86,7 +98,7 @@ public class AutoScoreCube extends StateMachine {
             List<PathPoint> waypoints = new ArrayList<>();
 
             Pose2d start = Robot.m_drive.getPose();
-            Pose2d end = Waypoints.aprilTagsScorePoses.get(targetID);
+            Pose2d end = transformRedPose(Waypoints.aprilTagsScorePoses.get(targetID));
 
             waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
             waypoints.add(new PathPoint(end.getTranslation(), end.getRotation(), end.getRotation()));
@@ -126,7 +138,7 @@ public class AutoScoreCube extends StateMachine {
         PathConstraints constraints = new PathConstraints(1.69, 1.69); //Nice^2
         List<PathPoint> waypoints = new ArrayList<>();
         Pose2d start = Robot.m_drive.getPose();
-        Pose2d end = start.plus(new Transform2d(new Translation2d(Units.inchesToMeters(10.69), 0) ,new Rotation2d(0)));//noice //X = 7.69
+        Pose2d end = transformRedPose(start.plus(new Transform2d(new Translation2d(Units.inchesToMeters(10.69), 0) ,new Rotation2d(0))));//noice //X = 7.69
        waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
        waypoints.add(new PathPoint(end.getTranslation(), new Rotation2d(0), end.getRotation()));
        Trajectory trajectory = PathPlanner.generatePath(constraints, false, waypoints);

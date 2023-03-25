@@ -75,7 +75,7 @@ public class Arm {
         // TODO: These conversion factors need to be fixed
         // shoulderMotor.setConversionFactor(TELESCOPE_CONVERSION_FACTOR);
         _canCoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
-        _canCoderConfiguration.magnetOffsetDegrees = -78;
+        _canCoderConfiguration.magnetOffsetDegrees = -135;
         shoulderEncoder.configAllSettings(_canCoderConfiguration);
         beltoMotor = new PWMSparkMax(0);
         shoulder_PID.setTolerance(RobotBase.isSimulation() ? 5 : 5);
