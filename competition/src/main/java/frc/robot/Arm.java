@@ -41,7 +41,7 @@ public class Arm {
     ProfiledPIDController shoulder_PID = new ProfiledPIDController((Robot.isSimulation()) ? .001 : .005, 0, 0, new TrapezoidProfile.Constraints(360, 420));//noice
     private double TELESCOPE_CONVERSION_FACTOR = 1; // gear ratio
     private double beltoSpeedo = 0.8;
-    private double outtakeBeltoSpeedo = -1;
+    private double outtakeBeltoSpeedo = -0.8;
     // Create a new ArmFeedforward with gains kS, kG, kV, and kA
     private final double kg = RobotBase.isSimulation() ? 0 : 0.39399;
     private ArmFeedforward feedforward = new ArmFeedforward(0.16623, kg, 17.022, 1.7561);

@@ -22,11 +22,12 @@
         source-key="/arm/shoulderAngle"
         min="NaN"
         max="NaN"
+        placeholder=""
     ><input
             slot="input"
             value="0"
             type="number"
-            id="vaadin-number-field-48"
+            id="vaadin-number-field-2"
             aria-labelledby="label-vaadin-number-field-88"
             aria-describedby=""
             min="NaN"
@@ -36,7 +37,7 @@
         ><label
             slot="label"
             id="label-vaadin-number-field-88"
-            for="vaadin-number-field-48"
+            for="vaadin-number-field-2"
         >Shoulder Angle</label>
         <div
             slot="error-message"
@@ -54,11 +55,12 @@
         source-key="/arm/telescopeDistance"
         min="NaN"
         max="NaN"
+        placeholder=""
     ><input
             slot="input"
             value="0"
             type="number"
-            id="vaadin-number-field-49"
+            id="vaadin-number-field-3"
             aria-labelledby="label-vaadin-number-field-112"
             aria-describedby=""
             min="NaN"
@@ -67,7 +69,7 @@
         ><label
             slot="label"
             id="label-vaadin-number-field-112"
-            for="vaadin-number-field-49"
+            for="vaadin-number-field-3"
         >Telescope Distance</label>
         <div
             slot="error-message"
@@ -85,12 +87,11 @@
         source-key="/arm/beltMotor"
         min="NaN"
         max="NaN"
-        placeholder=""
     ><input
             slot="input"
             value="0"
             type="number"
-            id="vaadin-number-field-50"
+            id="vaadin-number-field-4"
             aria-labelledby="label-vaadin-number-field-14"
             aria-describedby=""
             min="NaN"
@@ -99,7 +100,7 @@
         ><label
             slot="label"
             id="label-vaadin-number-field-14"
-            for="vaadin-number-field-50"
+            for="vaadin-number-field-4"
         >Belt Motor</label>
         <div
             slot="error-message"
@@ -116,60 +117,83 @@
     <kwarqs-arm-setpoints
         source-provider="NetworkTables"
         buttonselected="2"
-        style="transform: translate(380.667px, 12.6667px);"
+        style="transform: translate(379.067px, 13.4667px);"
         source-key="/dashboard/armSetpoint"
     ></kwarqs-arm-setpoints>
     <frc-toggle-button
         source-provider="NetworkTables"
-        style="transform: translate(920px, 200px); width: 150px; height: 54.525px;"
+        style="transform: translate(884.8px, 270.4px); width: 150px; height: 54.525px;"
         source-key="/robot/arm/telescopeoveride"
         label="Is Safe Mode"
+        toggled=""
     ></frc-toggle-button>
     <frc-toggle-switch
         source-provider="NetworkTables"
-        style="transform: translate(920px, 160px); width: 61.6px; height: 32.075px;"
+        style="transform: translate(861.6px, 139.2px); width: 174.4px; height: 103.275px;"
         source-key="/dashboard/arm/isCubes"
+        toggled=""
     ></frc-toggle-switch>
     <frc-label
         text="CUBES??????"
         source-provider="NetworkTables"
-        style="transform: translate(918.4px, 136px);"
+        style="transform: translate(891.2px, 114.4px);"
     ></frc-label>
-    <vaadin-number-field
-        label="April Tag ID"
-        value="0"
-        has-value=""
-        has-label=""
-        source-provider="NetworkTables"
-        style="transform: translate(40px, 360px);"
-        source-key="/robot/drivetrain/APRIL_TAG_ID"
-        placeholder=""
-        min="NaN"
-        max="NaN"
-    ><input
-            slot="input"
-            value="0"
-            type="number"
-            id="vaadin-number-field-279"
-            aria-labelledby="label-vaadin-number-field-279"
-            aria-describedby=""
-            min="undefined"
-            max="undefined"
-            step="any"
-        ><label
-            slot="label"
-            id="label-vaadin-number-field-279"
-            for="vaadin-number-field-279"
-        >April Tag ID</label>
-        <div
-            slot="error-message"
-            id="error-message-vaadin-number-field-217"
-            hidden=""
-        ></div>
-    </vaadin-number-field>
+
     <frc-label
         text="Tag IDs are not reflected in networktables- fix at some point"
         source-provider="NetworkTables"
         style="transform: translate(11.6px, 442.4px);"
+    ></frc-label>
+    <frc-number-label source-provider="NetworkTables"></frc-number-label>
+    <frc-number-label source-provider="NetworkTables"></frc-number-label>
+    <vaadin-number-field
+        label="Label"
+        value="0"
+        has-label=""
+        source-provider="NetworkTables"
+        style="transform: translate(40px, 360px);"
+        source-key="/robot/drivetrain/APRIL_TAG_ID"
+        has-value=""
+        min="NaN"
+        max="NaN"
+        placeholder=""
+    ><input
+            slot="input"
+            value="0"
+            type="number"
+            id="vaadin-number-field-5"
+            aria-labelledby="label-vaadin-number-field-141"
+            aria-describedby=""
+            min="NaN"
+            max="NaN"
+            step="any"
+        ><label
+            slot="label"
+            id="label-vaadin-number-field-141"
+            for="vaadin-number-field-5"
+        >Label</label>
+        <div
+            slot="error-message"
+            id="error-message-vaadin-number-field-113"
+            hidden=""
+        ></div>
+    </vaadin-number-field>
+    <frc-toggle-button
+        source-provider="NetworkTables"
+        style="transform: translate(824px, 24px); width: 128px; height: 76.4px;"
+        source-key="/auto/isWallSide/"
+        label="isWallSide?"
+    ></frc-toggle-button>
+    <frc-toggle-group
+        source-provider="NetworkTables"
+        style="transform: translate(1081.6px, 86.4px); width: 121.2px; height: 270.4px;"
+        options="[&quot;high&quot;,&quot;mid&quot;,&quot;low&quot;]"
+        value="mid"
+        source-key="/dashboard/autoScorePosition"
+    ></frc-toggle-group>
+    <frc-label
+        text="Auto Score"
+        source-provider="NetworkTables"
+        style="transform: translate(1106.4px, 54.4px);"
     ></frc-label>
 </dashboard-tab>
