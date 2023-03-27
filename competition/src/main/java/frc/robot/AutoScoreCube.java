@@ -3,6 +3,8 @@ package frc.robot;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.photonvision.PhotonUtils;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPoint;
@@ -51,6 +53,42 @@ public class AutoScoreCube extends StateMachine {
 
         // don't want to go to the wrong april tag now do we
     }
+
+    private double getClosestAprilTag() {
+        var targets = Robot.m_camera.getLatestResult().getTargets();
+        if (targets.size() > 1) {
+            double smallestdist = 10000000;
+            int bestid = 0;
+            for (int i = 0; i<targets.size(); i++) {
+                var target = targets.get(i);
+                var id = target.getFiducialId();
+                var pose = Waypoints.aprilTagsScorePosesCubes.get(id);
+                var distance = PhotonUtils.getDistanceToPose(pose, Robot.m_drive.getPose());
+                if (distance < smallestdist) {
+                    smallestdist = distance;
+                    bestid = id;
+                    
+                }
+
+            }
+            return bestid;
+        }
+        return targets.get(0).getFiducialId();
+
+    }
+
+    public Pose2d getIsLeft(double id) {
+        Pose2d left = Waypoints.aprilTagsScorePosesConesLeft.get(id);
+        Pose2d right = Waypoints.aprilTagsScorePosesConesRight.get(id);
+        String IsLeft = NtHelper.getString("/robot/autoScore/position", "left");
+        if (IsLeft.equals("left")) {
+            return left;
+        } else {
+            return right;
+        }
+        }
+
+    
 
     public void setScorePosition() {
         // get value from networktables
@@ -116,7 +154,14 @@ public class AutoScoreCube extends StateMachine {
             List<PathPoint> waypoints = new ArrayList<>();
 
             Pose2d start = Robot.m_drive.getPose();
-            Pose2d end = transformRedPose(Waypoints.aprilTagsScorePoses.get(targetID));
+            double closeApirlTag = getClosestAprilTag();
+            Pose2d end;
+            if (NtHelper.getBoolean("/dashboard/arm/isCubes",true)) {
+                end = transformRedPose(Waypoints.aprilTagsScorePosesCubes.get(closeApirlTag));
+            } else {
+                end = transformRedPose(getIsLeft(closeApirlTag));
+            }
+    
 
             waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
             waypoints.add(new PathPoint(end.getTranslation(), end.getRotation(), end.getRotation()));
