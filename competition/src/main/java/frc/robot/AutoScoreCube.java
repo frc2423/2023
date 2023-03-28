@@ -3,6 +3,8 @@ package frc.robot;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.photonvision.PhotonUtils;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPoint;
@@ -52,6 +54,48 @@ public class AutoScoreCube extends StateMachine {
         // don't want to go to the wrong april tag now do we
     }
 
+    private double getClosestAprilTag() {
+        var targets = Robot.m_camera.getLatestResult().getTargets();
+        if (targets.size() > 1) {
+            double smallestdist = 10000000;
+            int bestid = 0;
+            for (int i = 0; i<targets.size(); i++) {
+                var target = targets.get(i);
+                var id = target.getFiducialId();
+                var pose = Waypoints.aprilTagsScorePosesCubes.get(id);
+                var distance = PhotonUtils.getDistanceToPose(pose, Robot.m_drive.getPose());
+                if (distance < smallestdist) {
+                    smallestdist = distance;
+                    bestid = id;
+                    
+                }
+
+            }
+            return bestid;
+        
+        }
+        System.out.println(Robot.m_camera.getLatestResult().getBestTarget().getFiducialId());
+        return Robot.m_camera.getLatestResult().getBestTarget().getFiducialId();
+        
+
+    }
+
+    public Pose2d getIsLeft(double id) {
+        Pose2d left = Waypoints.aprilTagsScorePosesConesLeft.get((int)id);
+        Pose2d right = Waypoints.aprilTagsScorePosesConesRight.get((int)id);
+        String IsLeft = NtHelper.getString("/robot/autoScore/position", "right");
+        System.out.println("L/R" + IsLeft);
+        if (IsLeft.equals("left")) {
+            System.out.println(left);
+            return left;
+        } else {
+            System.out.println(right);
+            return right;
+        }
+        }
+
+    
+
     public void setScorePosition() {
         // get value from networktables
         // value is "high", "mid", or "low"
@@ -82,7 +126,7 @@ public class AutoScoreCube extends StateMachine {
     
             if (position.equals("mid")) {
                 Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_MID_CONE_ANGLE);
-                Robot.arm.telescopeToSetpoint(0);
+                Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_MID_CONE_LENGTH);
             }
     
             if (position.equals("low")) {
@@ -116,7 +160,14 @@ public class AutoScoreCube extends StateMachine {
             List<PathPoint> waypoints = new ArrayList<>();
 
             Pose2d start = Robot.m_drive.getPose();
-            Pose2d end = transformRedPose(Waypoints.aprilTagsScorePoses.get(targetID));
+            double closeApirlTag = getClosestAprilTag();
+            Pose2d end;
+            if (NtHelper.getBoolean("/dashboard/arm/isCubes",true)) {
+                end = transformRedPose(Waypoints.aprilTagsScorePosesCubes.get((int)closeApirlTag));
+            } else {
+                end = transformRedPose(getIsLeft(closeApirlTag));
+            }
+    
 
             waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
             waypoints.add(new PathPoint(end.getTranslation(), end.getRotation(), end.getRotation()));
@@ -156,7 +207,7 @@ public class AutoScoreCube extends StateMachine {
         PathConstraints constraints = new PathConstraints(1.69, 1.69); //Nice^2
         List<PathPoint> waypoints = new ArrayList<>();
         Pose2d start = Robot.m_drive.getPose();
-        Pose2d end = transformRedPose(start.plus(new Transform2d(new Translation2d(Units.inchesToMeters(10.69), 0) ,new Rotation2d(0))));//noice //X = 7.69
+        Pose2d end = transformRedPose(start.plus(new Transform2d(new Translation2d(Units.inchesToMeters(2), 0) ,new Rotation2d(0))));//noice //X = 7.69
        waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
        waypoints.add(new PathPoint(end.getTranslation(), new Rotation2d(0), end.getRotation()));
        Trajectory trajectory = PathPlanner.generatePath(constraints, false, waypoints);
@@ -187,9 +238,12 @@ public class AutoScoreCube extends StateMachine {
     public void scahr(StateContext ctx) {
         Robot.m_drive.drive(0, 0, 0, false);
         setScorePosition();
-        if (ctx.getTime() > 0.69){  //noice
-        Robot.arm.outtakeBelt();
+        if (ctx.getTime() > 0.5){ 
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_DUNK_ANGLE); 
+        } if (ctx.getTime() > 1.35) {
+            Robot.arm.outtakeBelt();
         }
+        
         // cahoobz
     }
 
