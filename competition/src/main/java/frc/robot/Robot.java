@@ -116,7 +116,12 @@ public class Robot extends TimedRobot {
       var highTeleSetPoint = (isCubes ? SetPoints.TELESCOPE_HIGH_CUBE_LENGTH : SetPoints.TELESCOPE_HIGH_CONE_LENGTH);
       var highFrontShoulderSetPoint = (isCubes ? SetPoints.SHOULDER_FRONT_HIGH_CUBE_ANGLE : SetPoints.SHOULDER_FRONT_HIGH_CONE_ANGLE);
       var highBackShoulderSetPoint = (isCubes ? SetPoints.SHOULDER_BACK_HIGH_CUBE_ANGLE : SetPoints.SHOULDER_BACK_HIGH_CONE_ANGLE);
-      
+      if (!isCubes && (position == SetPoints.ARM.BACK_MID) || (position == SetPoints.ARM.FRONT_MID)) {
+        arm.setOutakeSpeed(-0.3);
+      }
+      else {
+        arm.setOutakeSpeed(-1);
+      }
       if (position == SetPoints.ARM.UP) { //5
         arm.setShoulderSetpoint(SetPoints.SHOULDER_UP_ANGLE);
         arm.telescopeToSetpoint(0);
@@ -166,6 +171,7 @@ public class Robot extends TimedRobot {
     m_drive.setBrake(false);
     NtHelper.setDouble("/robot/shoulder/set_angle", 0);
     NtHelper.setString("/robot/arm/setsolenoid", "off");
+    NtHelper.setString("/robot/autoScore/position", "right");
     
   }
   long lastLoopStart = 0;
@@ -266,6 +272,7 @@ public class Robot extends TimedRobot {
     }
 
     if (m_controller_right.getStartButton()) {
+      arm.setOutakeSpeed(-0.3);
       if (Robot.arm.getShoulderAngle().getDegrees() < 0) {
         Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_DUNK_ANGLE);
       } else {

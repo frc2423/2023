@@ -67,7 +67,7 @@ public class Waypoints {
                                 RED_GRID_5.plus(new Transform2d(new Translation2d(Units.inchesToMeters(4), 0),
                                                 new Rotation2d(Math.PI))),
                                 3,
-                                RED_GRID_8.plus(new Transform2d(new Translation2d(Units.inchesToMeters(4), 0),
+                                RED_GRID_8.plus(new Transform2d(new Translation2d(Units.inchesToMeters(4), Units.inchesToMeters(-2)),
                                                 new Rotation2d(Math.PI))), // this is changed for cones
                                 6,
                                 BLUE_GRID_8.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
@@ -100,7 +100,7 @@ public class Waypoints {
                                 BLUE_GRID_7.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
                                                 new Rotation2d(Math.PI))));
 
-                ;
+                
 
         public static final Map<Integer, Pose2d> aprilTagsScorePosesConesRight = // Poses Moses
                 Map.of(
@@ -122,6 +122,6 @@ public class Waypoints {
                                 8,
                                 BLUE_GRID_9.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
                                                 new Rotation2d(Math.PI))));
-                ;
+                
 
 }

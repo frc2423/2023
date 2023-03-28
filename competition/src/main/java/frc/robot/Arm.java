@@ -213,9 +213,14 @@ public class Arm {
         beltoMotor.set(outtakeBeltoSpeedo);
     }
 
+    public void setOutakeSpeed(double speed) {
+        outtakeBeltoSpeedo = speed;
+    }
+
     public void beltStop() {
         // set belt speed to 0
         beltoMotor.set(0);
+        outtakeBeltoSpeedo = -1;
     }
 
     public void setBeltSpeed(double beltoSpeed) {
