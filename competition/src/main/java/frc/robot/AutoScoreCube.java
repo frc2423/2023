@@ -74,7 +74,6 @@ public class AutoScoreCube extends StateMachine {
             return bestid;
         
         }
-        System.out.println(Robot.m_camera.getLatestResult().getBestTarget().getFiducialId());
         return Robot.m_camera.getLatestResult().getBestTarget().getFiducialId();
         
 
@@ -84,15 +83,12 @@ public class AutoScoreCube extends StateMachine {
         Pose2d left = Waypoints.aprilTagsScorePosesConesLeft.get((int)id);
         Pose2d right = Waypoints.aprilTagsScorePosesConesRight.get((int)id);
         String IsLeft = NtHelper.getString("/robot/autoScore/position", "right");
-        System.out.println("L/R" + IsLeft);
         if (IsLeft.equals("left")) {
-            System.out.println(left);
             return left;
         } else {
-            System.out.println(right);
             return right;
         }
-        }
+    }
 
     
 
