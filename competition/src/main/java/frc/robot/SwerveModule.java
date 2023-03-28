@@ -11,9 +11,10 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.kinematics.SwerveModuleState;                               
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotBase;
 
 public class SwerveModule {
@@ -21,6 +22,8 @@ public class SwerveModule {
   private static final double kWheelRadius = Units.inchesToMeters(1.5); // We know this
   private static final double gearRatio = RobotBase.isSimulation() ? 1 : 5.08;
   private static final int kEncoderResolution = 1; // 4096;
+  private final DrivetrainRunnable drivetrainRunnable;
+  private final Notifier drivetrainNotifier;
 
   // State from robot logic
   private double driveMotorVoltage = 0;
@@ -40,8 +43,8 @@ public class SwerveModule {
    * 2 * Math.PI; // radians per second squared
    */
 
-  private final NeoMotor m_driveMotor;
-  private final NeoMotor m_turningMotor;
+  public final NeoMotor m_driveMotor;
+  public final NeoMotor m_turningMotor;
 
   private final FlywheelSim m_driveSim = new FlywheelSim(DCMotor.getNEO(1), 6.75, 0.025);
   private final FlywheelSim m_turnSim = new FlywheelSim(DCMotor.getNEO(1), 150.0 / 7.0, 0.004096955);
@@ -79,10 +82,15 @@ public class SwerveModule {
    * @param turnid  CAN ID for the turning motor.
    */
   public SwerveModule(int driveid, int turnid, String name, boolean swerveInvert, boolean invertDriveEncoderRate) {
-    this.name = name;
+    this.name = name; //:P
     m_driveMotor = new NeoMotor(driveid, false);
     m_turningMotor = new NeoMotor(turnid, true);
+    drivetrainRunnable = new DrivetrainRunnable(m_driveMotor, m_turningMotor);
+    drivetrainNotifier = new Notifier(drivetrainRunnable); 
+    drivetrainNotifier.setName("DrivetrainRunnable");
+    drivetrainNotifier.startPeriodic(0.02);
     m_driveMotor.setInverted(swerveInvert);
+   
 
     // Set the distance per pulse for the drive encoder. We can simply use the
     // distance traveled for one rotation of the wheel divided by the encoder
@@ -196,10 +204,11 @@ public class SwerveModule {
     // Update state from actual devices
     var encoderRateSign = invertDriveEncoderRate ? -1 : 1;
     var encoderDistanceSign = invertDriveEncoderDistance ? -1 : 1;
-    driveEncoderRate = m_driveMotor.getSpeed() * encoderRateSign;
-    driveEncoderDistance = m_driveMotor.getDistance() * encoderDistanceSign;
-    turnEncoderRate = m_turningMotor.getSpeed();
-    turnEncoderDistance = (RobotBase.isSimulation() ? 1 : -1) * m_turningMotor.getDistance();
+
+    driveEncoderRate = drivetrainRunnable.getDriveMotorSpeed() * encoderRateSign;
+    driveEncoderDistance = drivetrainRunnable.getDriveMotorDistance() * encoderDistanceSign;
+    turnEncoderRate = drivetrainRunnable.getTurningMotorSpeed();
+    turnEncoderDistance = (RobotBase.isSimulation() ? 1 : -1) * drivetrainRunnable.getTurningMotorDistance();
 
   }
 

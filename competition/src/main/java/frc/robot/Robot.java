@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -95,15 +96,17 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    telemtry();
+    double startTimeRPeriodic = getMS();
+    //telemtry();
     if (!isTeleop()) {
       arm.isSafeMode(!isTest());
     }
     m_drive.periodic();
     arm.periodic();
     field.setRobotPose(m_drive.getPose());
+    double endTimeRPeriodic = getMS();
+    NtHelper.setDouble("/robot/time/robotPeriodic", endTimeRPeriodic - startTimeRPeriodic);
   }
-
 
 
   public void updateArmSetpoint() {
@@ -169,8 +172,9 @@ public class Robot extends TimedRobot {
     
   }
   long lastLoopStart = 0;
-  public long getMS() {
-    return ZonedDateTime.now().toInstant().toEpochMilli();
+  public static double getMS() {
+    return Timer.getFPGATimestamp() * 1000;
+    // return ZonedDateTime.now().toInstant().toEpochMilli(); :p
   }
 
 
@@ -184,17 +188,18 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    tracer.clearEpochs();
-    tracer.resetTimer();
-    tracer.addEpoch("Teleop Start");
-    long currentMS = getMS();
-    long durationTeleop = getMS() - lastLoopStart;
-    long lastLoopStart = getMS();
+    double startTimePeriodic = getMS();
+    // tracer.clearEpochs();
+    // tracer.resetTimer();
+    // tracer.addEpoch("Teleop Start");
+    // long currentMS = getMS();
+    // long durationTeleop = getMS() - lastLoopStart;
+    // long lastLoopStart = getMS();
     final double kMaxSpeed = 4;
-    long start = getMS();
+    // long start = getMS();
     Robot.m_drive.addVisionMeasurement(photonEstimator.grabLatestEstimatedPose());
-    tracer.addEpoch("addVisionMeasurement");
-    long duration = getMS() - start;
+    // tracer.addEpoch("addVisionMeasurement");
+    // long duration = getMS() - start;
     // NtHelper.setString("/dashboard/diagnostics/loopDuration", String.valueOf(duration));
     if (m_controller.getStartButtonReleased()) {
       Robot.m_drive.setBrake(false);
@@ -347,6 +352,8 @@ int buttonindex = -1;
     
     tracer.addEpoch("loop end");
     tracer.printEpochs(epochToNT);
+    double endTimePeriodic = getMS();
+    NtHelper.setDouble("/robot/time/periodic", endTimePeriodic - startTimePeriodic);
   }
 
   @Override

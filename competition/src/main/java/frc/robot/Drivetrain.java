@@ -210,6 +210,7 @@ public class Drivetrain {
 
   /** Update odometry - this should be run every robot loop. */
   public void periodic() {
+    double startTimeRRPeriodic = Robot.getMS();
     telemetry();
     NtHelper.setDouble("/robot/angle", angle.getDegrees());
     updateOdometry();
@@ -222,6 +223,8 @@ public class Drivetrain {
     } else {
       realPeriodic();
     }
+    double endTimeRRPeriodic = Robot.getMS();
+    NtHelper.setDouble("/robot/time/drivetrainPeriodic", endTimeRRPeriodic - startTimeRRPeriodic);
   }
 
   private void telemetry() {
