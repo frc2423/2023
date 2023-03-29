@@ -91,13 +91,13 @@ public class Waypoints {
                                 RED_GRID_9.plus(new Transform2d(new Translation2d(Units.inchesToMeters(4), 0),
                                                 new Rotation2d(Math.PI))),
                                 6,
-                                BLUE_GRID_1.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
+                                BLUE_GRID_7.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
                                                 new Rotation2d(Math.PI))),
                                 7,
                                 BLUE_GRID_4.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
                                                 new Rotation2d(Math.PI))),
                                 8,
-                                BLUE_GRID_7.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
+                                BLUE_GRID_1.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
                                                 new Rotation2d(Math.PI))));
 
                 
@@ -114,13 +114,13 @@ public class Waypoints {
                                 RED_GRID_7.plus(new Transform2d(new Translation2d(Units.inchesToMeters(4), 0),
                                                 new Rotation2d(Math.PI))),
                                 6,
-                                BLUE_GRID_3.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
+                                BLUE_GRID_9.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
                                                 new Rotation2d(Math.PI))),
                                 7,
                                 BLUE_GRID_6.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
                                                 new Rotation2d(Math.PI))),
                                 8,
-                                BLUE_GRID_9.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
+                                BLUE_GRID_3.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
                                                 new Rotation2d(Math.PI))));
                 
 
