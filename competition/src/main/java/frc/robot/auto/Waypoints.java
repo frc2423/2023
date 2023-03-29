@@ -55,6 +55,8 @@ public class Waypoints {
         public static final Pose2d RED_CHARGE_1 = new Pose2d(12.62, 0.79, Rotation2d.fromDegrees(180));
         public static final Pose2d RED_CHARGE_2 = new Pose2d(12.62, 4.76, Rotation2d.fromDegrees(180));
 
+        public static final Pose2d RED_HP = new Pose2d(12.62, 0.79, Rotation2d.fromDegrees(180)); //figure it out man
+        public static final Pose2d BLUE_HP = new Pose2d(12.62, 4.76, Rotation2d.fromDegrees(180));
         // april tag section
 
         // public static final Pose2d BLUE_AT_2 = BLUE_GRID_5;
@@ -123,5 +125,10 @@ public class Waypoints {
                                 BLUE_GRID_3.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
                                                 new Rotation2d(Math.PI))));
                 
+        public static final Map<Integer, Pose2d> aprilTagsHumanPlayerStationLongName = //Tag 4 = Red, Tag 5 = Blue
+                Map.of(
+                                4,
+                                RED_HP, 5, BLUE_HP
+                );
 
 }
