@@ -18,7 +18,7 @@ public class YoYoAuto extends StateMachine { //(YoYoYes)
     private Pose2d gridEndPose;
     private Pose2d gpPose;
 
-public boolean isWallSide = true;
+public boolean isWallSide = false;
 
     public YoYoAuto() {
         super("Score");
@@ -31,7 +31,7 @@ public boolean isWallSide = true;
     @State(name = "Score")
     public void taxiRun(StateContext ctx) {
         if (ctx.isInit()) {
-      //  isWallSide = NtHelper.getBoolean("/auto/isWallSide/", false);
+        isWallSide = NtHelper.getBoolean("/auto/isWallSide/", false);
         if (!isWallSide) {
             gridPose =  Waypoints.BLUE_GRID_9;
             gridEndPose = Waypoints.BLUE_GRID_8;
@@ -47,7 +47,7 @@ public boolean isWallSide = true;
     }
     @State(name = "dunk")
     public void dunk(StateContext ctx) {
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(-71)));
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_DUNK_ANGLE);
         if( ctx.getTime() > 1) { //noice
             setState("Spit");
         }

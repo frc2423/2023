@@ -9,7 +9,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
@@ -23,7 +22,7 @@ import frc.robot.constants.SetPoints;
 import frc.robot.util.Camera;
 import frc.robot.util.NtHelper;
 import frc.robot.util.PhotonRunnable;
-import frc.robot.util.stateMachine.StateMachine; 
+import frc.robot.util.stateMachine.StateMachine;
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
@@ -97,7 +96,6 @@ public class Robot extends TimedRobot {
   }
 
 
-
   public void updateArmSetpoint() {
       var position = NtHelper.getDouble("/dashboard/armSetpoint/buttonselected", 5);
 
@@ -163,15 +161,15 @@ public class Robot extends TimedRobot {
     m_drive.setBrake(false);
     NtHelper.setDouble("/robot/shoulder/set_angle", 0);
     NtHelper.setString("/robot/arm/setsolenoid", "off");
+    NtHelper.setString("/robot/autoScore/position", "right");
     
   }
 
   @Override
   public void teleopPeriodic() {
     final double kMaxSpeed = 4;
-
     Robot.m_drive.addVisionMeasurement(photonEstimator.grabLatestEstimatedPose());
-    
+
     if (m_controller.getStartButtonReleased()) {
       Robot.m_drive.setBrake(false);
     }
@@ -191,10 +189,7 @@ public class Robot extends TimedRobot {
 
     if (m_controller.getStartButton()) {
       // autoAlign.autoRotate()
-
-    
-     
-      
+  
       SwerveModuleState brflSTATE = new SwerveModuleState(0,
                 Rotation2d.fromDegrees(0));
       SwerveModuleState frblSTATE = new SwerveModuleState(0,
@@ -321,8 +316,6 @@ int buttonindex = -1;
 
     
      arm.isSafeMode(NtHelper.getBoolean("/robot/arm/telescopeoveride", true)); 
-    
-
   }
 
   @Override

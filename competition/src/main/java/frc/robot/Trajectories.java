@@ -8,6 +8,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.auto.Waypoints;
 import frc.robot.util.NtHelper;
 import frc.robot.util.TrajectoryGeneration;
 
@@ -127,12 +128,15 @@ public class Trajectories {
         var robotAngle = robotPose.getRotation();
         var robotPosition = robotPose.getTranslation();
         var  robotLastPose = next_path.sample(next_path.getTotalTimeSeconds()).poseMeters;
-        var robotLastPos = robotLastPose.getTranslation();
+        var robotLastPosX = robotLastPose.getTranslation().getX();
+        var robotLastPosY = robotLastPose.getTranslation().getY();
         var robotLastAngle = robotLastPose.getRotation();
-        var distFinal = robotLastPos.getDistance(robotPosition);
+        var distFinalX = Math.abs(robotPosition.getX() - robotLastPosX);
+        var distFinalY = Math.abs(robotPosition.getY() - robotLastPosY);
+
         var angleDif = robotLastAngle.minus(robotAngle);
 
-        if ( distFinal < 0.1 && Math.abs(angleDif.getDegrees())< 5
+        if ( distFinalX < 0.05 && distFinalY < 0.05 && Math.abs(angleDif.getDegrees())< 5
 
         ) {
         return true;

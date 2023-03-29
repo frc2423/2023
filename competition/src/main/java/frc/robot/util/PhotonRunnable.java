@@ -9,9 +9,13 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Robot;
 import frc.robot.constants.CameraConstants;
 
@@ -59,7 +63,16 @@ public class PhotonRunnable implements Runnable {
           // Make sure the measurement is on the field
           if (estimatedPose.getX() > 0.0 && estimatedPose.getX() <= FIELD_LENGTH_METERS
               && estimatedPose.getY() > 0.0 && estimatedPose.getY() <= FIELD_WIDTH_METERS) {
-            atomicEstimatedRobotPose.set(estimatedRobotPose);
+                if (Alliance.Red.equals(DriverStation.getAlliance())) {
+                  double realX = FIELD_LENGTH_METERS - estimatedPose.getX();
+                  double realY = FIELD_WIDTH_METERS - estimatedPose.getY();
+                  Rotation3d realANGLE = estimatedPose.getRotation().plus(new Rotation3d(0,0, Math.PI));
+                  Pose3d transformedPose = new Pose3d(realX, realY, estimatedPose.getZ(), realANGLE);
+                  EstimatedRobotPose estimated = new EstimatedRobotPose(transformedPose, estimatedRobotPose.timestampSeconds, estimatedRobotPose.targetsUsed);
+                  atomicEstimatedRobotPose.set(estimated);
+                } else {
+                  atomicEstimatedRobotPose.set(estimatedRobotPose);
+                }
           }
         });
       }
