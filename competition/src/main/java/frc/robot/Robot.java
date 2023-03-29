@@ -4,20 +4,16 @@
 
 package frc.robot;
 
-import java.time.ZonedDateTime;
-
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,10 +23,6 @@ import frc.robot.util.Camera;
 import frc.robot.util.NtHelper;
 import frc.robot.util.PhotonRunnable;
 import frc.robot.util.stateMachine.StateMachine;
-import edu.wpi.first.wpilibj.Tracer;
-
-import java.util.List;
-import java.util.function.Consumer;
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
@@ -55,8 +47,6 @@ public class Robot extends TimedRobot {
   public static Arm arm = new Arm();
 
   private Auto auto = new Auto();
-
-  private Tracer tracer = new Tracer();
 
   @Override // is society
   public void robotInit() {
@@ -96,16 +86,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    double startTimeRPeriodic = getMS();
-    //telemtry();
+    telemtry();
     if (!isTeleop()) {
       arm.isSafeMode(!isTest());
     }
     m_drive.periodic();
     arm.periodic();
     field.setRobotPose(m_drive.getPose());
-    double endTimeRPeriodic = getMS();
-    NtHelper.setDouble("/robot/time/robotPeriodic", endTimeRPeriodic - startTimeRPeriodic);
   }
 
 
@@ -177,36 +164,12 @@ public class Robot extends TimedRobot {
     NtHelper.setString("/robot/autoScore/position", "right");
     
   }
-  long lastLoopStart = 0;
-  public static double getMS() {
-    return Timer.getFPGATimestamp() * 1000;
-    // return ZonedDateTime.now().toInstant().toEpochMilli(); :p
-  }
-
-
-  Consumer<String> epochToNT = epochStr ->{ 
-    NtHelper.setString("/dashboard/diagnostics/epochs", epochStr);
-    String[] lines = epochStr.split("\n");
-    for(int i = 0; i < lines.length; i++){
-      NtHelper.setString("/dashboard/diagnostics/epochs/" + i, lines[i]);
-    }
-  };
 
   @Override
   public void teleopPeriodic() {
-    double startTimePeriodic = getMS();
-    // tracer.clearEpochs();
-    // tracer.resetTimer();
-    // tracer.addEpoch("Teleop Start");
-    // long currentMS = getMS();
-    // long durationTeleop = getMS() - lastLoopStart;
-    // long lastLoopStart = getMS();
     final double kMaxSpeed = 4;
-    // long start = getMS();
     Robot.m_drive.addVisionMeasurement(photonEstimator.grabLatestEstimatedPose());
-    // tracer.addEpoch("addVisionMeasurement");
-    // long duration = getMS() - start;
-    // NtHelper.setString("/dashboard/diagnostics/loopDuration", String.valueOf(duration));
+
     if (m_controller.getStartButtonReleased()) {
       Robot.m_drive.setBrake(false);
     }
@@ -226,10 +189,7 @@ public class Robot extends TimedRobot {
 
     if (m_controller.getStartButton()) {
       // autoAlign.autoRotate()
-
-    
-     tracer.addEpoch("get controller buttons");
-      
+  
       SwerveModuleState brflSTATE = new SwerveModuleState(0,
                 Rotation2d.fromDegrees(0));
       SwerveModuleState frblSTATE = new SwerveModuleState(0,
@@ -356,11 +316,6 @@ int buttonindex = -1;
 
     
      arm.isSafeMode(NtHelper.getBoolean("/robot/arm/telescopeoveride", true)); 
-    
-    tracer.addEpoch("loop end");
-    tracer.printEpochs(epochToNT);
-    double endTimePeriodic = getMS();
-    NtHelper.setDouble("/robot/time/periodic", endTimePeriodic - startTimePeriodic);
   }
 
   @Override

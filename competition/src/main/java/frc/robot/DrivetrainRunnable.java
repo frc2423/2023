@@ -22,12 +22,6 @@ public class DrivetrainRunnable implements Runnable {
         driveMotorDistance.set(m_driveMotor.getDistance());
         turningMotorSpeed.set(m_turningMotor.getSpeed());
         turningMotorDistance.set(m_turningMotor.getDistance()); 
-        // driveEncoderRate = * encoderRateSign;
-        // driveEncoderDistance = m_driveMotor.getDistance() * encoderDistanceSign;
-        // turnEncoderRate = m_turningMotor.getSpeed();
-        // turnEncoderDistance = (RobotBase.isSimulation() ? 1 : -1) *
-        // m_turningMotor.getDistance();
-
     } //get variable name value
 
     public double getDriveMotorSpeed(){
