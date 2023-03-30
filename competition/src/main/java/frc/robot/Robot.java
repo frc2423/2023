@@ -23,12 +23,14 @@ import frc.robot.util.Camera;
 import frc.robot.util.NtHelper;
 import frc.robot.util.PhotonRunnable;
 import frc.robot.util.stateMachine.StateMachine;
+import frc.robot.Led.KwarqsLed;
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
   private final XboxController m_controller_right = new XboxController(1);
   private final PhotonRunnable photonEstimator = new PhotonRunnable();
   private final Notifier photonNotifier = new Notifier(photonEstimator);
+  private final KwarqsLed ledBrain = new KwarqsLed();
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0
   // to 1.
@@ -58,6 +60,7 @@ public class Robot extends TimedRobot {
     m_drive.setBrake(false);
     CameraServer.startAutomaticCapture();
     NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 5);
+    NtHelper.setString("/robot/dashboard/led", "green");
 
     NtHelper.listen("/dashboard/armSetpoint/buttonselected", (entry) -> {
       updateArmSetpoint();
@@ -81,6 +84,27 @@ public class Robot extends TimedRobot {
         arm.resetTelescopeEncoder();
       }
     });
+    ledBrain.setGreen();
+    NtHelper.listen("/robot/dashboard/led", (entry)->{
+        String ledValue = NtHelper.getString("/robot/dashboard/led", "green");
+        if (ledValue.equals("yellow")){
+          ledBrain.setYellow();
+        }
+        else if (ledValue.equals("purple")){
+          ledBrain.setPurple();
+        }
+        else if (ledValue.equals("green")){
+          ledBrain.setGreen();
+        }
+        else if (ledValue.equals("off")){
+          ledBrain.disable();
+        }
+        else{
+          ledBrain.setGreen();
+        }
+    });
+
+
     SmartDashboard.putData("Field", field);
   }
 
@@ -95,6 +119,12 @@ public class Robot extends TimedRobot {
     field.setRobotPose(m_drive.getPose());
   }
 
+  @Override
+  public void disabledInit() {
+    ledBrain.disable();
+    ledBrain.run();
+  }
+  
 
   public void updateArmSetpoint() {
       var position = NtHelper.getDouble("/dashboard/armSetpoint/buttonselected", 5);
@@ -167,6 +197,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    ledBrain.run();
     final double kMaxSpeed = 4;
     Robot.m_drive.addVisionMeasurement(photonEstimator.grabLatestEstimatedPose());
 

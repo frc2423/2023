@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import frc.robot.led.KwarqsLed;
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class. Runs the motors with
@@ -19,12 +20,13 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 public class Robot extends TimedRobot {
   private final Spark m_left1Motor = new Spark(3);
   private final Spark m_left2Motor = new Spark(4);
-  private final Spark m_right1Motor = new Spark(1);
+  private final Spark m_right1Motor = new Spark(1); //need to change this value for defense robot
   private final Spark m_right2Motor = new Spark(2);
   private final MotorControllerGroup leftMotors = new MotorControllerGroup(m_left1Motor, m_left2Motor);
   private final MotorControllerGroup rightMotors = new MotorControllerGroup(m_right1Motor, m_right2Motor);
   private final DifferentialDrive m_robotDrive = new DifferentialDrive(leftMotors, rightMotors);
   private final XboxController m_controller = new XboxController(0);
+  private KwarqsLed kwarqsLed = new KwarqsLed();
 
   @Override
   public void robotInit() {
@@ -34,14 +36,27 @@ public class Robot extends TimedRobot {
     rightMotors.setInverted(false);
     m_right2Motor.setInverted(false);
     m_right1Motor.setInverted(true);
+    kwarqsLed.setRandom();
 
   }
 
   @Override
+  public void teleopInit() {
+    kwarqsLed.setYellow();
+  }
+
+  @Override
   public void teleopPeriodic() {
+    kwarqsLed.run();
     // Drive with arcade drive.
     // That means that the Y axis drives forward
     // and backward, and the X turns left and right.
     m_robotDrive.arcadeDrive(-m_controller.getLeftY(), -m_controller.getRightX());
+ 
+ }
+ @Override
+  public void disabledInit() {
+    kwarqsLed.disable();
   }
 }
+
