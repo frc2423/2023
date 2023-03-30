@@ -31,7 +31,7 @@ public boolean isWallSide = false;
     @State(name = "Score")
     public void taxiRun(StateContext ctx) {
         if (ctx.isInit()) {
-        isWallSide = NtHelper.getBoolean("/auto/isWallSide/", false);
+        isWallSide = NtHelper.getBoolean("/auto/isWallSide/", true);
         if (!isWallSide) {
             gridPose =  Waypoints.BLUE_GRID_9;
             gridEndPose = Waypoints.BLUE_GRID_8;
@@ -71,7 +71,7 @@ public boolean isWallSide = false;
     public void move(StateContext ctx) {
         Robot.trajectories.follow_current_path();
         if (ctx.getTime() > .5) {
-            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_UP_ANGLE);
+            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_FLOOR_ANGLE);
             Robot.arm.telescopeToSetpoint(0);
         }
         if (Robot.trajectories.isFinished()) {
