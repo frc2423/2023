@@ -2,7 +2,6 @@
     tab-name="TeleOperated"
     slot="tab"
     source-provider="NetworkTables"
-    selected=""
 >
 
 
@@ -110,14 +109,22 @@
     ></frc-toggle-group>
     <kwarqs-arm-setpoints
         source-provider="NetworkTables"
-        buttonselected="9"
+        buttonselected="5"
         style="transform: translate(485.333px, 15.6667px);"
+        source-key="/dashboard/armSetpoint"
     ></kwarqs-arm-setpoints>
+    <kwarqs-arm-base
+        source-provider="NetworkTables"
+        count="0"
+        style="transform: translate(471.8px, 479.975px); width: 504px; height: 20px;"
+        source-key="/dashboard/arm"
+    ></kwarqs-arm-base>
 </dashboard-tab>
 <dashboard-tab
     tab-name="Auto(mobile)"
     slot="tab"
     source-provider="NetworkTables"
+    selected=""
 >
     <frc-sendable-chooser
         source-key="/SmartDashboard/Auto choices"
@@ -140,27 +147,33 @@
         <frc-field-robot
             source-key="/SmartDashboard/Field/Robot"
             source-provider="NetworkTables"
-            style="width: 0px; height: 0px; transform: translate(0px, 0px) rotate(0.593188deg);"
+            style="width: 23.03px; height: 34.5451px; transform: translate(16.5145px, 312.256px) rotate(87.02deg);"
             opacity="100"
             pose="[0,0,0]"
         ></frc-field-robot>
         <frc-field-trajectory
             source-key="/SmartDashboard/Field/trajectory"
             source-provider="NetworkTables"
-            style="width: 0px; height: 0px; transform: translate(0px, 0px) rotate(90deg);"
+            style="width: 38.3834px; height: 38.3834px; transform: translate(8.83778px, 310.337px) rotate(90deg);"
         ></frc-field-trajectory>
         <frc-field-robot
             source-key="/SmartDashboard/Field/ghost"
             source-provider="NetworkTables"
-            style="width: 0px; height: 0px; transform: translate(0px, 0px) rotate(263.061deg);"
+            style="width: 23.03px; height: 34.5451px; transform: translate(77.7822px, 90.4424px) rotate(263.061deg);"
             opacity="100"
             pose="[0,0,0]"
         ></frc-field-robot>
+        <frc-field-trajectory
+            source-key="/SmartDashboard/Field/flip"
+            source-provider="NetworkTables"
+            style="width: 38.3834px; height: 38.3834px; transform: translate(8.83778px, 310.337px) rotate(90deg);"
+        ></frc-field-trajectory>
     </frc-field>
     <kwarqs-arm-base
         source-provider="NetworkTables"
         count="0"
-        style="transform: translate(142px, 150.334px); width: 303.661px; height: 258px;"
+        style="transform: translate(142.8px, 183.134px); width: 303.661px; height: 258px;"
+        source-key="/dashboard/arm"
     ></kwarqs-arm-base>
 </dashboard-tab>
 <dashboard-tab

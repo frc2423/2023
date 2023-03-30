@@ -11,8 +11,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -43,10 +43,14 @@ public class Robot extends TimedRobot {
   private AutoAlign autoAlign = new AutoAlign();
 
   private StateMachine autoScoreCube = new AutoScoreCube();
+  private StateMachine autoHuman = new AutoHuman();
 
   public static Arm arm = new Arm();
 
   private Auto auto = new Auto();
+
+  boolean prevAutoHuman = false;
+  boolean isAutoHuman = false;
 
   @Override // is society
   public void robotInit() {
@@ -139,8 +143,10 @@ public class Robot extends TimedRobot {
       } else if (position == 21) {
         arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_HP_ANLGE);
         arm.telescopeToSetpoint(SetPoints.TELESCOPE_UP_LENGTH);
+      } else if (position == 22) {
+        autoHuman.setState(autoHuman.getDefaultState());
       }
-    
+     
   }
 
   @Override
@@ -167,8 +173,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    prevAutoHuman = isAutoHuman;
+    isAutoHuman = m_controller.getPOV() == 180;
+    boolean isAutoHumanPressed = !prevAutoHuman && isAutoHuman;
+    boolean isAutoHumanReleased = prevAutoHuman && !isAutoHuman;
     final double kMaxSpeed = 4;
     Robot.m_drive.addVisionMeasurement(photonEstimator.grabLatestEstimatedPose());
+
 
     if (m_controller.getStartButtonReleased()) {
       Robot.m_drive.setBrake(false);
@@ -181,6 +192,13 @@ public class Robot extends TimedRobot {
     if (m_controller.getBackButtonPressed()) {
       Robot.m_drive.setBrake(true);
       autoScoreCube.setState(autoScoreCube.getDefaultState());
+    }
+    if (isAutoHumanPressed) {
+      autoHuman.setState(autoHuman.getDefaultState());
+      Robot.m_drive.setBrake(true);
+    }
+    if (!isAutoHumanReleased) {
+      Robot.m_drive.setBrake(false);
     }
 
     if (m_controller.getBackButtonReleased()) {
@@ -204,7 +222,11 @@ public class Robot extends TimedRobot {
     }else if (m_controller.getBackButton()){
       autoScoreCube.run();
       // Robot.m_drive.addBestVisionMeasurement(m_camera);
-    } else {
+    } else if (isAutoHuman) {
+        autoHuman.run();
+    }
+    else {
+      
       boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
       double maxSpeed = (isSlowMode ? 1.5 : kMaxSpeed);
       double maxRotation = (isSlowMode ? Math.PI : Drivetrain.kMaxAngularSpeed);
@@ -251,6 +273,11 @@ int buttonindex = -1;
     boolean shiftUp = m_controller_right.getLeftTriggerAxis() > 0.2;
     boolean shiftDown = m_controller_right.getRightTriggerAxis() > 0.2;
     
+    switch (m_controller.getPOV()) {
+      case 180:
+      buttonindex = 22;
+      break;
+    }
     switch (m_controller_right.getPOV()) {
       case 0:
       buttonindex = 5;
