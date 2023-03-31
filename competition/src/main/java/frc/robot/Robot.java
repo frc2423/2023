@@ -42,7 +42,6 @@ public class Robot extends TimedRobot {
   public static Trajectories trajectories = new Trajectories();
   public static final Field2d field = new Field2d();
   public static final Camera m_camera= new Camera("driverCamera");
-  private AutoAlign autoAlign = new AutoAlign();
 
   private StateMachine autoScoreCube = new AutoScoreCube();
   private StateMachine autoHuman = new AutoHuman();
@@ -237,7 +236,6 @@ public class Robot extends TimedRobot {
     }
 
     if (m_controller.getStartButton()) {
-      // autoAlign.autoRotate()
   
       SwerveModuleState brflSTATE = new SwerveModuleState(0,
                 Rotation2d.fromDegrees(0));
@@ -252,7 +250,6 @@ public class Robot extends TimedRobot {
           
     }else if (m_controller.getBackButton()){
       autoScoreCube.run();
-      // Robot.m_drive.addBestVisionMeasurement(m_camera);
     } else if (isAutoHuman) {
         autoHuman.run();
     }
