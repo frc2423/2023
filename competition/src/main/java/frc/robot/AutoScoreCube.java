@@ -59,7 +59,7 @@ public class AutoScoreCube extends StateMachine {
         if (targets.size() > 1) {
             double smallestdist = 10000000;
             int bestid = 0;
-            for (int i = 0; i<targets.size(); i++) {
+            for (int i = 0; i < targets.size(); i++) {
                 var target = targets.get(i);
                 var id = target.getFiducialId();
                 var pose = Waypoints.aprilTagsScorePosesCubes.get(id);
@@ -67,21 +67,20 @@ public class AutoScoreCube extends StateMachine {
                 if (distance < smallestdist) {
                     smallestdist = distance;
                     bestid = id;
-                    
+
                 }
 
             }
             return bestid;
-        
+
         }
         return Robot.m_camera.getLatestResult().getBestTarget().getFiducialId();
-        
 
     }
 
     public Pose2d getIsLeft(double id) {
-        Pose2d left = Waypoints.aprilTagsScorePosesConesLeft.get((int)id);
-        Pose2d right = Waypoints.aprilTagsScorePosesConesRight.get((int)id);
+        Pose2d left = Waypoints.aprilTagsScorePosesConesLeft.get((int) id);
+        Pose2d right = Waypoints.aprilTagsScorePosesConesRight.get((int) id);
         String IsLeft = NtHelper.getString("/robot/autoScore/position", "right");
         if (IsLeft.equals("left")) {
             return left;
@@ -90,26 +89,24 @@ public class AutoScoreCube extends StateMachine {
         }
     }
 
-    
-
     public void setScorePosition() {
         // get value from networktables
         // value is "high", "mid", or "low"
         var position = NtHelper.getString("/dashboard/autoScorePosition", "mid");
         boolean isCubes = NtHelper.getBoolean("/dashboard/arm/isCubes", false);
-        if  (isCubes) {
+        if (isCubes) {
 
             // Set telescope and shoulder to position
             if (position.equals("high")) {
                 Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_HIGH_CUBE_ANGLE);
                 Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_HIGH_CUBE_LENGTH);
             }
-    
+
             if (position.equals("mid")) {
                 Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_MID_CUBE_ANGLE);
                 Robot.arm.telescopeToSetpoint(0);
             }
-    
+
             if (position.equals("low")) {
                 Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_FLOOR_ANGLE);
                 Robot.arm.telescopeToSetpoint(0);
@@ -119,12 +116,12 @@ public class AutoScoreCube extends StateMachine {
                 Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_HIGH_CONE_ANGLE);
                 Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_HIGH_CONE_LENGTH);
             }
-    
+
             if (position.equals("mid")) {
                 Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_MID_CONE_ANGLE);
                 Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_MID_CONE_LENGTH);
             }
-    
+
             if (position.equals("low")) {
                 Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_FLOOR_ANGLE);
                 Robot.arm.telescopeToSetpoint(0);
@@ -139,10 +136,11 @@ public class AutoScoreCube extends StateMachine {
             Rotation2d realANGLE = startPose.getRotation().plus(new Rotation2d(Math.PI));
             Pose2d transformedPose = new Pose2d(realX, realY, realANGLE);
             return transformedPose;
-          } else {
+        } else {
             return startPose;
-          }
+        }
     }
+
     @State(name = "createPath")
     public void createPath(StateContext ctx) {
         if (scoringTag()) {
@@ -152,26 +150,25 @@ public class AutoScoreCube extends StateMachine {
             var isRed = Alliance.Red.equals(DriverStation.getAlliance());
             var targetID = bestTarget.getFiducialId();
             NtHelper.setDouble("/robot/drivetrain/APRIL_TAG_ID", targetID);
-            PathConstraints constraints = new PathConstraints(1.69, 1.69); //Nice^2
+            PathConstraints constraints = new PathConstraints(1.69, 1.69); // Nice^2
             List<PathPoint> waypoints = new ArrayList<>();
 
             Pose2d start = Robot.m_drive.getPose();
             double closeApirlTag = getClosestAprilTag();
             Pose2d end;
-            if (NtHelper.getBoolean("/dashboard/arm/isCubes",true)) {
-                end = transformRedPose(Waypoints.aprilTagsScorePosesCubes.get((int)closeApirlTag));
+            if (NtHelper.getBoolean("/dashboard/arm/isCubes", true)) {
+                end = transformRedPose(Waypoints.aprilTagsScorePosesCubes.get((int) closeApirlTag));
             } else {
                 end = transformRedPose(getIsLeft(closeApirlTag));
             }
-    
 
             waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
             waypoints.add(new PathPoint(end.getTranslation(), end.getRotation(), end.getRotation()));
             Trajectory trajectory = PathPlanner.generatePath(constraints, false, waypoints);
             Robot.trajectories.setNewTrajectoryGroup(trajectory);
             // Robot.trajectories.setNewTrajectoryGroup(Robot.m_drive.getPose(),
-            //         Waypoints.aprilTagsScorePoses.get(targetID), false);
-            setState("followPath"); //sus
+            // Waypoints.aprilTagsScorePoses.get(targetID), false);
+            setState("followPath"); // sus
         }
         // staharting @ current pose ending @ score pose
     }
@@ -189,24 +186,26 @@ public class AutoScoreCube extends StateMachine {
     public void stahp(StateContext ctx) {
         Robot.m_drive.drive(0, 0, 0, false);
         // when stop :P
-        if (NtHelper.getString("/dashboard/autoScorePosition", "mid").equals ("low")) {
+        if (NtHelper.getString("/dashboard/autoScorePosition", "mid").equals("low")) {
             setState("scahr");
-        }
-        else {
+        } else {
             setState("mooofawad");
         }
     }
-    
+
     @State(name = "mooofawad")
     public void mooofawad(StateContext ctx) {
         // Robot.m_drive.drive(0, 0.2, 0, false);
-        PathConstraints constraints = new PathConstraints(1.69, 1.69); //Nice^2
+        PathConstraints constraints = new PathConstraints(1.69, 1.69); // Nice^2
         List<PathPoint> waypoints = new ArrayList<>();
         Pose2d start = Robot.m_drive.getPose();
-        Pose2d end = transformRedPose(start.plus(new Transform2d(new Translation2d(Units.inchesToMeters(2), 0) ,new Rotation2d(0))));//noice //X = 7.69
-       waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
-       waypoints.add(new PathPoint(end.getTranslation(), new Rotation2d(0), end.getRotation()));
-       Trajectory trajectory = PathPlanner.generatePath(constraints, false, waypoints);
+        Pose2d end = transformRedPose(
+                start.plus(new Transform2d(new Translation2d(Units.inchesToMeters(2), 0), new Rotation2d(0))));// noice
+                                                                                                               // //X =
+                                                                                                               // 7.69
+        waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
+        waypoints.add(new PathPoint(end.getTranslation(), new Rotation2d(0), end.getRotation()));
+        Trajectory trajectory = PathPlanner.generatePath(constraints, false, waypoints);
         Robot.trajectories.setNewTrajectoryGroup(trajectory);
         setState("GOO");
     }
@@ -214,18 +213,18 @@ public class AutoScoreCube extends StateMachine {
     @State(name = "beSWERVY")
     public void beSWERVY(StateContext ctx) {
         SwerveModuleState jilly = new SwerveModuleState(0,
-                    Rotation2d.fromDegrees(0));
+                Rotation2d.fromDegrees(0));
 
-            Robot.m_drive.m_frontLeft.setDesiredState(jilly);
-            Robot.m_drive.m_frontRight.setDesiredState(jilly);
-            Robot.m_drive.m_backLeft.setDesiredState(jilly);
-            Robot.m_drive.m_backRight.setDesiredState(jilly);
+        Robot.m_drive.m_frontLeft.setDesiredState(jilly);
+        Robot.m_drive.m_frontRight.setDesiredState(jilly);
+        Robot.m_drive.m_backLeft.setDesiredState(jilly);
+        Robot.m_drive.m_backRight.setDesiredState(jilly);
     }
-        
+
     @State(name = "GOO")
     public void GOO(StateContext ctx) {
         Robot.trajectories.follow_current_path();
-        if (ctx.getTime() > .8) {//noice
+        if (ctx.getTime() > .8) {// noice
             setState("scahr");
         }
     }
@@ -234,12 +233,17 @@ public class AutoScoreCube extends StateMachine {
     public void scahr(StateContext ctx) {
         Robot.m_drive.drive(0, 0, 0, false);
         setScorePosition();
-        if (ctx.getTime() > 0.5){ 
-        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_DUNK_ANGLE); 
-        } if (ctx.getTime() > 1.35) {
+        boolean isCubes = NtHelper.getBoolean("/dashboard/arm/isCubes", false);
+
+        if (ctx.getTime() > 0.5) {
+            if (!isCubes) {
+                Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_DUNK_ANGLE);
+            }
+        }
+        if (ctx.getTime() > 1.35) {
             Robot.arm.outtakeBelt();
         }
-        
+
         // cahoobz
     }
 

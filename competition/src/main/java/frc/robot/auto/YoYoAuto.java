@@ -22,6 +22,7 @@ public boolean isWallSide = false;
 
     public YoYoAuto() {
         super("Score");
+        NtHelper.setBoolean("/auto/isWallSide", false);
         Robot.arm.beltStop();
             gridPose =  Waypoints.BLUE_GRID_1;
             gridEndPose = Waypoints.BLUE_GRID_2;
@@ -31,7 +32,7 @@ public boolean isWallSide = false;
     @State(name = "Score")
     public void taxiRun(StateContext ctx) {
         if (ctx.isInit()) {
-        isWallSide = NtHelper.getBoolean("/auto/isWallSide/", false);
+        isWallSide = NtHelper.getBoolean("/auto/isWallSide", false);
         if (!isWallSide) {
             gridPose =  Waypoints.BLUE_GRID_9;
             gridEndPose = Waypoints.BLUE_GRID_8;
