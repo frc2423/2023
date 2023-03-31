@@ -124,6 +124,10 @@ public class Trajectories {
     }
 
     public Boolean isFinishedWithoutTime() {
+        return isFinishedWithoutTime(.05, .05, 5);
+    }
+
+    public Boolean isFinishedWithoutTime(double finalX , double finalY, double rotFinal) {
         var robotPose =  drivetrain.getPose();
         var robotAngle = robotPose.getRotation();
         var robotPosition = robotPose.getTranslation();
@@ -136,7 +140,7 @@ public class Trajectories {
 
         var angleDif = robotLastAngle.minus(robotAngle);
 
-        if ( distFinalX < 0.05 && distFinalY < 0.05 && Math.abs(angleDif.getDegrees())< 5
+        if ( distFinalX < finalX && distFinalY < finalY && Math.abs(angleDif.getDegrees())< rotFinal
 
         ) {
         return true;
