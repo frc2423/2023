@@ -200,7 +200,7 @@ public class AutoScoreCube extends StateMachine {
         List<PathPoint> waypoints = new ArrayList<>();
         Pose2d start = Robot.m_drive.getPose();
         Pose2d end = transformRedPose(
-                start.plus(new Transform2d(new Translation2d(Units.inchesToMeters(8), 0), new Rotation2d(0))));// noice
+                start.plus(new Transform2d(new Translation2d(Units.inchesToMeters(5), 0), new Rotation2d(0))));// noice
                                                                                                                // //X =
                                                                                                                // 7.69
         waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
@@ -235,13 +235,16 @@ public class AutoScoreCube extends StateMachine {
         setScorePosition();
         boolean isCubes = NtHelper.getBoolean("/dashboard/arm/isCubes", false);
 
-        if (ctx.getTime() > 0.5) {
-            if (!isCubes) {
-                Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_DUNK_ANGLE);
+        if (isCubes) {
+
+            if (ctx.getTime() > 0.5) {
+                if (!isCubes) {
+                    Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_DUNK_ANGLE);
+                }
             }
-        }
-        if (ctx.getTime() > 1.35) {
-            Robot.arm.outtakeBelt();
+            if (ctx.getTime() > 1.35) {
+                Robot.arm.outtakeBelt();
+            }
         }
 
         // cahoobz

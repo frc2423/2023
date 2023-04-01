@@ -37,7 +37,7 @@ public class LedController {
 
     public void run() {
         if (currentLed != null && leds.containsKey(currentLed)) {
-            System.out.println("it does things");
+            //[System.out.println("it does things");
             leds.get(currentLed).run(ledBuffer, ledBuffer.getLength());
             led.setData(ledBuffer);
         }

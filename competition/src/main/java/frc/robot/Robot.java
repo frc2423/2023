@@ -102,7 +102,10 @@ public class Robot extends TimedRobot {
   }
 
   public void setLED() {
-    if (NtHelper.getBoolean("/dashboard/arm/isCubes", true)) {
+    if(isDisabled()) {
+      ledBrain.disable();
+    }
+    else if (NtHelper.getBoolean("/dashboard/arm/isCubes", true)) {
       ledBrain.setPurple();
     } else {
       ledBrain.setYellow();
@@ -118,12 +121,14 @@ public class Robot extends TimedRobot {
     m_drive.periodic();
     arm.periodic();
     field.setRobotPose(m_drive.getPose());
+    setLED();
+    ledBrain.run();
   }
+
 
   @Override
   public void disabledInit() {
-    ledBrain.disable();
-    ledBrain.run();
+    
   }
   
 
@@ -205,7 +210,6 @@ public class Robot extends TimedRobot {
     isAutoHuman = m_controller.getPOV() == 180;
     boolean isAutoHumanPressed = !prevAutoHuman && isAutoHuman;
     boolean isAutoHumanReleased = prevAutoHuman && !isAutoHuman;
-    ledBrain.run();
     final double kMaxSpeed = 4;
     Robot.m_drive.addVisionMeasurement(photonEstimator.grabLatestEstimatedPose());
 
