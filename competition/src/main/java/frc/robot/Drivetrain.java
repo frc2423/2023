@@ -132,14 +132,6 @@ public class Drivetrain {
     }
   };
 
-  public void addBestVisionMeasurement(Camera m_Camera) {
-    var res = m_Camera.returnCamera().getLatestResult();
-    var imageCaptureTime = res.getTimestampSeconds();
-    if (res.hasTargets()) {
-      addVisionMeasurement(res.getBestTarget(), imageCaptureTime);
-    }
-  }
-
 
   public void addVisionMeasurement(PhotonTrackedTarget target, double imageCaptureTime) {
 

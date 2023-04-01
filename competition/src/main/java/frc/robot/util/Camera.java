@@ -5,18 +5,22 @@ import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.constants.CameraConstants;
 
 public class Camera {
     private PhotonCamera camera;
 
+    private Transform3d cameraToRobot;
+
     public PhotonCamera returnCamera(){
         return camera;
     }
 
-    public Camera(String name) {
-        camera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
+    public Camera(String name, Transform3d cameraToRobot) {
+        camera = new PhotonCamera(name);
+        this.cameraToRobot = cameraToRobot;
     }
 
     public double getTapeX() {
@@ -43,13 +47,17 @@ public class Camera {
         if (returnTargetIDInfo(number) != null) {
 
             return PhotonUtils.calculateDistanceToTargetMeters(
-                    CameraConstants.CAMERA_HEIGHT_METERS,
+                    cameraToRobot.getZ(),
                     CameraConstants.TARGET_HEIGHT_METERS,
-                    CameraConstants.CAMERA_PITCH_RADIANS,
+                    cameraToRobot.getRotation().getY(),
                     Units.degreesToRadians(returnTargetIDInfo(number).getPitch()));
 
         }
         return -1;
+    }
+
+    public Transform3d getCameraToRobot() {
+        return cameraToRobot;
     }
 
     public boolean checkID(int id) {

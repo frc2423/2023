@@ -200,7 +200,7 @@ public class AutoScoreCube extends StateMachine {
         List<PathPoint> waypoints = new ArrayList<>();
         Pose2d start = Robot.m_drive.getPose();
         Pose2d end = transformRedPose(
-                start.plus(new Transform2d(new Translation2d(Units.inchesToMeters(2), 0), new Rotation2d(0))));// noice
+                start.plus(new Transform2d(new Translation2d(Units.inchesToMeters(8), 0), new Rotation2d(0))));// noice
                                                                                                                // //X =
                                                                                                                // 7.69
         waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
