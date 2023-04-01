@@ -89,28 +89,24 @@ public class Robot extends TimedRobot {
         arm.resetTelescopeEncoder();
       }
     });
-    ledBrain.setGreen();
-    NtHelper.listen("/robot/dashboard/led", (entry)->{
-        String ledValue = NtHelper.getString("/robot/dashboard/led", "green");
-        if (ledValue.equals("yellow")){
-          ledBrain.setYellow();
-        }
-        else if (ledValue.equals("purple")){
-          ledBrain.setPurple();
-        }
-        else if (ledValue.equals("green")){
-          ledBrain.setGreen();
-        }
-        else if (ledValue.equals("off")){
-          ledBrain.disable();
-        }
-        else{
-          ledBrain.setGreen();
-        }
+    setLED();
+    NtHelper.listen("/dashboard/arm/isCubes", (entry)->{
+        setLED();
+        
     });
+
+    
 
 
     SmartDashboard.putData("Field", field);
+  }
+
+  public void setLED() {
+    if (NtHelper.getBoolean("/dashboard/arm/isCubes", true)) {
+      ledBrain.setPurple();
+    } else {
+      ledBrain.setYellow();
+    }
   }
 
   @Override
@@ -147,6 +143,7 @@ public class Robot extends TimedRobot {
       else {
         arm.setOutakeSpeed(-1);
       }
+      
       if (position == SetPoints.ARM.UP) { //5
         arm.setShoulderSetpoint(SetPoints.SHOULDER_UP_ANGLE);
         arm.telescopeToSetpoint(0);
@@ -212,7 +209,7 @@ public class Robot extends TimedRobot {
     final double kMaxSpeed = 4;
     Robot.m_drive.addVisionMeasurement(photonEstimator.grabLatestEstimatedPose());
 
-
+  
     if (m_controller.getStartButtonReleased()) {
       Robot.m_drive.setBrake(false);
     }
