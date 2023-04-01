@@ -176,7 +176,7 @@ public class AutoScoreCube extends StateMachine {
     @State(name = "followPath") // what?!
     public void followPath(StateContext ctx) {
         Robot.trajectories.follow_current_path();
-        if (Robot.trajectories.isFinishedWithoutTime()) {
+        if (Robot.trajectories.isFinishedWithoutTime(.03, .03, 5)) {
             setState("stahp");
         }
         // dew it

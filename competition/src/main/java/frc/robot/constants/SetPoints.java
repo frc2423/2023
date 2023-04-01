@@ -19,8 +19,8 @@ public class SetPoints {
     public final static Rotation2d SHOULDER_BACK_HIGH_CONE_ANGLE = new Rotation2d(Units.degreesToRadians(-44.3));
     public final static Rotation2d SHOULDER_FRONT_HIGH_CUBE_ANGLE = new Rotation2d(Units.degreesToRadians(58));
     public final static Rotation2d SHOULDER_BACK_HIGH_CUBE_ANGLE = new Rotation2d(Units.degreesToRadians(-58));
-    public final static Rotation2d SHOULDER_FRONT_DUNK_ANGLE = new Rotation2d(Units.degreesToRadians(74));
-    public final static Rotation2d SHOULDER_BACK_DUNK_ANGLE = new Rotation2d(Units.degreesToRadians(-74));
+    public final static Rotation2d SHOULDER_FRONT_DUNK_ANGLE = new Rotation2d(Units.degreesToRadians(80));
+    public final static Rotation2d SHOULDER_BACK_DUNK_ANGLE = new Rotation2d(Units.degreesToRadians(-80));
     public final static Rotation2d SHOULDER_FRONT_HP_ANLGE = new Rotation2d(Units.degreesToRadians(74));
     public final static Rotation2d SHOULDER_BACK_HP_ANLGE = new Rotation2d(Units.degreesToRadians(-74));
 

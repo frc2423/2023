@@ -33,7 +33,7 @@ public class GyroAuto extends StateMachine {
 
     @State(name = "Spit")
     public void spit(StateContext ctx) {
-        Robot.arm.outtakeBelt();
+        Robot.arm.outtakeBeltCube();
         if (ctx.getTime() > .5) {
             setState("Start");
         }

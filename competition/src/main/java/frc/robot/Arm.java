@@ -210,7 +210,18 @@ public class Arm {
 
     public void outtakeBelt() {
         // sets belt speed to # < 0
+        if (NtHelper.getBoolean("/dashboard/arm/isCubes", false)) {
+            beltoMotor.set(outtakeBeltoSpeedo);
+        } else {
+            beltoMotor.set(-0.6);
+        }
+    }
+    public void outtakeBeltCube() {
         beltoMotor.set(outtakeBeltoSpeedo);
+    }
+
+    public void outtakeBeltCone() {
+        beltoMotor.set(-0.6);
     }
 
     public void setOutakeSpeed(double speed) {

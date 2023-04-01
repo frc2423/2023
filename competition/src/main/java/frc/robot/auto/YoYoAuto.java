@@ -58,7 +58,7 @@ public boolean isWallSide = false;
 
     @State(name = "Spit")
     public void spit(StateContext ctx) {
-        Robot.arm.outtakeBelt();
+        Robot.arm.outtakeBeltCone();
         if (ctx.getTime() > .5) {
             Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_UP_ANGLE);
             Robot.arm.beltStop();
@@ -70,7 +70,9 @@ public boolean isWallSide = false;
 
     @State(name = "Move")
     public void move(StateContext ctx) {
+        if (ctx.getTime() > 1) {
         Robot.trajectories.follow_current_path();
+        }
         if (ctx.getTime() > .5) {
             Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_UP_ANGLE);
             Robot.arm.telescopeToSetpoint(0);
@@ -137,7 +139,7 @@ public boolean isWallSide = false;
     @State(name = "TryScoreMidPart2")
     public void tryScoreMid2(StateContext ctx) {
         // try score mid :P
-        Robot.arm.outtakeBelt();
+        Robot.arm.outtakeBeltCube();
 
         if (ctx.getTime() > 1) { //time?
             Robot.arm.beltStop();
