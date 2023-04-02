@@ -33,6 +33,47 @@ public class AutoScoreCube extends StateMachine {
         NtHelper.setString("/dashboard/autoScorePosition", "mid");
     }
 
+    public String getScoringTagLabel() {
+        var m_Camera = Robot.m_camera;
+        var res = m_Camera.returnCamera().getLatestResult();
+        var bestTarget = res.getBestTarget();
+        if (res.hasTargets()) {
+            return "None";
+        }
+        var targetid = bestTarget.getFiducialId();
+
+
+        if (targetid == 1) {
+            return "RED Left <--";
+        }
+        else if (targetid == 2) {
+            return "RED Middle ^";
+        }
+        else if (targetid == 3) {
+            return "RED Right -->";
+        }
+        else if (targetid == 4) {
+            return "BLUE HP";
+        }
+        else if (targetid == 5) {
+            return "RED HP";
+        }
+        else if (targetid == 6) {
+            return "BLUE Left <--";
+        }
+        else if (targetid == 7) {
+            return "BLUE Middle ^";
+        }
+        else if (targetid == 8) {
+            return "BLUE Right -->";
+        }
+        else {
+            return "Unknown";
+        }
+    
+
+    }
+
     public boolean scoringTag() {
         var m_Camera = Robot.m_camera;
         var res = m_Camera.returnCamera().getLatestResult();

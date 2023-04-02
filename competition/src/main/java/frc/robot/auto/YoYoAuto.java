@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Robot;
 import frc.robot.constants.SetPoints;
@@ -31,6 +32,13 @@ public boolean isWallSide = false;
 
     @State(name = "Score")
     public void taxiRun(StateContext ctx) {
+        SwerveModuleState zeroState = new SwerveModuleState(0,
+                Rotation2d.fromDegrees(0));
+
+        Robot.m_drive.m_frontLeft.setDesiredState(zeroState);
+        Robot.m_drive.m_frontRight.setDesiredState(zeroState);
+        Robot.m_drive.m_backLeft.setDesiredState(zeroState);
+        Robot.m_drive.m_backRight.setDesiredState(zeroState);
         if (ctx.isInit()) {
         isWallSide = NtHelper.getBoolean("/auto/isWallSide", false);
         if (!isWallSide) {

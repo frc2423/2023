@@ -45,7 +45,7 @@ public class Robot extends TimedRobot {
   public static final Field2d field = new Field2d();
   public static final Camera m_camera= new Camera("Microsoft_LifeCam_HD-3000", CameraConstants.cameraToRobot);
 
-  private StateMachine autoScoreCube = new AutoScoreCube();
+  private AutoScoreCube autoScoreCube = new AutoScoreCube();
   private StateMachine autoHuman = new AutoHuman();
 
   public static Arm arm = new Arm();
@@ -114,6 +114,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    NtHelper.setString("/dashboard/getScoringTagLabel", autoScoreCube.getScoringTagLabel());
+
     telemtry();
     if (!isTeleop()) {
       arm.isSafeMode(!isTest());
@@ -212,8 +214,8 @@ public class Robot extends TimedRobot {
     boolean isAutoHumanReleased = prevAutoHuman && !isAutoHuman;
     final double kMaxSpeed = 4;
     Robot.m_drive.addVisionMeasurement(photonEstimator.grabLatestEstimatedPose());
+    
 
-  
     if (m_controller.getStartButtonReleased()) {
       Robot.m_drive.setBrake(false);
     }
