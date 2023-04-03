@@ -114,8 +114,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    NtHelper.setString("/dashboard/getScoringTagLabel", autoScoreCube.getScoringTagLabel());
-
+    
     telemtry();
     if (!isTeleop()) {
       arm.isSafeMode(!isTest());
@@ -125,6 +124,13 @@ public class Robot extends TimedRobot {
     field.setRobotPose(m_drive.getPose());
     setLED();
     ledBrain.run();
+
+    try {
+      NtHelper.setString("/dashboard/getScoringTagLabel", autoScoreCube.getScoringTagLabel());
+    } catch(Exception exception) {
+      System.err.println("Error getting scoring tag");
+      exception.printStackTrace();
+    }
   }
 
 

@@ -36,10 +36,10 @@ public class AutoScoreCube extends StateMachine {
     public String getScoringTagLabel() {
         var m_Camera = Robot.m_camera;
         var res = m_Camera.returnCamera().getLatestResult();
-        var bestTarget = res.getBestTarget();
-        if (res.hasTargets()) {
+        if (!res.hasTargets()) {
             return "None";
         }
+        var bestTarget = res.getBestTarget();
         var targetid = bestTarget.getFiducialId();
 
 

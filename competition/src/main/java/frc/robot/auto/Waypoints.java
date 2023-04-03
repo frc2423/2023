@@ -63,7 +63,7 @@ public class Waypoints {
         public static final Pose2d RED_HP = new Pose2d(FIELD_LENGTH_METERS - BLUE_HP.getX(), 7.2, Rotation2d.fromDegrees(90)); //figure it out man
         // april tag section
 
-        // public static final Pose2d BLUE_AT_2 = BLUE_GRID_5;
+        // public static final Pose2d BLUE_AT_2 = BLUE_GRID_5;p
         public static final Map<Integer, Pose2d> aprilTagsScorePosesCubes = // Poses Moses
                 Map.of(
                                 1,
