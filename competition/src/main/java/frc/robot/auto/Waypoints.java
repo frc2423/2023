@@ -1,13 +1,17 @@
 package frc.robot.auto;
 
+import java.util.Map;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import java.util.Map;
 
 public class Waypoints {
+        public static final double FIELD_LENGTH_METERS = 16.54175;
+        public static final double FIELD_WIDTH_METERS = 8.0137;
+
         // contains all the waypoints that do the waypoint things
         private static final double xBlueGrid = 2.07;
         private static final double xRedGrid = 14.52;
@@ -55,11 +59,11 @@ public class Waypoints {
         public static final Pose2d RED_CHARGE_1 = new Pose2d(12.62, 0.79, Rotation2d.fromDegrees(180));
         public static final Pose2d RED_CHARGE_2 = new Pose2d(12.62, 4.76, Rotation2d.fromDegrees(180));
 
-        public static final Pose2d RED_HP = new Pose2d(12.62, 0.79, Rotation2d.fromDegrees(180)); //figure it out man
-        public static final Pose2d BLUE_HP = new Pose2d(13.84, 7.27, Rotation2d.fromDegrees(90));
+        public static final Pose2d BLUE_HP = new Pose2d(13.84, 7.2, Rotation2d.fromDegrees(90));
+        public static final Pose2d RED_HP = new Pose2d(FIELD_LENGTH_METERS - BLUE_HP.getX(), 7.2, Rotation2d.fromDegrees(90)); //figure it out man
         // april tag section
 
-        // public static final Pose2d BLUE_AT_2 = BLUE_GRID_5;
+        // public static final Pose2d BLUE_AT_2 = BLUE_GRID_5;p
         public static final Map<Integer, Pose2d> aprilTagsScorePosesCubes = // Poses Moses
                 Map.of(
                                 1,
@@ -93,13 +97,13 @@ public class Waypoints {
                                 RED_GRID_9.plus(new Transform2d(new Translation2d(Units.inchesToMeters(4), 0),
                                                 new Rotation2d(Math.PI))),
                                 6,
-                                BLUE_GRID_7.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
+                                BLUE_GRID_7.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4 + 3), 0),
                                                 new Rotation2d(Math.PI))),
                                 7,
-                                BLUE_GRID_4.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
+                                BLUE_GRID_4.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4 + 3), 0),
                                                 new Rotation2d(Math.PI))),
                                 8,
-                                BLUE_GRID_1.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4), 0),
+                                BLUE_GRID_1.plus(new Transform2d(new Translation2d(Units.inchesToMeters(-4 + 3), 0),
                                                 new Rotation2d(Math.PI))));
 
                 

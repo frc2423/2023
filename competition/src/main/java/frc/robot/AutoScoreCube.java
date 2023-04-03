@@ -33,6 +33,47 @@ public class AutoScoreCube extends StateMachine {
         NtHelper.setString("/dashboard/autoScorePosition", "mid");
     }
 
+    public String getScoringTagLabel() {
+        var m_Camera = Robot.m_camera;
+        var res = m_Camera.returnCamera().getLatestResult();
+        if (!res.hasTargets()) {
+            return "None";
+        }
+        var bestTarget = res.getBestTarget();
+        var targetid = bestTarget.getFiducialId();
+
+
+        if (targetid == 1) {
+            return "RED Left <--";
+        }
+        else if (targetid == 2) {
+            return "RED Middle ^";
+        }
+        else if (targetid == 3) {
+            return "RED Right -->";
+        }
+        else if (targetid == 4) {
+            return "BLUE HP";
+        }
+        else if (targetid == 5) {
+            return "RED HP";
+        }
+        else if (targetid == 6) {
+            return "BLUE Left <--";
+        }
+        else if (targetid == 7) {
+            return "BLUE Middle ^";
+        }
+        else if (targetid == 8) {
+            return "BLUE Right -->";
+        }
+        else {
+            return "Unknown";
+        }
+    
+
+    }
+
     public boolean scoringTag() {
         var m_Camera = Robot.m_camera;
         var res = m_Camera.returnCamera().getLatestResult();
@@ -176,7 +217,7 @@ public class AutoScoreCube extends StateMachine {
     @State(name = "followPath") // what?!
     public void followPath(StateContext ctx) {
         Robot.trajectories.follow_current_path();
-        if (Robot.trajectories.isFinishedWithoutTime()) {
+        if (Robot.trajectories.isFinishedWithoutTime(.03, .03, 5)) {
             setState("stahp");
         }
         // dew it
@@ -200,7 +241,7 @@ public class AutoScoreCube extends StateMachine {
         List<PathPoint> waypoints = new ArrayList<>();
         Pose2d start = Robot.m_drive.getPose();
         Pose2d end = transformRedPose(
-                start.plus(new Transform2d(new Translation2d(Units.inchesToMeters(2), 0), new Rotation2d(0))));// noice
+                start.plus(new Transform2d(new Translation2d(Units.inchesToMeters(5), 0), new Rotation2d(0))));// noice
                                                                                                                // //X =
                                                                                                                // 7.69
         waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
@@ -235,13 +276,16 @@ public class AutoScoreCube extends StateMachine {
         setScorePosition();
         boolean isCubes = NtHelper.getBoolean("/dashboard/arm/isCubes", false);
 
-        if (ctx.getTime() > 0.5) {
-            if (!isCubes) {
-                Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_DUNK_ANGLE);
+        if (isCubes) {
+
+            if (ctx.getTime() > 0.5) {
+                if (!isCubes) {
+                    Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_DUNK_ANGLE);
+                }
             }
-        }
-        if (ctx.getTime() > 1.35) {
-            Robot.arm.outtakeBelt();
+            if (ctx.getTime() > 1.35) {
+                Robot.arm.outtakeBelt();
+            }
         }
 
         // cahoobz

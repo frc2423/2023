@@ -8,6 +8,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.auto.Auto;
+import frc.robot.constants.CameraConstants;
 import frc.robot.constants.SetPoints;
 import frc.robot.util.Camera;
 import frc.robot.util.NtHelper;
@@ -41,10 +43,9 @@ public class Robot extends TimedRobot {
   public static Drivetrain m_drive = new Drivetrain();
   public static Trajectories trajectories = new Trajectories();
   public static final Field2d field = new Field2d();
-  public static final Camera m_camera= new Camera("driverCamera");
-  private AutoAlign autoAlign = new AutoAlign();
+  public static final Camera m_camera= new Camera("Microsoft_LifeCam_HD-3000", CameraConstants.cameraToRobot);
 
-  private StateMachine autoScoreCube = new AutoScoreCube();
+  private AutoScoreCube autoScoreCube = new AutoScoreCube();
   private StateMachine autoHuman = new AutoHuman();
 
   public static Arm arm = new Arm();
@@ -88,32 +89,32 @@ public class Robot extends TimedRobot {
         arm.resetTelescopeEncoder();
       }
     });
-    ledBrain.setGreen();
-    NtHelper.listen("/robot/dashboard/led", (entry)->{
-        String ledValue = NtHelper.getString("/robot/dashboard/led", "green");
-        if (ledValue.equals("yellow")){
-          ledBrain.setYellow();
-        }
-        else if (ledValue.equals("purple")){
-          ledBrain.setPurple();
-        }
-        else if (ledValue.equals("green")){
-          ledBrain.setGreen();
-        }
-        else if (ledValue.equals("off")){
-          ledBrain.disable();
-        }
-        else{
-          ledBrain.setGreen();
-        }
+    setLED();
+    NtHelper.listen("/dashboard/arm/isCubes", (entry)->{
+        setLED();
+        
     });
+
+    
 
 
     SmartDashboard.putData("Field", field);
   }
 
+  public void setLED() {
+    if(isDisabled()) {
+      ledBrain.disable();
+    }
+    else if (NtHelper.getBoolean("/dashboard/arm/isCubes", true)) {
+      ledBrain.setPurple();
+    } else {
+      ledBrain.setYellow();
+    }
+  }
+
   @Override
   public void robotPeriodic() {
+    
     telemtry();
     if (!isTeleop()) {
       arm.isSafeMode(!isTest());
@@ -121,12 +122,21 @@ public class Robot extends TimedRobot {
     m_drive.periodic();
     arm.periodic();
     field.setRobotPose(m_drive.getPose());
+    setLED();
+    ledBrain.run();
+
+    try {
+      NtHelper.setString("/dashboard/getScoringTagLabel", autoScoreCube.getScoringTagLabel());
+    } catch(Exception exception) {
+      System.err.println("Error getting scoring tag");
+      exception.printStackTrace();
+    }
   }
+
 
   @Override
   public void disabledInit() {
-    ledBrain.disable();
-    ledBrain.run();
+    
   }
   
 
@@ -146,6 +156,7 @@ public class Robot extends TimedRobot {
       else {
         arm.setOutakeSpeed(-1);
       }
+      
       if (position == SetPoints.ARM.UP) { //5
         arm.setShoulderSetpoint(SetPoints.SHOULDER_UP_ANGLE);
         arm.telescopeToSetpoint(0);
@@ -207,10 +218,9 @@ public class Robot extends TimedRobot {
     isAutoHuman = m_controller.getPOV() == 180;
     boolean isAutoHumanPressed = !prevAutoHuman && isAutoHuman;
     boolean isAutoHumanReleased = prevAutoHuman && !isAutoHuman;
-    ledBrain.run();
     final double kMaxSpeed = 4;
     Robot.m_drive.addVisionMeasurement(photonEstimator.grabLatestEstimatedPose());
-
+    
 
     if (m_controller.getStartButtonReleased()) {
       Robot.m_drive.setBrake(false);
@@ -237,7 +247,6 @@ public class Robot extends TimedRobot {
     }
 
     if (m_controller.getStartButton()) {
-      // autoAlign.autoRotate()
   
       SwerveModuleState brflSTATE = new SwerveModuleState(0,
                 Rotation2d.fromDegrees(0));
@@ -252,7 +261,6 @@ public class Robot extends TimedRobot {
           
     }else if (m_controller.getBackButton()){
       autoScoreCube.run();
-      // Robot.m_drive.addBestVisionMeasurement(m_camera);
     } else if (isAutoHuman) {
         autoHuman.run();
     }

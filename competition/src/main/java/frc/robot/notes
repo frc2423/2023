@@ -1,0 +1,6 @@
+- Update camera class so its constructor takes in a camera name and passes it into PhotonCamera so its configurable
+- Update camera class so we can pass in settings like camera position and angle per camera (cameraToRobot)
+- Add cameraToRobot settings for other camera
+- Create a second camera
+- Make sure PhotonRunnable uses both cameras
+- Make sure addVisionMeasurement(PhotonTrackedTarget target, double imageCaptureTime) is passed cameraToRobot instead of using hard coded one

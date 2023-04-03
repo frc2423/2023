@@ -11,19 +11,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.util.Camera;
 import frc.robot.util.NtHelper;
-
-import java.lang.annotation.Target;
-
 import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
-
 import frc.robot.constants.CameraConstants;
 
 public class Drivetrain {
@@ -137,14 +131,6 @@ public class Drivetrain {
       m_odometry.addVisionMeasurement(pose2d, robotpose.timestampSeconds);
     }
   };
-
-  public void addBestVisionMeasurement(Camera m_Camera) {
-    var res = m_Camera.returnCamera().getLatestResult();
-    var imageCaptureTime = res.getTimestampSeconds();
-    if (res.hasTargets()) {
-      addVisionMeasurement(res.getBestTarget(), imageCaptureTime);
-    }
-  }
 
 
   public void addVisionMeasurement(PhotonTrackedTarget target, double imageCaptureTime) {

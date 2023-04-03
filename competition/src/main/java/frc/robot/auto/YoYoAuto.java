@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Robot;
 import frc.robot.constants.SetPoints;
@@ -31,6 +32,13 @@ public boolean isWallSide = false;
 
     @State(name = "Score")
     public void taxiRun(StateContext ctx) {
+        SwerveModuleState zeroState = new SwerveModuleState(0,
+                Rotation2d.fromDegrees(0));
+
+        Robot.m_drive.m_frontLeft.setDesiredState(zeroState);
+        Robot.m_drive.m_frontRight.setDesiredState(zeroState);
+        Robot.m_drive.m_backLeft.setDesiredState(zeroState);
+        Robot.m_drive.m_backRight.setDesiredState(zeroState);
         if (ctx.isInit()) {
         isWallSide = NtHelper.getBoolean("/auto/isWallSide", false);
         if (!isWallSide) {
@@ -58,7 +66,7 @@ public boolean isWallSide = false;
 
     @State(name = "Spit")
     public void spit(StateContext ctx) {
-        Robot.arm.outtakeBelt();
+        Robot.arm.outtakeBeltCone();
         if (ctx.getTime() > .5) {
             Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_UP_ANGLE);
             Robot.arm.beltStop();
@@ -70,7 +78,9 @@ public boolean isWallSide = false;
 
     @State(name = "Move")
     public void move(StateContext ctx) {
+        if (ctx.getTime() > 1) {
         Robot.trajectories.follow_current_path();
+        }
         if (ctx.getTime() > .5) {
             Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_UP_ANGLE);
             Robot.arm.telescopeToSetpoint(0);
@@ -137,7 +147,7 @@ public boolean isWallSide = false;
     @State(name = "TryScoreMidPart2")
     public void tryScoreMid2(StateContext ctx) {
         // try score mid :P
-        Robot.arm.outtakeBelt();
+        Robot.arm.outtakeBeltCube();
 
         if (ctx.getTime() > 1) { //time?
             Robot.arm.beltStop();

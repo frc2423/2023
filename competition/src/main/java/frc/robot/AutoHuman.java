@@ -8,11 +8,13 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPoint;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.auto.Waypoints;
 import frc.robot.util.NtHelper;
+import frc.robot.util.PhotonRunnable;
 import frc.robot.util.stateMachine.State;
 import frc.robot.util.stateMachine.StateContext;
 import frc.robot.util.stateMachine.StateMachine;
@@ -22,6 +24,18 @@ public class AutoHuman extends StateMachine { //Autoo Hooman
     public AutoHuman() {
         super("look");
         //NtHelper.setString("/dashboard/autoScorePosition", "mid");
+    }
+
+    public Pose2d transformRedPose(Pose2d startPose) {
+        if (Alliance.Red.equals(DriverStation.getAlliance())) {
+            double realX = PhotonRunnable.FIELD_LENGTH_METERS - startPose.getX();
+            double realY = PhotonRunnable.FIELD_WIDTH_METERS - startPose.getY();
+            Rotation2d realANGLE = startPose.getRotation().plus(new Rotation2d(Math.PI));
+            Pose2d transformedPose = new Pose2d(realX, realY, realANGLE);
+            return transformedPose;
+        } else {
+            return startPose;
+        }
     }
 
     public boolean scoringTag() {
@@ -59,7 +73,7 @@ public class AutoHuman extends StateMachine { //Autoo Hooman
             List<PathPoint> waypoints = new ArrayList<>();
 
             Pose2d start = Robot.m_drive.getPose();
-            Pose2d end = Waypoints.aprilTagsHumanPlayerStationLongName.get(targetID);
+            Pose2d end = transformRedPose(Waypoints.aprilTagsHumanPlayerStationLongName.get(targetID));
 
             waypoints.add(new PathPoint(start.getTranslation(), start.getRotation(), start.getRotation()));
             waypoints.add(new PathPoint(end.getTranslation(), end.getRotation(), end.getRotation()));

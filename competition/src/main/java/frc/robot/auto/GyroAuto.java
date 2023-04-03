@@ -33,7 +33,7 @@ public class GyroAuto extends StateMachine {
 
     @State(name = "Spit")
     public void spit(StateContext ctx) {
-        Robot.arm.outtakeBelt();
+        Robot.arm.outtakeBeltCube();
         if (ctx.getTime() > .5) {
             setState("Start");
         }
@@ -87,7 +87,7 @@ public class GyroAuto extends StateMachine {
         if (ctx.getTime() < .75) {
             Robot.m_drive.drive(1.05, 0, 0, true);
         } else {
-            Robot.m_drive.drive(-1.05, 0, 0, true);
+            Robot.m_drive.drive(-1.4, 0, 0, true); // -1.40 m/s
             if (Robot.m_drive.m_gyro.getPitch() < -6) {
                 setState("KeepGoing");
             }
@@ -96,8 +96,8 @@ public class GyroAuto extends StateMachine {
 
     @State(name = "KeepGoing")
     public void KeepGoing(StateContext ctx) {
-        Robot.m_drive.drive(-1.05, 0, 0, true);
-        if (ctx.getTime() > 2.4) {
+        Robot.m_drive.drive(-1.4, 0, 0, true); // -1.40 m/s
+        if (ctx.getTime() > 1.95) {  // 1.95s
             setState("Balance");
         }
     }
