@@ -32,7 +32,12 @@ public class AutoScoreCube extends StateMachine {
         super("createPath"); // so rad
         NtHelper.setString("/dashboard/autoScorePosition", "mid");
     }
-
+    public int getScoringTagID() {
+        var m_Camera = Robot.m_camera;
+        var res = m_Camera.returnCamera().getLatestResult();
+        var bestTarget = res.getBestTarget();
+        return bestTarget.getFiducialId();
+    }
     public String getScoringTagLabel() {
         var m_Camera = Robot.m_camera;
         var res = m_Camera.returnCamera().getLatestResult();
@@ -131,6 +136,9 @@ public class AutoScoreCube extends StateMachine {
     }
 
     public void setScorePosition() {
+        Pose2d pose1 = new Pose2d();
+        Pose2d pose2 = new Pose2d();
+        pose1.getTranslation().getDistance(pose2.getTranslation());
         // get value from networktables
         // value is "high", "mid", or "low"
         var position = NtHelper.getString("/dashboard/autoScorePosition", "mid");

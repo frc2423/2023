@@ -8,7 +8,6 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -18,6 +17,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Led.KwarqsLed;
 import frc.robot.auto.Auto;
 import frc.robot.constants.CameraConstants;
 import frc.robot.constants.SetPoints;
@@ -25,7 +25,6 @@ import frc.robot.util.Camera;
 import frc.robot.util.NtHelper;
 import frc.robot.util.PhotonRunnable;
 import frc.robot.util.stateMachine.StateMachine;
-import frc.robot.Led.KwarqsLed;
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
@@ -221,6 +220,13 @@ public class Robot extends TimedRobot {
     final double kMaxSpeed = 4;
     Robot.m_drive.addVisionMeasurement(photonEstimator.grabLatestEstimatedPose());
     
+    
+ int tagID = autoScoreCube.getScoringTagID();
+    if (tagID == 5) {
+      Robot.m_drive.getPose();
+    } else if (tagID  == 4) {
+
+    }
 
     if (m_controller.getStartButtonReleased()) {
       Robot.m_drive.setBrake(false);
