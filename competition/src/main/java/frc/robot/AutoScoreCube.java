@@ -27,7 +27,7 @@ import frc.robot.util.stateMachine.StateContext;
 import frc.robot.util.stateMachine.StateMachine;
 
 public class AutoScoreCube extends StateMachine {
-    // dw jacob we made it specific just fpr you
+    // dw jacob we made it specific just for you
     public AutoScoreCube() {
         super("createPath"); // so rad
         NtHelper.setString("/dashboard/autoScorePosition", "mid");

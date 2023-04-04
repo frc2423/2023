@@ -4,14 +4,21 @@ import frc.robot.util.stateMachine.StateContext;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Robot;
+import frc.robot.constants.ArmPosition;
 import frc.robot.constants.SetPoints;
+import frc.robot.constants.StateConstants;
+import frc.robot.util.NtHelper;
 import frc.robot.util.stateMachine.State;
 import frc.robot.util.stateMachine.StateMachine;
+
 public class BasedAuto extends StateMachine {
-    
+    String position = new String();
+    //fix hard coded stuff please
+
     public BasedAuto(){
         super("Score");
         Robot.arm.beltStop();
+        position = NtHelper.getString("/dashboard/autoArm", "low"); //from nt
     }
 
     @State(name = "Score")
@@ -23,15 +30,20 @@ public class BasedAuto extends StateMachine {
         Robot.m_drive.m_frontRight.setDesiredState(zeroState);
         Robot.m_drive.m_backLeft.setDesiredState(zeroState);
         Robot.m_drive.m_backRight.setDesiredState(zeroState);
-       
-        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_CONE_ANGLE);
-        Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_MID_CONE_LENGTH);
+
+        if (position.equals(ArmPosition.MID)){
+            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_CONE_ANGLE);
+            Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_MID_CONE_LENGTH);
+        } else if (position.equals(ArmPosition.LOW)) {
+            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_FLOOR_ANGLE);
+            Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_BACK_FLOOR_LENGTH);
+        }
 
         if (ctx.getTime() > 1) { //probably want to reduce the time
-            setState("dunk");
+            setState("Dunk");
         }
     }
-    @State(name = "dunk")
+    @State(name = "Dunk")
     public void dunk(StateContext ctx) {
         Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_DUNK_ANGLE);
         if( ctx.getTime() > 1) { //noice
