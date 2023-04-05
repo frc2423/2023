@@ -30,7 +30,7 @@ import frc.robot.Led.KwarqsLed;
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
   private final XboxController m_controller_right = new XboxController(1);
-  private final PhotonRunnable photonEstimator = new PhotonRunnable();
+  public final static PhotonRunnable photonEstimator = new PhotonRunnable();
   private final Notifier photonNotifier = new Notifier(photonEstimator);
   private final KwarqsLed ledBrain = new KwarqsLed();
 
@@ -43,7 +43,6 @@ public class Robot extends TimedRobot {
   public static Drivetrain m_drive = new Drivetrain();
   public static Trajectories trajectories = new Trajectories();
   public static final Field2d field = new Field2d();
-  public static final Camera m_camera= new Camera("Microsoft_LifeCam_HD-3000", CameraConstants.cameraToRobot);
 
   private AutoScoreCube autoScoreCube = new AutoScoreCube();
   private StateMachine autoHuman = new AutoHuman();

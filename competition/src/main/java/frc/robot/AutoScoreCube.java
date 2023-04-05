@@ -34,14 +34,11 @@ public class AutoScoreCube extends StateMachine {
     }
 
     public String getScoringTagLabel() {
-        var m_Camera = Robot.m_camera;
-        var res = m_Camera.returnCamera().getLatestResult();
-        if (!res.hasTargets()) {
-            return "None";
-        }
-        var bestTarget = res.getBestTarget();
-        var targetid = bestTarget.getFiducialId();
+        var targetid = Robot.photonEstimator.grabBestID();
 
+        if (targetid == null) {
+            return "None";
+        } 
 
         if (targetid == 1) {
             return "RED Left <--";
@@ -75,13 +72,11 @@ public class AutoScoreCube extends StateMachine {
     }
 
     public boolean scoringTag() {
-        var m_Camera = Robot.m_camera;
-        var res = m_Camera.returnCamera().getLatestResult();
-        var bestTarget = res.getBestTarget();
+        var targetid = Robot.photonEstimator.grabBestID();
+
         var isRed = Alliance.Red.equals(DriverStation.getAlliance());
 
-        if (res.hasTargets()) {
-            var targetid = bestTarget.getFiducialId();
+        if (targetid != null) {
 
             if (isRed && (targetid == 1 || targetid == 2 || targetid == 3)) {
                 return true;
@@ -95,29 +90,30 @@ public class AutoScoreCube extends StateMachine {
         // don't want to go to the wrong april tag now do we
     }
 
-    private double getClosestAprilTag() {
-        var targets = Robot.m_camera.getLatestResult().getTargets();
-        if (targets.size() > 1) {
-            double smallestdist = 10000000;
-            int bestid = 0;
-            for (int i = 0; i < targets.size(); i++) {
-                var target = targets.get(i);
-                var id = target.getFiducialId();
-                var pose = Waypoints.aprilTagsScorePosesCubes.get(id);
-                var distance = PhotonUtils.getDistanceToPose(pose, Robot.m_drive.getPose());
-                if (distance < smallestdist) {
-                    smallestdist = distance;
-                    bestid = id;
+    // private double getClosestAprilTag() {
+    //     var targetid = Robot.photonEstimator.grabBestID();
 
-                }
+    //     if (targets.size() > 1) {
+    //         double smallestdist = 10000000;
+    //         int bestid = 0;
+    //         for (int i = 0; i < targets.size(); i++) {
+    //             var target = targets.get(i);
+    //             var id = target.getFiducialId();
+    //             var pose = Waypoints.aprilTagsScorePosesCubes.get(id);
+    //             var distance = PhotonUtils.getDistanceToPose(pose, Robot.m_drive.getPose());
+    //             if (distance < smallestdist) {
+    //                 smallestdist = distance;
+    //                 bestid = id;
 
-            }
-            return bestid;
+    //             }
 
-        }
-        return Robot.m_camera.getLatestResult().getBestTarget().getFiducialId();
+    //         }
+    //         return bestid;
 
-    }
+    //     }
+    //     return Robot.m_camera.getLatestResult().getBestTarget().getFiducialId();
+
+    // }
 
     public Pose2d getIsLeft(double id) {
         Pose2d left = Waypoints.aprilTagsScorePosesConesLeft.get((int) id);
@@ -185,20 +181,18 @@ public class AutoScoreCube extends StateMachine {
     @State(name = "createPath")
     public void createPath(StateContext ctx) {
         if (scoringTag()) {
-            var m_Camera = Robot.m_camera;
-            var res = m_Camera.returnCamera().getLatestResult();
-            var bestTarget = res.getBestTarget();
+            var targetid = Robot.photonEstimator.grabBestID();
+
             var isRed = Alliance.Red.equals(DriverStation.getAlliance());
-            var targetID = bestTarget.getFiducialId();
-            NtHelper.setDouble("/robot/drivetrain/APRIL_TAG_ID", targetID);
+            NtHelper.setDouble("/robot/drivetrain/APRIL_TAG_ID", targetid);
             PathConstraints constraints = new PathConstraints(1.69, 1.69); // Nice^2
             List<PathPoint> waypoints = new ArrayList<>();
 
             Pose2d start = Robot.m_drive.getPose();
-            double closeApirlTag = getClosestAprilTag();
+            int closeApirlTag = targetid;
             Pose2d end;
             if (NtHelper.getBoolean("/dashboard/arm/isCubes", true)) {
-                end = transformRedPose(Waypoints.aprilTagsScorePosesCubes.get((int) closeApirlTag));
+                end = transformRedPose(Waypoints.aprilTagsScorePosesCubes.get(closeApirlTag));
             } else {
                 end = transformRedPose(getIsLeft(closeApirlTag));
             }
