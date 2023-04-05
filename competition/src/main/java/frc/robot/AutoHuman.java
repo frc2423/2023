@@ -39,13 +39,12 @@ public class AutoHuman extends StateMachine { //Autoo Hooman
     }
 
     public boolean scoringTag() {
-        var m_Camera = Robot.m_camera;
-        var res = m_Camera.returnCamera().getLatestResult();
-        var bestTarget = res.getBestTarget();
+        var targetid = Robot.photonEstimator.grabBestID();
+        
         var isRed = Alliance.Red.equals(DriverStation.getAlliance());
 
-        if (res.hasTargets()) {
-            var targetid = bestTarget.getFiducialId();
+        if (targetid != null) {
+           
 
             if (isRed && ( targetid == 5)) {
                 return true;
@@ -63,11 +62,9 @@ public class AutoHuman extends StateMachine { //Autoo Hooman
     @State(name = "look")
     public void createPath(StateContext ctx) {
         if (scoringTag()) {
-            var m_Camera = Robot.m_camera;
-            var res = m_Camera.returnCamera().getLatestResult();
-            var bestTarget = res.getBestTarget();
+            var targetID = Robot.photonEstimator.grabBestID();
+            
             var isRed = Alliance.Red.equals(DriverStation.getAlliance());
-            var targetID = bestTarget.getFiducialId();
             //NtHelper.setDouble("/robot/drivetrain/APRIL_TAG_ID", targetID);
             PathConstraints constraints = new PathConstraints(1.69, 1.69); //Nice^2
             List<PathPoint> waypoints = new ArrayList<>();
