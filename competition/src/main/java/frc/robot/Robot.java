@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -25,6 +26,7 @@ import frc.robot.util.Camera;
 import frc.robot.util.NtHelper;
 import frc.robot.util.PhotonRunnable;
 import frc.robot.util.stateMachine.StateMachine;
+import frc.robot.auto.humanplayerstationcode;
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
@@ -42,8 +44,8 @@ public class Robot extends TimedRobot {
   public static Drivetrain m_drive = new Drivetrain();
   public static Trajectories trajectories = new Trajectories();
   public static final Field2d field = new Field2d();
-  public static final Camera m_camera= new Camera("Microsoft_LifeCam_HD-3000", CameraConstants.cameraToRobot);
-
+  // public static final Camera m_camera= new Camera("Microsoft_LifeCam_HD-3000", CameraConstants.cameraToRobot);
+public static final Camera m_camera = new Camera("frontCamera", CameraConstants.cameraToRobot);
   private AutoScoreCube autoScoreCube = new AutoScoreCube();
   private StateMachine autoHuman = new AutoHuman();
 
@@ -388,6 +390,16 @@ int buttonindex = -1;
 
     
      arm.isSafeMode(NtHelper.getBoolean("/robot/arm/telescopeoveride", true)); 
+
+
+     // Rrrrrrrumblllllleee
+     System.out.println(humanplayerstationcode.seeapriltag());
+     if (humanplayerstationcode.seeapriltag()) {
+      m_controller.setRumble(RumbleType.kBothRumble, 1);
+     } else {
+      m_controller.setRumble(RumbleType.kBothRumble, 0);
+     }
+     
   }
 
   @Override
