@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Led.KwarqsLed;
 import frc.robot.auto.Auto;
+import frc.robot.auto.HumanPlayerStationDetection;
 import frc.robot.constants.CameraConstants;
 import frc.robot.constants.SetPoints;
 import frc.robot.util.Camera;
@@ -219,13 +220,7 @@ public class Robot extends TimedRobot {
     final double kMaxSpeed = 4;
     Robot.m_drive.addVisionMeasurement(photonEstimator.grabLatestEstimatedPose());
     
-    
- int tagID = autoScoreCube.getScoringTagID();
-    if (tagID == 5) {
-      Robot.m_drive.getPose();
-    } else if (tagID  == 4) {
-
-    }
+  
 
     if (m_controller.getStartButtonReleased()) {
       Robot.m_drive.setBrake(false);
@@ -390,8 +385,7 @@ int buttonindex = -1;
 
 
      // Rrrrrrrumblllllleee
-     System.out.println(humanplayerstationcode.seeapriltag());
-     if (humanplayerstationcode.seeapriltag()) {
+     if (HumanPlayerStationDetection.seesTagCloseEnough()) {
       m_controller.setRumble(RumbleType.kBothRumble, 1);
      } else {
       m_controller.setRumble(RumbleType.kBothRumble, 0);
