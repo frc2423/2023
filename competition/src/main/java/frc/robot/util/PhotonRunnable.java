@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Robot;
 import frc.robot.constants.CameraConstants;
@@ -28,11 +29,13 @@ public class PhotonRunnable implements Runnable {
   private final PhotonCamera photonCamera;
   private final AtomicReference<EstimatedRobotPose> atomicEstimatedRobotPose = new AtomicReference<EstimatedRobotPose>();
   private final AtomicReference<Integer> atomicID = new AtomicReference<Integer>();
-
+  
   private final double APRILTAG_AMBIGUITY_THRESHOLD = 0.35;
   public static final double FIELD_LENGTH_METERS = 16.54175;
   public static final double FIELD_WIDTH_METERS = 8.0137;
   public static final Camera m_camera = new Camera("frontCamera", CameraConstants.cameraToRobot);
+  public Timer timer = new Timer();
+  public Double lastTag = null;
 
   public PhotonRunnable() {
     this.photonCamera = m_camera.returnCamera();
@@ -60,9 +63,18 @@ public class PhotonRunnable implements Runnable {
       atomicID.set(null);
       return;
     }
-
+    
     var photonResults = photonCamera.getLatestResult();
 
+    if (photonResults != null) {
+      lastTag = (double)photonResults.getBestTarget().getFiducialId();
+    } else {
+      timer.start();
+        if (timer.get() > 0.2) {
+          lastTag = null;
+        }
+    }
+    
     if (!photonResults.hasTargets()) {
       atomicID.set(null);
       return;
@@ -94,6 +106,10 @@ public class PhotonRunnable implements Runnable {
         }
       }
     });
+  }
+
+  public double getLastAprilTag() {
+    return lastTag; //make last tag atomic bc multi threading sucks 
   }
 
   /**
