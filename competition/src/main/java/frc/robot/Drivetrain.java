@@ -126,7 +126,6 @@ public class Drivetrain {
 
   public void addVisionMeasurement(EstimatedRobotPose robotpose){
     if (robotpose != null) {
-      System.out.println("we have pose");
       // New pose from vision
       var pose2d = robotpose.estimatedPose.toPose2d();
       m_odometry.addVisionMeasurement(pose2d, robotpose.timestampSeconds);

@@ -19,7 +19,7 @@ public class SetPoints {
 
     public final static Rotation2d SHOULDER_UP_ANGLE = new Rotation2d();
     public final static Rotation2d SHOULDER_FRONT_FLOOR_ANGLE = new Rotation2d(Units.degreesToRadians(122));
-    public final static Rotation2d SHOULDER_BACK_FLOOR_ANGLE = new Rotation2d(Units.degreesToRadians(-122));
+    public final static Rotation2d SHOULDER_BACK_FLOOR_ANGLE = new Rotation2d(Units.degreesToRadians(-119));
 
 
     public final static double TELESCOPE_FRONT_FLOOR_LENGTH = 0;

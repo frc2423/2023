@@ -269,7 +269,7 @@ public class Robot extends TimedRobot {
       
       boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
       double maxSpeed = (isSlowMode ? 1.5 : kMaxSpeed);
-      double maxRotation = (isSlowMode ? Math.PI : Drivetrain.kMaxAngularSpeed);
+      double maxRotation = (isSlowMode ? Math.PI * 0.7 : Drivetrain.kMaxAngularSpeed);
 
       double deadband = 0.2;
 
