@@ -56,6 +56,11 @@ public class PhotonRunnable implements Runnable {
     this.photonPoseEstimator = photonPoseEstimator;
   }
 
+  private void setTagId(Integer tagId) {
+    atomicID.set(tagId);
+
+  }
+
   @Override
   public void run() {
     // Get AprilTag data
