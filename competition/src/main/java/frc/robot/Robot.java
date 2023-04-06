@@ -117,6 +117,7 @@ public class Robot extends TimedRobot {
     telemtry();
     if (!isTeleop()) {
       arm.isSafeMode(!isTest());
+      m_controller.setRumble(RumbleType.kBothRumble, 0);
     }
     m_drive.periodic();
     arm.periodic();
