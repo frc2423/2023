@@ -18,11 +18,11 @@ public class BasedAuto extends StateMachine {
     public BasedAuto(){
         super("Score");
         Robot.arm.beltStop();
-        position = NtHelper.getString("/dashboard/autoArm", "low"); //from nt
     }
-
+    
     @State(name = "Score")
     public void taxiRun(StateContext ctx) {
+        position = NtHelper.getString("/dashboard/autoArm", "low"); //from nt
         SwerveModuleState zeroState = new SwerveModuleState(0,
                 Rotation2d.fromDegrees(0));
 
@@ -34,13 +34,16 @@ public class BasedAuto extends StateMachine {
         if (position.equals(ArmPosition.MID)){
             Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_CONE_ANGLE);
             Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_MID_CONE_LENGTH);
-        } else if (position.equals(ArmPosition.LOW)) {
+        } else {
             Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_FLOOR_ANGLE);
             Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_BACK_FLOOR_LENGTH);
         }
 
-        if (ctx.getTime() > 1) { //probably want to reduce the time
+        if (ctx.getTime() > 1)
+            if (position.equals(ArmPosition.MID)) { //probably want to reduce the time
             setState("Dunk");
+        } else {
+            setState("Spit");
         }
     }
     @State(name = "Dunk")

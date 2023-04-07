@@ -2,8 +2,12 @@ package frc.robot.auto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Drivetrain;
 import frc.robot.Robot;
@@ -11,6 +15,7 @@ import frc.robot.constants.ArmPosition;
 import frc.robot.constants.SetPoints;
 import frc.robot.util.LinearScale;
 import frc.robot.util.NtHelper;
+import frc.robot.util.PhotonRunnable;
 import frc.robot.util.stateMachine.State;
 import frc.robot.util.stateMachine.StateContext;
 import frc.robot.util.stateMachine.StateMachine;
@@ -23,11 +28,11 @@ public class GyroAuto extends StateMachine {
     public GyroAuto() {
         super("Score");
         Robot.arm.beltStop();
-        position = NtHelper.getString("/dashboard/autoArm", "low"); //from nt
     }
-
+    
     @State(name = "Score")
     public void taxiRun(StateContext ctx) {
+        position = NtHelper.getString("/dashboard/autoArm", "low"); //from nt
         if(position.equals(ArmPosition.HIGH)){
             Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_HIGH_CUBE_ANGLE);
             Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_HIGH_CUBE_LENGTH);
@@ -60,6 +65,13 @@ public class GyroAuto extends StateMachine {
         if (ctx.isInit()) {
             timer.reset();
             timer.start();
+            var gridPose =  Waypoints.BLUE_GRID_5;
+            var resetPose = gridPose;
+            if (Alliance.Red.equals(DriverStation.getAlliance())) {
+                double realY = PhotonRunnable.FIELD_WIDTH_METERS - resetPose.getY();
+                resetPose = new Pose2d(resetPose.getX(), realY, resetPose.getRotation());
+            }
+            Robot.m_drive.resetOdometry(resetPose);
         }
         if (ctx.getTime() < 0.2) {
             SwerveModuleState billY = new SwerveModuleState(0,
@@ -71,11 +83,21 @@ public class GyroAuto extends StateMachine {
             Robot.m_drive.m_backRight.setDesiredState(billY);
 
         } else {
+            if (ctx.getTime() > 0.5) {
+                Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_UP_LENGTH);
+            }
+
             Robot.m_drive.drive(1.05, 0, 0, true);
             Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(0)));
 
             if (Robot.m_drive.m_gyro.getPitch() > 3) {
                 setState("Reached");
+            } else if (Alliance.Red.equals(DriverStation.getAlliance())){
+                if(Robot.m_drive.getPose().getX() > 7){
+                    setState("stop");
+                }
+            } else if(Robot.m_drive.getPose().getX() > 7) {
+                setState("stop");
             }
 
         }
