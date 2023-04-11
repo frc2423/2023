@@ -29,6 +29,8 @@ public class PhotonRunnable implements Runnable {
   private final PhotonCamera photonCamera;
   private final AtomicReference<EstimatedRobotPose> atomicEstimatedRobotPose = new AtomicReference<EstimatedRobotPose>();
   private final AtomicReference<Integer> atomicID = new AtomicReference<Integer>();
+  private final AtomicReference<Boolean> atomicIsConnected = new AtomicReference<Boolean>(false);
+
 
   private final double APRILTAG_AMBIGUITY_THRESHOLD = 0.35;
   public static final double FIELD_LENGTH_METERS = 16.54175;
@@ -76,6 +78,8 @@ public class PhotonRunnable implements Runnable {
       setTagId(null);
       return;
     }
+
+    atomicIsConnected.set(photonCamera.isConnected());
 
     var photonResults = photonCamera.getLatestResult();
 
@@ -137,4 +141,7 @@ public class PhotonRunnable implements Runnable {
     return atomicEstimatedRobotPose.getAndSet(null);
   }
 
+  public Boolean isConnected() {
+    return atomicIsConnected.get();
+  }
 }

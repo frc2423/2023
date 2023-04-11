@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.math.MathUtil;
+
 
 public class SwerveModule {
   // Constants
@@ -54,9 +56,9 @@ public class SwerveModule {
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final PIDController m_turningPIDController = new PIDController(
-      RobotBase.isSimulation() ? 23 : 2, // kp
-      0.2,
-      0.06/*
+      RobotBase.isSimulation() ? 23 : 2, // kp (new value: 2.7)
+      0.2, // (new value: 0)
+      0.06/* // (new value: .06)
         * ,
         * new TrapezoidProfile.Constraints(
         * kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration)
@@ -162,10 +164,11 @@ public class SwerveModule {
     turnMotorVoltage = (turnOutput + turnFeedforward);
     // driveMotorVoltage = 0;
     // turnMotorVoltage = 0;
-
-    NtHelper.setDouble("/drive/" + name + "/actdistance", turnEncoderDistance);
-    NtHelper.setDouble("/drive/" + name + "/desdistance", state.angle.getRadians());
-
+    
+    NtHelper.setDouble("/drive/" + name + "/actdistance", Math.toDegrees(MathUtil.angleModulus(turnEncoderDistance)));
+    NtHelper.setDouble("/drive/" + name + "/desdistance", Math.toDegrees(MathUtil.angleModulus(state.angle.getRadians())));
+    // NtHelper.setDouble("/drive/" + name + "/error", (Math.toDegrees(MathUtil.angleModulus(turnEncoderDistance)) - Math.toDegrees(MathUtil.angleModulus(state.angle.getRadians()))));
+    // NtHelper.setDouble("/drive/" + name + "/voltage", turnMotorVoltage);
   }
 
   public void resetPosition() {

@@ -65,6 +65,7 @@ public class Robot extends TimedRobot {
     CameraServer.startAutomaticCapture();
     NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 5);
     NtHelper.setString("/robot/dashboard/led", "green");
+    NtHelper.setBoolean("/dashboard/gyroIsResetting", false);
 
     NtHelper.listen("/dashboard/armSetpoint/buttonselected", (entry) -> {
       updateArmSetpoint();
@@ -211,7 +212,14 @@ public class Robot extends TimedRobot {
     NtHelper.setString("/robot/autoScore/position", "right");
     
   }
-
+  
+  public void resetGyroFromDashboard() {
+    boolean isTrue = NtHelper.getBoolean("/dashboard/gyroIsResetting", false);
+    if (isTrue) {
+      m_drive.resetAngle();
+    }
+  }
+  
   @Override
   public void teleopPeriodic() {
     prevAutoHuman = isAutoHuman;
@@ -220,6 +228,7 @@ public class Robot extends TimedRobot {
     boolean isAutoHumanReleased = prevAutoHuman && !isAutoHuman;
     final double kMaxSpeed = 4;
     Robot.m_drive.addVisionMeasurement(photonEstimator.grabLatestEstimatedPose());
+    resetGyroFromDashboard();
     
   
 
@@ -268,8 +277,8 @@ public class Robot extends TimedRobot {
     else {
       
       boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
-      double maxSpeed = (isSlowMode ? 1.5 : kMaxSpeed);
-      double maxRotation = (isSlowMode ? Math.PI : Drivetrain.kMaxAngularSpeed);
+      double maxSpeed = (isSlowMode ? 2 : kMaxSpeed);
+      double maxRotation = (isSlowMode ? Math.PI * 0.7 : Drivetrain.kMaxAngularSpeed);
 
       double deadband = 0.2;
 
