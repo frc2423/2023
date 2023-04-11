@@ -60,7 +60,7 @@ public class TwoPeiceAuto extends StateMachine {
     public void setTrajectory(StateContext ctx) {
         System.out.println("setTraj");
         Robot.trajectories.setNewTrajectoryGroup("getFirstGamePeice");
-        Robot.m_drive.resetOdometry(Robot.m_drive.getPose()); 
+        Robot.trajectories.resetOdometry(); 
         if (ctx.getTime() > 0.01) {
             setState("move");
         }
