@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Robot;
 import frc.robot.constants.CameraConstants;
@@ -33,6 +34,8 @@ public class PhotonRunnable implements Runnable {
   public static final double FIELD_LENGTH_METERS = 16.54175;
   public static final double FIELD_WIDTH_METERS = 8.0137;
   public static final Camera m_camera = new Camera("frontCamera", CameraConstants.cameraToRobot);
+  public Timer timer = new Timer();
+  public Double lastTag = null;
 
   public PhotonRunnable() {
     this.photonCamera = m_camera.returnCamera();
@@ -53,30 +56,46 @@ public class PhotonRunnable implements Runnable {
     this.photonPoseEstimator = photonPoseEstimator;
   }
 
+  private void setTagId(Integer tagId) {
+    if (tagId != null) {
+      atomicID.set(tagId);
+      timer.reset();
+    } else {
+      timer.start();
+      if (timer.get() > 0.2) {
+        atomicID.set(null);
+      }
+    }
+
+  }
+
   @Override
   public void run() {
     // Get AprilTag data
     if (photonPoseEstimator == null || photonCamera == null) {
-      atomicID.set(null);
+      setTagId(null);
       return;
     }
 
     var photonResults = photonCamera.getLatestResult();
 
+   
+
     if (!photonResults.hasTargets()) {
-      atomicID.set(null);
+      setTagId(null);
       return;
     }
-    
-    // if (photonResults.getBestTarget().getPoseAmbiguity() > APRILTAG_AMBIGUITY_THRESHOLD) {
-    //   atomicID.set(null);
 
-    //   return;
+    // if (photonResults.getBestTarget().getPoseAmbiguity() >
+    // APRILTAG_AMBIGUITY_THRESHOLD) {
+    // atomicID.set(null);
+
+    // return;
     // }
 
     photonPoseEstimator.update(photonResults).ifPresent(estimatedRobotPose -> {
       var estimatedPose = estimatedRobotPose.estimatedPose;
-      atomicID.set(photonResults.getBestTarget().getFiducialId());
+      setTagId(photonResults.getBestTarget().getFiducialId());
       // Make sure the measurement is on the field
       if (estimatedPose.getX() > 0.0 && estimatedPose.getX() <= FIELD_LENGTH_METERS
           && estimatedPose.getY() > 0.0 && estimatedPose.getY() <= FIELD_WIDTH_METERS) {
@@ -94,6 +113,10 @@ public class PhotonRunnable implements Runnable {
         }
       }
     });
+  }
+
+  public double getLastAprilTag() {
+    return lastTag; // make last tag atomic bc multi threading sucks
   }
 
   /**
