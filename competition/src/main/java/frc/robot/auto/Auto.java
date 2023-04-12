@@ -16,6 +16,7 @@ public class Auto extends StateMachine {
     StateMachine gyroauto;
     StateMachine yoyoyo;
     StateMachine scoreonly; 
+    StateMachine twopeice;
     private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
     public Auto() {
@@ -27,6 +28,7 @@ public class Auto extends StateMachine {
         gyroauto = new GyroAuto();
         yoyoyo = new YoYoYoAuto();
         scoreonly = new ScoreOnly();
+        twopeice = new TwoPeiceAuto();
 
         m_chooser.setDefaultOption("taxi", "taxi");
         m_chooser.addOption("yoyo", "yoyo");
@@ -35,6 +37,7 @@ public class Auto extends StateMachine {
         m_chooser.addOption("gyroauto", "gyroauto");
         m_chooser.addOption("YoYoYoAuto" , "YoYoYoAuto");
         m_chooser.addOption("scoreonly", "scoreonly");
+        m_chooser.addOption("twopeiceTEST", "twopeice");
 
         SmartDashboard.putData("Auto choices", m_chooser);
     }
@@ -64,6 +67,9 @@ public class Auto extends StateMachine {
                 break;
             case "scoreonly":
                 selectedAutonomous = scoreonly;
+                break;
+            case "twopeice":
+                selectedAutonomous = twopeice;
                 break;
             default:
                 selectedAutonomous = taxi;

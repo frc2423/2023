@@ -1,5 +1,13 @@
 {
   "HALProvider": {
+    "Addressable LEDs": {
+      "0": {
+        "columns": 8
+      },
+      "window": {
+        "visible": true
+      }
+    },
     "PWM Outputs": {
       "window": {
         "visible": true
@@ -49,6 +57,12 @@
       "auto": {
         "open": true
       },
+      "dashboard": {
+        "arm": {
+          "open": true
+        },
+        "open": true
+      },
       "drive": {
         "BL": {
           "open": true
@@ -68,6 +82,11 @@
           "open": true
         }
       }
+    }
+  },
+  "NetworkTables Info": {
+    "Connections": {
+      "open": true
     }
   }
 }

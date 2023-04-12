@@ -8,7 +8,6 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -18,6 +17,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Led.KwarqsLed;
 import frc.robot.auto.Auto;
 import frc.robot.constants.CameraConstants;
 import frc.robot.constants.SetPoints;
@@ -25,7 +25,6 @@ import frc.robot.util.Camera;
 import frc.robot.util.NtHelper;
 import frc.robot.util.PhotonRunnable;
 import frc.robot.util.stateMachine.StateMachine;
-import frc.robot.Led.KwarqsLed;
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
@@ -57,6 +56,7 @@ public class Robot extends TimedRobot {
 
   @Override // is society
   public void robotInit() {
+    var isRed = Alliance.Red.equals(DriverStation.getAlliance());
     photonNotifier.setName("PhotonRunnable");
     photonNotifier.startPeriodic(0.02);
     DataLogManager.start();
@@ -94,23 +94,33 @@ public class Robot extends TimedRobot {
         setLED();
         
     });
-
     
 
+  
 
     SmartDashboard.putData("Field", field);
   }
 
   public void setLED() {
+    var isRed = Alliance.Red.equals(DriverStation.getAlliance());
     if(isDisabled()) {
-      ledBrain.disable();
+      if (isRed) {
+        ledBrain.setRed();
+      } else {
+        ledBrain.setBlue();
+      }
+      // ledBrain.disable();
     }
-    else if (NtHelper.getBoolean("/dashboard/arm/isCubes", true)) {
+    else if (NtHelper.getBoolean("/dashboard/arm/isCubes", true) && isTeleop()) {
       ledBrain.setPurple();
-    } else {
+    }  else if (isAutonomous()) {
+      ledBrain.setRainbow();
+    }
+     else {
       ledBrain.setYellow();
     }
   }
+
 
   @Override
   public void robotPeriodic() {
@@ -196,6 +206,9 @@ public class Robot extends TimedRobot {
     arm.resetTelescopeEncoder();
     m_drive.setBrake(false);
     auto.restart();
+    ledBrain.setRainbow();
+    
+
   }
 
   @Override
@@ -209,6 +222,7 @@ public class Robot extends TimedRobot {
     NtHelper.setDouble("/robot/shoulder/set_angle", 0);
     NtHelper.setString("/robot/arm/setsolenoid", "off");
     NtHelper.setString("/robot/autoScore/position", "right");
+    ledBrain.setPurple();
     
   }
 
