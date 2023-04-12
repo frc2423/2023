@@ -94,13 +94,6 @@ public class Robot extends TimedRobot {
         setLED();
         
     });
-  //  if (DriverStation.isFMSAttached()) {
-      if (isRed) {
-        ledBrain.setRed();
-      } else {
-        ledBrain.setBlue();
-      }
-  //  }
     
 
   
