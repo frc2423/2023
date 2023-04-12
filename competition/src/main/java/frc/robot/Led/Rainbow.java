@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 public class Rainbow implements Led{
     public void start(AddressableLEDBuffer buffer, int length) {
     }
-    private LedController ledController = new LedController(64);
+    
     private static double m_rainbowFirstPixelHue = 1;
 
     public void run(AddressableLEDBuffer buffer, int length) {
@@ -16,7 +16,7 @@ public class Rainbow implements Led{
         final var hue = (m_rainbowFirstPixelHue + (i * 180 / 64)) % 180;
         // Set the value
         int intValueHue = (int) hue;
-        ledController.ledBuffer.setHSV(i, intValueHue, 255, 128);
+        KwarqsLed.ledController.ledBuffer.setHSV(i, intValueHue, 255, 128);
       }
       // Increase by to make the rainbow "move"
       m_rainbowFirstPixelHue += 3;
