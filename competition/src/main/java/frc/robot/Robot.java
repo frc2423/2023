@@ -10,6 +10,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -26,6 +27,7 @@ import frc.robot.util.NtHelper;
 import frc.robot.util.PhotonRunnable;
 import frc.robot.util.stateMachine.StateMachine;
 import frc.robot.Led.KwarqsLed;
+import frc.robot.Led.LedController;
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
@@ -106,7 +108,7 @@ public class Robot extends TimedRobot {
       ledBrain.disable();
     }
     else if (NtHelper.getBoolean("/dashboard/arm/isCubes", true)) {
-      ledBrain.setPurple();
+      ledBrain.setRainbow();
     } else {
       ledBrain.setYellow();
     }

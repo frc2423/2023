@@ -27,7 +27,7 @@ public class TwoPeiceAuto extends StateMachine {
         if (ctx.getTime() > 0.3) {
             Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_MID_CONE_LENGTH);
         }
-        if (ctx.getTime() > 1){ // CHANGE THIS TIME
+        if (ctx.getTime() > 1.3){ // CHANGE THIS TIME
             setState("dunk");
         }
     }
@@ -58,7 +58,6 @@ public class TwoPeiceAuto extends StateMachine {
 
     @State(name = "setTrajectory")
     public void setTrajectory(StateContext ctx) {
-        System.out.println("setTraj");
         Robot.trajectories.setNewTrajectoryGroup("getFirstGamePeice");
         Robot.trajectories.resetOdometry(); 
         if (ctx.getTime() > 0.01) {
@@ -69,7 +68,6 @@ public class TwoPeiceAuto extends StateMachine {
 
     @State(name = "move")
     public void move(StateContext ctx) {
-        System.out.println("move");
         Robot.trajectories.follow_current_path();
         if (Robot.trajectories.isFinished()) {
             setState("armDown");
@@ -78,7 +76,6 @@ public class TwoPeiceAuto extends StateMachine {
 
     @State(name = "armDown")
     public void armDown(StateContext ctx) {
-        System.out.println("armDown");
         Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_FLOOR_ANGLE);
         Robot.arm.intakeBelt();
         if (ctx.getTime() > 1) {//test this time
@@ -102,7 +99,6 @@ public class TwoPeiceAuto extends StateMachine {
     
     @State(name = "moveBack")
     public void moveBack(StateContext ctx) {
-        System.out.println("MoveBACK");
         Robot.trajectories.follow_current_path();
         if (Robot.trajectories.isFinished()) {
             setState("scoreCube");
