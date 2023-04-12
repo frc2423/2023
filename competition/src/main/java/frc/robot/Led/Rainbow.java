@@ -10,13 +10,13 @@ public class Rainbow implements Led{
 
     public void run(AddressableLEDBuffer buffer, int length) {
          // For every pixel
-    for (var i = 0; i < 64; i++) {
+    for (var i = 0; i < LedController.ledBuffer.getLength(); i++) {
         // Calculate the hue - hue is easier for rainbows because the color
         // shape is a circle so only one value needs to precess
-        final var hue = (m_rainbowFirstPixelHue + (i * 180 / 64)) % 180;
+        final var hue = (m_rainbowFirstPixelHue + (i * 180 / LedController.ledBuffer.getLength())) % 180;
         // Set the value
         int intValueHue = (int) hue;
-        LedController.ledBuffer.setHSV(i, intValueHue, 255, 128);
+        LedController.ledBuffer.setHSV(i, intValueHue, 255, 200);
       }
       // Increase by to make the rainbow "move"
       m_rainbowFirstPixelHue += 3;
