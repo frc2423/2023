@@ -16,7 +16,7 @@ public class Rainbow implements Led{
         final var hue = (m_rainbowFirstPixelHue + (i * 180 / 64)) % 180;
         // Set the value
         int intValueHue = (int) hue;
-        KwarqsLed.ledController.ledBuffer.setHSV(i, intValueHue, 255, 128);
+        LedController.ledBuffer.setHSV(i, intValueHue, 255, 128);
       }
       // Increase by to make the rainbow "move"
       m_rainbowFirstPixelHue += 3;

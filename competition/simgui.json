@@ -57,6 +57,12 @@
       "auto": {
         "open": true
       },
+      "dashboard": {
+        "arm": {
+          "open": true
+        },
+        "open": true
+      },
       "drive": {
         "BL": {
           "open": true
@@ -76,6 +82,11 @@
           "open": true
         }
       }
+    }
+  },
+  "NetworkTables Info": {
+    "Connections": {
+      "open": true
     }
   }
 }

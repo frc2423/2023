@@ -107,9 +107,12 @@ public class Robot extends TimedRobot {
     if(isDisabled()) {
       ledBrain.disable();
     }
-    else if (NtHelper.getBoolean("/dashboard/arm/isCubes", true)) {
+    else if (NtHelper.getBoolean("/dashboard/arm/isCubes", true) && isTeleop()) {
+      ledBrain.setPurple();
+    }  else if (isAutonomous()) {
       ledBrain.setRainbow();
-    } else {
+    }
+     else {
       ledBrain.setYellow();
     }
   }
@@ -198,6 +201,9 @@ public class Robot extends TimedRobot {
     arm.resetTelescopeEncoder();
     m_drive.setBrake(false);
     auto.restart();
+    ledBrain.setRainbow();
+    
+
   }
 
   @Override
@@ -211,6 +217,7 @@ public class Robot extends TimedRobot {
     NtHelper.setDouble("/robot/shoulder/set_angle", 0);
     NtHelper.setString("/robot/arm/setsolenoid", "off");
     NtHelper.setString("/robot/autoScore/position", "right");
+    ledBrain.setPurple();
     
   }
 
