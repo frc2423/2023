@@ -8,7 +8,7 @@ public class Red implements Led{
 
     public void run(AddressableLEDBuffer buffer, int length) {
         for (var i = 0; i < buffer.getLength(); i++) {
-            buffer.setRGB(i, 128, 0, 0);
+            buffer.setRGB(i, 200, 0, 0);
         }
     }
 

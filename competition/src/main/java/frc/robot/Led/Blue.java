@@ -8,7 +8,7 @@ public class Blue implements Led{
 
     public void run(AddressableLEDBuffer buffer, int length) {
         for (var i = 0; i < buffer.getLength(); i++) {
-            buffer.setRGB(i, 00, 0, 128);
+            buffer.setRGB(i, 00, 0, 200);
         }
     }
 
