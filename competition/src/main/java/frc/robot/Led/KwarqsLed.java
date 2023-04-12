@@ -10,6 +10,8 @@ public class KwarqsLed {
         ledController.add("green", new Green());
         ledController.add("dark", new Dark());
         ledController.add("rainbow", new Rainbow());
+        ledController.add("red" , new Red());
+        ledController.add("blue" , new Blue());
     }
 
     public void disable() {
@@ -30,6 +32,14 @@ public class KwarqsLed {
 
     public void setRainbow()  {
        ledController.set("rainbow");
+    }
+
+    public void setRed() {
+        ledController.set("red");
+    }
+
+    public void setBlue() {
+        ledController.set("blue");
     }
 
     public void run() {

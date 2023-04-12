@@ -8,9 +8,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -19,6 +17,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Led.KwarqsLed;
 import frc.robot.auto.Auto;
 import frc.robot.constants.CameraConstants;
 import frc.robot.constants.SetPoints;
@@ -26,8 +25,6 @@ import frc.robot.util.Camera;
 import frc.robot.util.NtHelper;
 import frc.robot.util.PhotonRunnable;
 import frc.robot.util.stateMachine.StateMachine;
-import frc.robot.Led.KwarqsLed;
-import frc.robot.Led.LedController;
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
@@ -59,6 +56,7 @@ public class Robot extends TimedRobot {
 
   @Override // is society
   public void robotInit() {
+    var isRed = Alliance.Red.equals(DriverStation.getAlliance());
     photonNotifier.setName("PhotonRunnable");
     photonNotifier.startPeriodic(0.02);
     DataLogManager.start();
@@ -96,16 +94,29 @@ public class Robot extends TimedRobot {
         setLED();
         
     });
-
+  //  if (DriverStation.isFMSAttached()) {
+      if (isRed) {
+        ledBrain.setRed();
+      } else {
+        ledBrain.setBlue();
+      }
+  //  }
     
 
+  
 
     SmartDashboard.putData("Field", field);
   }
 
   public void setLED() {
+    var isRed = Alliance.Red.equals(DriverStation.getAlliance());
     if(isDisabled()) {
-      ledBrain.disable();
+      if (isRed) {
+        ledBrain.setRed();
+      } else {
+        ledBrain.setBlue();
+      }
+      // ledBrain.disable();
     }
     else if (NtHelper.getBoolean("/dashboard/arm/isCubes", true) && isTeleop()) {
       ledBrain.setPurple();
@@ -116,6 +127,7 @@ public class Robot extends TimedRobot {
       ledBrain.setYellow();
     }
   }
+
 
   @Override
   public void robotPeriodic() {
