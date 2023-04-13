@@ -59,19 +59,19 @@ public class YoYoYoAuto extends StateMachine {
         Robot.trajectories.follow_current_path();
         // Robot.arm.intakeBelt();
         if (Robot.trajectories.isFinished()) {
-            setState("Stahp");
+            setState("Stop");
         }
     }
 
-    @State(name = "Stahp")
-    public void stahp(StateContext ctx) {
+    @State(name = "Stop")
+    public void Stop(StateContext ctx) {
         Robot.m_drive.drive(0, 0, 0, false);
-        setState("Akwire");
+        setState("Acquire");
 
     }
 
-    @State(name = "Akwire")
-    public void akwire(StateContext ctx) {
+    @State(name = "Acquire")
+    public void Acquire(StateContext ctx) {
         /*
          * arm to forward floor
          * move belt
@@ -129,12 +129,12 @@ public class YoYoYoAuto extends StateMachine {
         Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_UP_ANGLE);
         Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_UP_LENGTH);
         if (Robot.trajectories.isFinished()) {
-            setState("akwaia2");
+            setState("Acquire2");
         }
     }
 
-    @State(name = "akwaia2")
-    public void akwaia2(StateContext ctx) {
+    @State(name = "Acquire2")
+    public void Acquire2(StateContext ctx) {
         Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_FLOOR_ANGLE);
         Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_FRONT_FLOOR_LENGTH);
         Robot.m_drive.drive(0.1, 0, 0, false);

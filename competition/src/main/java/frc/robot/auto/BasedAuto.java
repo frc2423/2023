@@ -60,12 +60,12 @@ public class BasedAuto extends StateMachine {
         Robot.arm.beltStop();
         Robot.m_drive.drive(1, 0, 0, true);
         if (ctx.getTime() > 4) {
-            setState("Stahp");
+            setState("Stop");
         }
     }
 
-    @State(name = "Stahp")
-    public void stahp(StateContext ctx){
+    @State(name = "Stop")
+    public void Stop(StateContext ctx){
         Robot.m_drive.drive(0, 0, 0, false);
 
     }
