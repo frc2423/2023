@@ -35,12 +35,12 @@ public class BalanceAuto extends StateMachine{
         Robot.arm.beltStop();
         Robot.m_drive.drive(0.5, 0, 0, false);
         if (ctx.getTime() > 4) {
-            setState("Stahp");
+            setState("Stop");
         }
     }
 
-    @State(name = "Stahp")
-    public void stahp(StateContext ctx){
+    @State(name = "Stop")
+    public void Stop(StateContext ctx){
         if (ctx.isInit()){
             Robot.m_drive.drive(0, 0.3, 0, false);
         } else if (ctx.getTime() > 0.25){

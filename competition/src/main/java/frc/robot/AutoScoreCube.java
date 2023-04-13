@@ -218,24 +218,24 @@ public class AutoScoreCube extends StateMachine {
     public void followPath(StateContext ctx) {
         Robot.trajectories.follow_current_path();
         if (Robot.trajectories.isFinishedWithoutTime(.03, .03, 5)) {
-            setState("stahp");
+            setState("robotStop");
         }
         // dew it
     }
 
-    @State(name = "stahp")
-    public void stahp(StateContext ctx) {
+    @State(name = "robotStop")
+    public void robotStop(StateContext ctx) {
         Robot.m_drive.drive(0, 0, 0, false);
         // when stop :P
         if (NtHelper.getString("/dashboard/autoScorePosition", "mid").equals("low")) {
-            setState("scahr");
+            setState("attemptRobotScore");
         } else {
-            setState("mooofawad");
+            setState("moveForward");
         }
     }
 
-    @State(name = "mooofawad")
-    public void mooofawad(StateContext ctx) {
+    @State(name = "moveForward")
+    public void moveForward(StateContext ctx) {
         // Robot.m_drive.drive(0, 0.2, 0, false);
         PathConstraints constraints = new PathConstraints(1.69, 1.69); // Nice^2
         List<PathPoint> waypoints = new ArrayList<>();
@@ -248,11 +248,11 @@ public class AutoScoreCube extends StateMachine {
         waypoints.add(new PathPoint(end.getTranslation(), new Rotation2d(0), end.getRotation()));
         Trajectory trajectory = PathPlanner.generatePath(constraints, false, waypoints);
         Robot.trajectories.setNewTrajectoryGroup(trajectory);
-        setState("GOO");
+        setState("followRobotPath");
     }
 
-    @State(name = "beSWERVY")
-    public void beSWERVY(StateContext ctx) {
+    @State(name = "setSwerveState")
+    public void setSwerveState(StateContext ctx) {
         SwerveModuleState jilly = new SwerveModuleState(0,
                 Rotation2d.fromDegrees(0));
 
@@ -262,16 +262,16 @@ public class AutoScoreCube extends StateMachine {
         Robot.m_drive.m_backRight.setDesiredState(jilly);
     }
 
-    @State(name = "GOO")
-    public void GOO(StateContext ctx) {
+    @State(name = "followRobotPath")
+    public void followRobotPath(StateContext ctx) {
         Robot.trajectories.follow_current_path();
         if (ctx.getTime() > .8) {// noice
-            setState("scahr");
+            setState("attemptRobotScore");
         }
     }
 
-    @State(name = "scahr")
-    public void scahr(StateContext ctx) {
+    @State(name = "attemptRobotScore")
+    public void attemptRobotScore(StateContext ctx) {
         Robot.m_drive.drive(0, 0, 0, false);
         setScorePosition();
         boolean isCubes = NtHelper.getBoolean("/dashboard/arm/isCubes", false);

@@ -86,19 +86,19 @@ public boolean isWallSide = false;
             Robot.arm.telescopeToSetpoint(0);
         }
         if (Robot.trajectories.isFinished()) {
-            setState("Stahp");
+            setState("Stop");
         }
     }
 
-    @State(name = "Stahp")
-    public void stahp(StateContext ctx) {
+    @State(name = "Stop")
+    public void Stop(StateContext ctx) {
         Robot.m_drive.drive(0, 0, 0, false);
-        setState("Akwire");
+        setState("Acquire");
 
     }
 
-    @State(name = "Akwire")
-    public void akwire(StateContext ctx) {
+    @State(name = "Acquire")
+    public void Acquire(StateContext ctx) {
         /*
          * arm to forward floor
          * move belt
