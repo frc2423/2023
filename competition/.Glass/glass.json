@@ -10,8 +10,11 @@
       "angle": {
         "open": true
       },
-      "auto": {
-        "open": true
+      "dashboard": {
+        "open": true,
+        "robot": {
+          "open": true
+        }
       },
       "drive": {
         "BL": {
@@ -50,10 +53,16 @@
         "auto": {
           "open": true
         },
+        "autoScore": {
+          "open": true
+        },
         "open": true,
         "shoulder": {
           "open": true
         }
+      },
+      "swerve": {
+        "open": true
       },
       "test": {
         "open": true

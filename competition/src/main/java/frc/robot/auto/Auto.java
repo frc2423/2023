@@ -1,5 +1,6 @@
 package frc.robot.auto;
 
+import frc.robot.util.NtHelper;
 import frc.robot.util.stateMachine.State;
 import frc.robot.util.stateMachine.StateContext;
 import frc.robot.util.stateMachine.StateMachine;
@@ -37,6 +38,7 @@ public class Auto extends StateMachine {
         m_chooser.addOption("scoreonly", "scoreonly");
 
         SmartDashboard.putData("Auto choices", m_chooser);
+        NtHelper.setString("/dashboard/autoArm", "low");
     }
 
     public void getAuto() {

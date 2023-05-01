@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Robot;
 import frc.robot.constants.CameraConstants;
@@ -27,15 +28,21 @@ public class PhotonRunnable implements Runnable {
   private final PhotonPoseEstimator photonPoseEstimator;
   private final PhotonCamera photonCamera;
   private final AtomicReference<EstimatedRobotPose> atomicEstimatedRobotPose = new AtomicReference<EstimatedRobotPose>();
+  private final AtomicReference<Integer> atomicID = new AtomicReference<Integer>();
+  private final AtomicReference<Boolean> atomicIsConnected = new AtomicReference<Boolean>(false);
 
-  private final double APRILTAG_AMBIGUITY_THRESHOLD = 0.2;
+
+  private final double APRILTAG_AMBIGUITY_THRESHOLD = 0.35;
   public static final double FIELD_LENGTH_METERS = 16.54175;
   public static final double FIELD_WIDTH_METERS = 8.0137;
+  public static final Camera m_camera = new Camera("frontCamera", CameraConstants.cameraToRobot);
+  public Timer timer = new Timer();
+  public Double lastTag = null;
 
   public PhotonRunnable() {
-    this.photonCamera = Robot.m_camera.returnCamera();
+    this.photonCamera = m_camera.returnCamera();
     PhotonPoseEstimator photonPoseEstimator = null;
-    
+
     try {
       var layout = AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField();
       // PV estimates will always be blue, they'll get flipped by robot thread
@@ -44,51 +51,97 @@ public class PhotonRunnable implements Runnable {
         photonPoseEstimator = new PhotonPoseEstimator(
             layout, PoseStrategy.MULTI_TAG_PNP, photonCamera, CameraConstants.cameraToRobot.inverse());
       }
-    } catch(IOException e) {
+    } catch (IOException e) {
       DriverStation.reportError("Failed to load AprilTagFieldLayout", e.getStackTrace());
       photonPoseEstimator = null;
     }
     this.photonPoseEstimator = photonPoseEstimator;
   }
 
-  @Override
-  public void run() {      
-    // Get AprilTag data
-    if (photonPoseEstimator != null && photonCamera != null && !RobotState.isAutonomous()) {
-      var photonResults = photonCamera.getLatestResult();
-      if (photonResults.hasTargets() 
-          && (photonResults.targets.size() > 1 || photonResults.targets.get(0).getPoseAmbiguity() < APRILTAG_AMBIGUITY_THRESHOLD)) { //how confident it is in the april tag
-        photonPoseEstimator.update(photonResults).ifPresent(estimatedRobotPose -> {
-          var estimatedPose = estimatedRobotPose.estimatedPose;
-          // Make sure the measurement is on the field
-          if (estimatedPose.getX() > 0.0 && estimatedPose.getX() <= FIELD_LENGTH_METERS
-              && estimatedPose.getY() > 0.0 && estimatedPose.getY() <= FIELD_WIDTH_METERS) {
-                if (Alliance.Red.equals(DriverStation.getAlliance())) {
-                  double realX = FIELD_LENGTH_METERS - estimatedPose.getX();
-                  double realY = FIELD_WIDTH_METERS - estimatedPose.getY();
-                  Rotation3d realANGLE = estimatedPose.getRotation().plus(new Rotation3d(0,0, Math.PI));
-                  Pose3d transformedPose = new Pose3d(realX, realY, estimatedPose.getZ(), realANGLE);
-                  EstimatedRobotPose estimated = new EstimatedRobotPose(transformedPose, estimatedRobotPose.timestampSeconds, estimatedRobotPose.targetsUsed);
-                  atomicEstimatedRobotPose.set(estimated);
-                } else {
-                  atomicEstimatedRobotPose.set(estimatedRobotPose);
-                }
-          }
-        });
+  private void setTagId(Integer tagId) {
+    if (tagId != null) {
+      atomicID.set(tagId);
+      timer.reset();
+    } else {
+      timer.start();
+      if (timer.get() > 0.2) {
+        atomicID.set(null);
       }
-    }  
+    }
+
+  }
+
+  @Override
+  public void run() {
+    // Get AprilTag data
+    if (photonPoseEstimator == null || photonCamera == null) {
+      setTagId(null);
+      return;
+    }
+
+    atomicIsConnected.set(photonCamera.isConnected());
+
+    var photonResults = photonCamera.getLatestResult();
+
+   
+
+    if (!photonResults.hasTargets()) {
+      setTagId(null);
+      return;
+    }
+
+    // if (photonResults.getBestTarget().getPoseAmbiguity() >
+    // APRILTAG_AMBIGUITY_THRESHOLD) {
+    // atomicID.set(null);
+
+    // return;
+    // }
+
+    photonPoseEstimator.update(photonResults).ifPresent(estimatedRobotPose -> {
+      var estimatedPose = estimatedRobotPose.estimatedPose;
+      setTagId(photonResults.getBestTarget().getFiducialId());
+      // Make sure the measurement is on the field
+      if (estimatedPose.getX() > 0.0 && estimatedPose.getX() <= FIELD_LENGTH_METERS
+          && estimatedPose.getY() > 0.0 && estimatedPose.getY() <= FIELD_WIDTH_METERS) {
+        if (Alliance.Red.equals(DriverStation.getAlliance())) {
+          // nextId = photonResults.getBestTarget().getFiducialId();
+          double realX = FIELD_LENGTH_METERS - estimatedPose.getX();
+          double realY = FIELD_WIDTH_METERS - estimatedPose.getY();
+          Rotation3d realANGLE = estimatedPose.getRotation().plus(new Rotation3d(0, 0, Math.PI));
+          Pose3d transformedPose = new Pose3d(realX, realY, estimatedPose.getZ(), realANGLE);
+          EstimatedRobotPose estimated = new EstimatedRobotPose(transformedPose,
+              estimatedRobotPose.timestampSeconds, estimatedRobotPose.targetsUsed);
+          atomicEstimatedRobotPose.set(estimated);
+        } else {
+          atomicEstimatedRobotPose.set(estimatedRobotPose);
+        }
+      }
+    });
+  }
+
+  public double getLastAprilTag() {
+    return lastTag; // make last tag atomic bc multi threading sucks
   }
 
   /**
-   * Gets the latest robot pose. Calling this will only return the pose once. If it returns a non-null value, it is a
+   * Gets the latest robot pose. Calling this will only return the pose once. If
+   * it returns a non-null value, it is a
    * new estimate that hasn't been returned before.
-   * This pose will always be for the BLUE alliance. It must be flipped if the current alliance is RED.
+   * This pose will always be for the BLUE alliance. It must be flipped if the
+   * current alliance is RED.
+   * 
    * @return latest estimated pose
    */
+
+  public Integer grabBestID() {
+    return atomicID.get();
+  }
+
   public EstimatedRobotPose grabLatestEstimatedPose() {
     return atomicEstimatedRobotPose.getAndSet(null);
   }
 
-
-
+  public Boolean isConnected() {
+    return atomicIsConnected.get();
+  }
 }

@@ -8,29 +8,30 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Led.KwarqsLed;
 import frc.robot.auto.Auto;
+import frc.robot.auto.HumanPlayerStationDetection;
 import frc.robot.constants.CameraConstants;
 import frc.robot.constants.SetPoints;
 import frc.robot.util.Camera;
 import frc.robot.util.NtHelper;
 import frc.robot.util.PhotonRunnable;
 import frc.robot.util.stateMachine.StateMachine;
-import frc.robot.Led.KwarqsLed;
 
 public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
   private final XboxController m_controller_right = new XboxController(1);
-  private final PhotonRunnable photonEstimator = new PhotonRunnable();
+  public final static PhotonRunnable photonEstimator = new PhotonRunnable();
   private final Notifier photonNotifier = new Notifier(photonEstimator);
   private final KwarqsLed ledBrain = new KwarqsLed();
 
@@ -43,8 +44,6 @@ public class Robot extends TimedRobot {
   public static Drivetrain m_drive = new Drivetrain();
   public static Trajectories trajectories = new Trajectories();
   public static final Field2d field = new Field2d();
-  public static final Camera m_camera= new Camera("Microsoft_LifeCam_HD-3000", CameraConstants.cameraToRobot);
-
   private AutoScoreCube autoScoreCube = new AutoScoreCube();
   private StateMachine autoHuman = new AutoHuman();
 
@@ -66,6 +65,7 @@ public class Robot extends TimedRobot {
     CameraServer.startAutomaticCapture();
     NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 5);
     NtHelper.setString("/robot/dashboard/led", "green");
+    NtHelper.setBoolean("/dashboard/gyroIsResetting", false);
 
     NtHelper.listen("/dashboard/armSetpoint/buttonselected", (entry) -> {
       updateArmSetpoint();
@@ -118,6 +118,7 @@ public class Robot extends TimedRobot {
     telemtry();
     if (!isTeleop()) {
       arm.isSafeMode(!isTest());
+      m_controller.setRumble(RumbleType.kBothRumble, 0);
     }
     m_drive.periodic();
     arm.periodic();
@@ -211,7 +212,14 @@ public class Robot extends TimedRobot {
     NtHelper.setString("/robot/autoScore/position", "right");
     
   }
-
+  
+  public void resetGyroFromDashboard() {
+    boolean isTrue = NtHelper.getBoolean("/dashboard/gyroIsResetting", false);
+    if (isTrue) {
+      m_drive.resetAngle();
+    }
+  }
+  
   @Override
   public void teleopPeriodic() {
     prevAutoHuman = isAutoHuman;
@@ -220,7 +228,9 @@ public class Robot extends TimedRobot {
     boolean isAutoHumanReleased = prevAutoHuman && !isAutoHuman;
     final double kMaxSpeed = 4;
     Robot.m_drive.addVisionMeasurement(photonEstimator.grabLatestEstimatedPose());
+    resetGyroFromDashboard();
     
+  
 
     if (m_controller.getStartButtonReleased()) {
       Robot.m_drive.setBrake(false);
@@ -267,8 +277,8 @@ public class Robot extends TimedRobot {
     else {
       
       boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
-      double maxSpeed = (isSlowMode ? 1.5 : kMaxSpeed);
-      double maxRotation = (isSlowMode ? Math.PI : Drivetrain.kMaxAngularSpeed);
+      double maxSpeed = (isSlowMode ? 2 : kMaxSpeed);
+      double maxRotation = (isSlowMode ? Math.PI * 0.7 : Drivetrain.kMaxAngularSpeed);
 
       double deadband = 0.2;
 
@@ -382,6 +392,15 @@ int buttonindex = -1;
 
     
      arm.isSafeMode(NtHelper.getBoolean("/robot/arm/telescopeoveride", true)); 
+
+
+     // Rrrrrrrumblllllleee
+     if (HumanPlayerStationDetection.seesTagCloseEnough()) {
+      m_controller.setRumble(RumbleType.kBothRumble, 1);
+     } else {
+      m_controller.setRumble(RumbleType.kBothRumble, 0);
+     }
+     
   }
 
   @Override

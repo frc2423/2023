@@ -2,6 +2,7 @@
     tab-name="TeleOperated"
     slot="tab"
     source-provider="NetworkTables"
+    selected=""
 >
 
 
@@ -16,7 +17,6 @@
         source-key="/arm/shoulderAngle"
         min="NaN"
         max="NaN"
-        placeholder=""
     ><input
             slot="input"
             value="0"
@@ -49,7 +49,6 @@
         source-key="/arm/telescopeDistance"
         min="NaN"
         max="NaN"
-        placeholder=""
     ><input
             slot="input"
             value="0"
@@ -76,28 +75,30 @@
 
     <frc-toggle-button
         source-provider="NetworkTables"
-        style="transform: translate(442.334px, 24.333px); width: 151.588px; height: 53.725px;"
+        style="transform: translate(262.325px, 98.725px); width: 214.787px; height: 145.725px;"
         source-key="/robot/arm/telescopeoveride"
         label="Is Safe Mode"
+        toggled=""
     ></frc-toggle-button>
     <frc-toggle-switch
         source-provider="NetworkTables"
-        style="transform: translate(227.797px, 135.797px); width: 194.25px; height: 99.0625px;"
+        style="transform: translate(306.197px, 316.597px); width: 194.25px; height: 99.0625px;"
         source-key="/dashboard/arm/isCubes"
+        toggled=""
     ></frc-toggle-switch>
     <frc-label
         text="CUBES??????"
         source-provider="NetworkTables"
-        style="transform: translate(268.932px, 107.797px); width: 121.182px; height: 24.3333px;"
+        style="transform: translate(341.732px, 291.797px); width: 121.182px; height: 24.3333px;"
     ></frc-label>
 
 
     <frc-toggle-group
         source-provider="NetworkTables"
-        style="transform: translate(221.333px, 255.531px); flex-direction: row; width: 207.458px; height: 113.573px;"
+        style="transform: translate(40px, 382.4px); flex-direction: row; width: 207.458px; height: 113.573px;"
         source-key="/robot/autoScore/position"
         options="[&quot;right&quot;,&quot;left&quot;]"
-        value="right"
+        value="left"
         direction="horizontal"
     ></frc-toggle-group>
     <frc-toggle-group
@@ -105,37 +106,24 @@
         style="transform: translate(39.7292px, 87px); flex-direction: column; width: 149.995px; height: 283.661px;"
         source-key="/dashboard/autoScorePosition"
         options="[&quot;high&quot;,&quot;mid&quot;,&quot;low&quot;]"
-        value="high"
+        value="low"
     ></frc-toggle-group>
     <kwarqs-arm-setpoints
         source-provider="NetworkTables"
         buttonselected="5"
-        style="transform: translate(485.333px, 15.6667px);"
+        style="transform: translate(594.933px, 0.00419771px);"
         source-key="/dashboard/armSetpoint"
     ></kwarqs-arm-setpoints>
     <kwarqs-arm-base
         source-provider="NetworkTables"
         count="0"
-        style="transform: translate(471.8px, 479.975px); width: 504px; height: 20px;"
+        style="transform: translate(575px, 446.4px); width: 504px; height: 20px;"
         source-key="/dashboard/arm"
     ></kwarqs-arm-base>
-</dashboard-tab>
-<dashboard-tab
-    tab-name="Auto(mobile)"
-    slot="tab"
-    source-provider="NetworkTables"
-    selected=""
->
-    <frc-sendable-chooser
-        source-key="/SmartDashboard/Auto choices"
-        source-provider="NetworkTables"
-        style="transform: translate(8.33369px, 6.20618e-05px); width: 325.333px; height: 82.6667px;"
-        options="[]"
-    ></frc-sendable-chooser>
     <frc-field
         source-key="/SmartDashboard/Field"
         source-provider="NetworkTables"
-        style="transform: translate(589.005px, 26.6667px); width: 690.995px; height: 355.151px;"
+        style="transform: translate(1092.59px, 18.6px); width: 420.212px; height: 266.812px;"
         width="54.27083"
         height="26.2916"
         image="/field-images/2023-field.jpg"
@@ -147,34 +135,123 @@
         <frc-field-robot
             source-key="/SmartDashboard/Field/Robot"
             source-provider="NetworkTables"
-            style="width: 23.03px; height: 34.5451px; transform: translate(16.5145px, 312.256px) rotate(87.02deg);"
-            opacity="100"
-            pose="[0,0,0]"
-        ></frc-field-robot>
-        <frc-field-trajectory
-            source-key="/SmartDashboard/Field/trajectory"
-            source-provider="NetworkTables"
-            style="width: 38.3834px; height: 38.3834px; transform: translate(8.83778px, 310.337px) rotate(90deg);"
-        ></frc-field-trajectory>
-        <frc-field-robot
-            source-key="/SmartDashboard/Field/ghost"
-            source-provider="NetworkTables"
-            style="width: 23.03px; height: 34.5451px; transform: translate(77.7822px, 90.4424px) rotate(263.061deg);"
+            style="width: 14.0049px; height: 21.0074px; transform: translate(349.43px, 33.9228px) rotate(77.5467deg);"
             opacity="100"
             pose="[0,0,0]"
         ></frc-field-robot>
         <frc-field-trajectory
             source-key="/SmartDashboard/Field/flip"
             source-provider="NetworkTables"
-            style="width: 38.3834px; height: 38.3834px; transform: translate(8.83778px, 310.337px) rotate(90deg);"
+            style="width: 23.3415px; height: 23.3415px; transform: translate(5.37439px, 188.72px) rotate(90deg);"
+        ></frc-field-trajectory>
+        <frc-field-trajectory
+            source-key="/SmartDashboard/Field/trajectory"
+            source-provider="NetworkTables"
+            style="width: 23.3415px; height: 23.3415px; transform: translate(5.37439px, 188.72px) rotate(90deg);"
+        ></frc-field-trajectory>
+        <frc-field-robot
+            source-key="/SmartDashboard/Field/ghost"
+            source-provider="NetworkTables"
+            style="width: 14.0049px; height: 21.0074px; transform: translate(10.0427px, 189.888px) rotate(90deg);"
+            opacity="100"
+            pose="[0,0,0]"
+        ></frc-field-robot>
+    </frc-field>
+
+    <vaadin-text-field
+        label="April Tag"
+        has-label=""
+        source-provider="NetworkTables"
+        style="transform: translate(501px, 25.2px);"
+        source-key="/dashboard/getScoringTagLabel"
+        readonly=""
+        has-value=""
+    ><input
+            slot="input"
+            type="text"
+            id="vaadin-text-field-4"
+            aria-labelledby="label-vaadin-text-field-48"
+            aria-describedby=""
+            readonly=""
+        ><label
+            slot="label"
+            id="label-vaadin-text-field-48"
+            for="vaadin-text-field-4"
+        >April Tag</label>
+        <div
+            slot="error-message"
+            id="error-message-vaadin-text-field-37"
+            hidden=""
+        ></div>
+    </vaadin-text-field>
+</dashboard-tab>
+<dashboard-tab
+    tab-name="Auto(mobile)"
+    slot="tab"
+    source-provider="NetworkTables"
+>
+    <frc-sendable-chooser
+        source-key="/SmartDashboard/Auto choices"
+        source-provider="NetworkTables"
+        style="transform: translate(8.33369px, 6.20618e-05px); width: 325.333px; height: 82.6667px;"
+        options="[]"
+    ></frc-sendable-chooser>
+    <frc-field
+        source-key="/SmartDashboard/Field"
+        source-provider="NetworkTables"
+        style="transform: translate(780.205px, 48.2667px); width: 690.995px; height: 355.151px;"
+        width="54.27083"
+        height="26.2916"
+        image="/field-images/2023-field.jpg"
+        top-left-field-corner-x="46"
+        top-left-field-corner-y="36"
+        bottom-right-field-corner-x="1088"
+        bottom-right-field-corner-y="544"
+    >
+        <frc-field-robot
+            source-key="/SmartDashboard/Field/Robot"
+            source-provider="NetworkTables"
+            style="width: 0px; height: 0px; transform: translate(0px, 0px) rotate(77.5467deg);"
+            opacity="100"
+            pose="[0,0,0]"
+        ></frc-field-robot>
+        <frc-field-trajectory
+            source-key="/SmartDashboard/Field/trajectory"
+            source-provider="NetworkTables"
+            style="width: 0px; height: 0px; transform: translate(0px, 0px) rotate(90deg);"
+        ></frc-field-trajectory>
+        <frc-field-robot
+            source-key="/SmartDashboard/Field/ghost"
+            source-provider="NetworkTables"
+            style="width: 0px; height: 0px; transform: translate(0px, 0px) rotate(90deg);"
+            opacity="100"
+            pose="[0,0,0]"
+        ></frc-field-robot>
+        <frc-field-trajectory
+            source-key="/SmartDashboard/Field/flip"
+            source-provider="NetworkTables"
+            style="width: 0px; height: 0px; transform: translate(0px, 0px) rotate(90deg);"
         ></frc-field-trajectory>
     </frc-field>
     <kwarqs-arm-base
         source-provider="NetworkTables"
         count="0"
-        style="transform: translate(142.8px, 183.134px); width: 303.661px; height: 258px;"
+        style="transform: translate(338.8px, 183.134px); width: 303.661px; height: 258px;"
         source-key="/dashboard/arm"
     ></kwarqs-arm-base>
+    <frc-toggle-button
+        source-provider="NetworkTables"
+        style="transform: translate(582px, 28.9875px); width: 150.4px; height: 93.2px;"
+        source-key="/auto/isWallSide"
+        toggled=""
+        label="isWallSide?"
+    ></frc-toggle-button>
+    <frc-toggle-group
+        source-provider="NetworkTables"
+        style="transform: translate(86.4px, 124.2px); flex-direction: column;"
+        options="[&quot;high&quot;,&quot;mid&quot;,&quot;low&quot;]"
+        value="mid"
+    ></frc-toggle-group>
 </dashboard-tab>
 <dashboard-tab
     tab-name="deBUG"
@@ -189,23 +266,22 @@
         source-provider="NetworkTables"
         style="transform: translate(56.6667px, 138.666px);"
         source-key="/robot/drivetrain/APRIL_TAG_ID"
-        placeholder=""
         min="NaN"
         max="NaN"
     ><input
             slot="input"
             value="0"
             type="number"
-            id="vaadin-number-field-724"
+            id="vaadin-number-field-5"
             aria-labelledby="label-vaadin-number-field-744"
             aria-describedby=""
-            min="undefined"
-            max="undefined"
+            min="NaN"
+            max="NaN"
             step="any"
         ><label
             slot="label"
             id="label-vaadin-number-field-744"
-            for="vaadin-number-field-724"
+            for="vaadin-number-field-5"
         >APrIL tag ID</label>
         <div
             slot="error-message"
