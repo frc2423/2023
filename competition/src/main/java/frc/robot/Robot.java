@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.net.http.HttpHeaders;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -405,33 +407,44 @@ int buttonindex = -1;
 
   @Override
   public void testPeriodic() {
+
+    double urmomsSpeed = Math.PI / 9;
+    m_drive.m_frontRight.feedforwardFunctionStuff(urmomsSpeed);
+
+    NtHelper.setDouble("/drivetrain/feedforwardDesired/", urmomsSpeed * 180 / Math.PI);
+    NtHelper.setDouble("/drivetrain/feedforwardActual/", m_drive.m_frontRight.getTurnEncoderRate() * 60 * 180 / Math.PI);
+    // m_drive.m_frontLeft.m_turningMotor.setF(crazy); //setSpeed(crazy);
+
+    // m_drive.m_frontLeft.m_turningMotor.setSpeed(1);
+    
+
     if (m_controller.getStartButton()) {
       arm.resetShoulder();
     }
     NtHelper.setDouble("/test/shoulderPosition", arm.getShoulderEncoderPosition());
 
-    double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3
-    double manualAngle = NtHelper.getDouble("/test/angle", 0);
-    SwerveModuleState bloB = new SwerveModuleState(manualSpeed,
-        Rotation2d.fromDegrees(manualAngle));
+    // double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3
+    // double manualAngle = NtHelper.getDouble("/test/angle", 0);
+    // SwerveModuleState bloB = new SwerveModuleState(manualSpeed,
+    //      Rotation2d.fromDegrees(manualAngle));
 
-    double[] desiredStates = {
-        bloB.angle.getRadians(),
-        bloB.speedMetersPerSecond,
-        bloB.angle.getRadians(),
-        bloB.speedMetersPerSecond,
-        bloB.angle.getRadians(),
-        bloB.speedMetersPerSecond,
-        bloB.angle.getRadians(),
-        bloB.speedMetersPerSecond,
-    };
+    // double[] desiredStates = {
+    //     bloB.angle.getRadians(),
+    //     bloB.speedMetersPerSecond,
+    //     bloB.angle.getRadians(),
+    //     bloB.speedMetersPerSecond,
+    //     bloB.angle.getRadians(),
+    //     bloB.speedMetersPerSecond,
+    //     bloB.angle.getRadians(),
+    //     bloB.speedMetersPerSecond,
+    // };
 
-    NtHelper.setDoubleArray("/swerve/desiredStates", desiredStates);
+    // NtHelper.setDoubleArray("/swerve/desiredStates", desiredStates);
 
-    m_drive.m_frontLeft.setDesiredState(bloB);
-    m_drive.m_frontRight.setDesiredState(bloB);
-    m_drive.m_backLeft.setDesiredState(bloB);
-    m_drive.m_backRight.setDesiredState(bloB);
+    // m_drive.m_frontLeft.setDesiredState(bloB);
+    // m_drive.m_frontRight.setDesiredState(bloB);
+    // m_drive.m_backLeft.setDesiredState(bloB);
+    // m_drive.m_backRight.setDesiredState(bloB);
 
     if (m_controller.getXButton()) {
       arm.extend();

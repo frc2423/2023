@@ -11,7 +11,6 @@
         "open": true
       },
       "dashboard": {
-        "open": true,
         "robot": {
           "open": true
         }
@@ -32,6 +31,9 @@
         "frontLeft": {
           "open": true
         },
+        "open": true
+      },
+      "drivetrain": {
         "open": true
       },
       "rates": {
@@ -56,7 +58,6 @@
         "autoScore": {
           "open": true
         },
-        "open": true,
         "shoulder": {
           "open": true
         }

@@ -70,6 +70,12 @@ public class SwerveModule {
   // Gains are for example purposes only - must be determined for your own robot!
   private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ks, kv);
 
+
+  private double turnKs =  0.16;
+  private double turnKv = 0.45;
+
+  private final SimpleMotorFeedforward crazyFeedforwardTesting = new SimpleMotorFeedforward(turnKs, turnKv); //AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+
   private final boolean invertDriveEncoderRate;
   private final boolean invertDriveEncoderDistance;
 
@@ -226,4 +232,13 @@ public class SwerveModule {
       updateReal();
     }
   }
+
+  public void feedforwardFunctionStuff(double urmom) { //DDDDDDDDDDDDDDDDDDDDD
+    turnMotorVoltage = crazyFeedforwardTesting.calculate(urmom);
+  }
+
+  public double getTurnEncoderRate() {
+    return turnEncoderRate;
+  }
+
 }
