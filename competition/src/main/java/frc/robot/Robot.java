@@ -408,10 +408,10 @@ int buttonindex = -1;
   @Override
   public void testPeriodic() {
 
-    double urmomsSpeed = Math.PI / 9;
-    m_drive.m_frontRight.feedforwardFunctionStuff(urmomsSpeed);
+    double posicione = NtHelper.getDouble("/drivetrain/posicione", Math.PI / 2);  //Math.PI / 2; //italiano
+    m_drive.m_frontRight.feedforwardFunctionStuff(posicione); //prosciutto plateau
 
-    NtHelper.setDouble("/drivetrain/feedforwardDesired/", urmomsSpeed * 180 / Math.PI);
+    NtHelper.setDouble("/drivetrain/feedforwardDesired/", posicione * 180 / Math.PI);
     NtHelper.setDouble("/drivetrain/feedforwardActual/", m_drive.m_frontRight.getTurnEncoderRate() * 60 * 180 / Math.PI);
     // m_drive.m_frontLeft.m_turningMotor.setF(crazy); //setSpeed(crazy);
 
@@ -458,7 +458,8 @@ int buttonindex = -1;
   }
 
   @Override
-  public void testInit() {
+  public void testInit() { //test innit
+    NtHelper.setDouble("/drivetrain/posicione", Math.PI / 2);
     m_drive.setBrake(false);
     m_drive.resetAngle();
     arm.resetTelescopeEncoder();

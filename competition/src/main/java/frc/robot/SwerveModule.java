@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.robot.util.NtHelper;
 import edu.wpi.first.math.controller.PIDController;
@@ -17,6 +18,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 
 
 public class SwerveModule {
@@ -54,15 +56,19 @@ public class SwerveModule {
   // Gains are for example purposes only - must be determined for your own robot!
   private final PIDController m_drivePIDController = new PIDController(0, 0, 0); // for sim use .5
 
-  // Gains are for example purposes only - must be determined for your own robot!
-  private final PIDController m_turningPIDController = new PIDController(
-      RobotBase.isSimulation() ? 23 : 2, // kp (new value: 2.7)
-      0.2, // (new value: 0)
-      0.06/* // (new value: .06)
-        * ,
-        * new TrapezoidProfile.Constraints(
-        * kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration)
-        */);
+  // Massively correct Gains are for example purposes only - must be determined for your own robot!
+  //private PIDController turningPIDController = new PIDController( 4, 0, 0);
+  private ProfiledPIDController turningPIDController = new ProfiledPIDController( 4, 0, 0.2, new TrapezoidProfile.Constraints(Math.PI * 6, Math.PI * 12));
+
+
+  // private final PIDController m_turningPIDController = new PIDController(
+  //     RobotBase.isSimulation() ? 23 : 2, // kp (new value: 2.7)
+  //     0.2, // (new value: 0)
+  //     0.06/* // (new value: .06)
+  //       * ,
+  //       * new TrapezoidProfile.Constraints( 
+  //       * kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration)
+  //       */);
 
   private double ks = RobotBase.isSimulation() ? 0.025 : .2;
   private double kv = RobotBase.isSimulation() ? 0.075 : 2.5;
@@ -113,8 +119,8 @@ public class SwerveModule {
 
     // Limit the PID Controller's input range between -pi and pi and set the input
     // to be continuous.
-    m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
-    m_turningPIDController.setTolerance(0);
+    turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
+    turningPIDController.setTolerance(Math.PI / 180.0);
 
     this.invertDriveEncoderRate = invertDriveEncoderRate;
     this.invertDriveEncoderDistance = false; // invertDriveEncoderDistance;
@@ -163,11 +169,12 @@ public class SwerveModule {
     final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
 
     // Calculate the turning motor output from the turning PID controller.
-    final double turnOutput = m_turningPIDController.calculate(turnEncoderDistance, state.angle.getRadians());
+    final double turnOutput = turningPIDController.calculate(turnEncoderDistance, state.angle.getRadians());
 
     final double turnFeedforward = 0;
     driveMotorVoltage = (driveOutput + driveFeedforward);
-    turnMotorVoltage = (turnOutput + turnFeedforward);
+    double velocity = turningPIDController.calculate(turnEncoderDistance, state.angle.getRadians());
+    turnMotorVoltage = crazyFeedforwardTesting.calculate(velocity);
     // driveMotorVoltage = 0;
     // turnMotorVoltage = 0;
     
@@ -232,9 +239,12 @@ public class SwerveModule {
       updateReal();
     }
   }
-
-  public void feedforwardFunctionStuff(double urmom) { //DDDDDDDDDDDDDDDDDDDDD
-    turnMotorVoltage = crazyFeedforwardTesting.calculate(urmom);
+  //urmom
+  public void feedforwardFunctionStuff(double posiyion) { //DDDDDDDDDDDDDDDDDDDDD 
+    double velocity = turningPIDController.calculate(turnEncoderDistance, posiyion);
+    turnMotorVoltage = crazyFeedforwardTesting.calculate(velocity);
+    NtHelper.setDouble("/drivetrain/velocity", velocity);
+    NtHelper.setDouble("/drivetrain/error", turningPIDController.getPositionError());
   }
 
   public double getTurnEncoderRate() {
