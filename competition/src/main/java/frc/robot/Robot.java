@@ -21,9 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Led.KwarqsLed;
 import frc.robot.auto.Auto;
 import frc.robot.auto.HumanPlayerStationDetection;
-import frc.robot.constants.CameraConstants;
 import frc.robot.constants.SetPoints;
-import frc.robot.util.Camera;
 import frc.robot.util.NtHelper;
 import frc.robot.util.PhotonRunnable;
 import frc.robot.util.stateMachine.StateMachine;
@@ -413,7 +411,7 @@ int buttonindex = -1;
     double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3
     double manualAngle = NtHelper.getDouble("/test/angle", 0);
     SwerveModuleState bloB = new SwerveModuleState(manualSpeed,
-        Rotation2d.fromDegrees(manualAngle));
+         Rotation2d.fromDegrees(manualAngle));
 
     double[] desiredStates = {
         bloB.angle.getRadians(),
@@ -445,7 +443,7 @@ int buttonindex = -1;
   }
 
   @Override
-  public void testInit() {
+  public void testInit() { //test innit
     m_drive.setBrake(false);
     m_drive.resetAngle();
     arm.resetTelescopeEncoder();

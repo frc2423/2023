@@ -1,0 +1,14 @@
+{
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)",
+    "serverTeam": "10.24.23.2"
+  },
+  "Persistent Values": {
+    "open": false
+  },
+  "transitory": {
+    "drivetrain": {
+      "open": true
+    }
+  }
+}
