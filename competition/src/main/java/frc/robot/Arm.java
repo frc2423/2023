@@ -28,16 +28,21 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 public class Arm {
     private NeoMotor telescopeMotor;
     private NeoMotor shoulderMotor;
-    private PWMSparkMax beltoMotor;
+    private NeoMotor beltoMotor;
+    private NeoMotor wristoMotor;
     private ProfiledPIDController telescopePIDController = new ProfiledPIDController(0.7, 0, 0, new TrapezoidProfile.Constraints(60, 80));
     private static final int TELESCOPE_MOTOR_CAN_BUS_PORT = 9;
     public static final double DISTANCE = 0;
     private double SHOULDER_MAXIMUM = 125; // calculate later :)
     private double TELESCOPE_MINIMUM = 0;
+    private double WRIST_MAXIMUM = 0; // calculate later :)
     private double TELESCOPE_MAXIMUM = 30;//97;
     private CANCoder shoulderEncoder = new CANCoder(25);
+    private CANCoder wristEncoder = new CANCoder();//set deviceNumber
     CANCoderConfiguration _canCoderConfiguration = new CANCoderConfiguration();
     ProfiledPIDController shoulder_PID = new ProfiledPIDController((Robot.isSimulation()) ? .001 : .005, 0, 0, new TrapezoidProfile.Constraints(360, 420));//noice
+    ProfiledPIDController wrist_PID = new ProfiledPIDController((Robot.isSimulation()) ? 0 : 0, 0, 0, new TrapezoidProfile.Constraints(0, 0));//PLEASE SET VALUES
+
     private double TELESCOPE_CONVERSION_FACTOR = 1; // gear ratio
     private double beltoSpeedo = 0.8;
     private double outtakeBeltoSpeedo = -1;
@@ -50,11 +55,14 @@ public class Arm {
     private double telescopeSetPoint = 0;
     public static final double MAX_SHOULDER_VOLTAGE = 4;
     private Rotation2d shoulderSetpoint = new Rotation2d();
+    private Rotation2d wristSetpoint = new Rotation2d();
 
     private MechanismLigament2d shoulder;
     private MechanismLigament2d telescope;
 
     private Rotation2d shoulderAngle = new Rotation2d(0);
+    private Rotation2d wristAngle = new Rotation2d(0);
+
     private double telescopeDist = 0;
 
     private final FlywheelSim telescopeSimMotor = new FlywheelSim(DCMotor.getNEO(1), 150.0 / 7.0, 0.004096955);
@@ -76,7 +84,7 @@ public class Arm {
         _canCoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
         _canCoderConfiguration.magnetOffsetDegrees = -135;
         shoulderEncoder.configAllSettings(_canCoderConfiguration);
-        beltoMotor = new PWMSparkMax(0);
+        beltoMotor = new NeoMotor(0); //PLEASE SET PORT thx :P
         shoulder_PID.setTolerance(RobotBase.isSimulation() ? 5 : 5);
         NtHelper.setDouble("/sim/shoulderAngle", 0);
         NtHelper.setDouble("/sim/telescopeDist", 0);
@@ -178,6 +186,16 @@ public class Arm {
         shoulderEncoder.setPosition(0);
     }
 
+    public void goToSetpoint(double shoulderSetpoint , double wristSetpoint, boolean isCubes) {
+        //if the shoulder is less than 90 degrees keep moving the wrist, 
+        //otherwise stop the shoulder and let the wrist finsh moving.
+        if (isCubes) {
+            //set arm to floor, set wrist to cube intake position
+        } else {
+            //else stuff
+        }
+    }
+
     public void getShoulderEncoderCANErrors() {
         String error = shoulderEncoder.getLastError().toString();
         NtHelper.setString("/robot/shoulder/error", error);
@@ -204,23 +222,23 @@ public class Arm {
 
     public void intakeBelt() {
         // sets belt speed to # > 0
-        beltoMotor.set(beltoSpeedo);
+        beltoMotor.setSpeed(beltoSpeedo); 
     }
 
     public void outtakeBelt() {
         // sets belt speed to # < 0
         if (NtHelper.getBoolean("/dashboard/arm/isCubes", false)) {
-            beltoMotor.set(outtakeBeltoSpeedo);
+            beltoMotor.setSpeed(outtakeBeltoSpeedo);
         } else {
-            beltoMotor.set(-0.6);
+            beltoMotor.setSpeed(-0.6);
         }
     }
     public void outtakeBeltCube() {
-        beltoMotor.set(outtakeBeltoSpeedo);
+        beltoMotor.setSpeed(outtakeBeltoSpeedo);
     }
 
     public void outtakeBeltCone() {
-        beltoMotor.set(-0.6);
+        beltoMotor.setSpeed(-0.6);
     }
 
     public void setOutakeSpeed(double speed) {
@@ -229,13 +247,35 @@ public class Arm {
 
     public void beltStop() {
         // set belt speed to 0
-        beltoMotor.set(0);
+        beltoMotor.setSpeed(0);
         outtakeBeltoSpeedo = -1;
     }
 
     public void setBeltSpeed(double beltoSpeed) {
         // sets constants for belt speeds for intakeBelt, outtakeBelt, and beltStop
         beltoSpeedo = beltoSpeed;
+    }
+
+    public void wristToSetpoint(Rotation2d wristAngle) {
+        if (wristAngle.getDegrees() >= -WRIST_MAXIMUM && wristAngle.getDegrees() <= WRIST_MAXIMUM) {
+            wristSetpoint = wristAngle;   
+        }
+    } 
+
+    public void resetWrist() {
+        wristEncoder.setPosition(0);
+    }
+
+    public Rotation2d getWristAngle() {
+        return wristAngle;
+    }
+
+    private double wristCalcPID(Rotation2d angle) {
+        return wrist_PID.calculate(wristAngle.getDegrees(), angle.getDegrees());
+    }
+
+    public double getWristEncoderPosition() {
+        return wristEncoder.getAbsolutePosition();
     }
 
     public Rotation2d getShoulderAngle() {
@@ -246,7 +286,7 @@ public class Arm {
         return shoulderEncoder.getAbsolutePosition();
     }
 
-    private double calculatePid(Rotation2d angle) {
+    private double shoulderCalcPID(Rotation2d angle) {
         return shoulder_PID.calculate(shoulderAngle.getDegrees(), angle.getDegrees());
     }
 
@@ -291,7 +331,7 @@ public class Arm {
         double telescopeMotorPercent = (telescopeVoltage / RobotController.getBatteryVoltage());
         telescopeMotorPercent = telescopePIDController.calculate(telescopeDist, telescopeSetPoint)
                 / RobotController.getBatteryVoltage();
-        setShoulderVelocity(calculatePid(shoulderSetpoint));
+        setShoulderVelocity(shoulderCalcPID(shoulderSetpoint));
         if (shoulderAngle.getDegrees() >= getMaxShoulderAngle() && shoulderVoltage > 0) {
             shoulderMotorPercent = 0;
         } else if (shoulderAngle.getDegrees() <= -getMaxShoulderAngle() && shoulderVoltage < 0) {
@@ -363,6 +403,6 @@ public class Arm {
     private void telemtry() {
         NtHelper.setDouble("/arm/telescopeDistance", telescopeDist);
         NtHelper.setDouble("/arm/shoulderAngle", getShoulderAngle().getDegrees());
-        NtHelper.setDouble("/arm/beltMotor", beltoMotor.get());
+        NtHelper.setDouble("/arm/beltMotor", beltoMotor.getPercent());
     }
 }
