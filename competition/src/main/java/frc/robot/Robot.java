@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.net.http.HttpHeaders;
-
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -23,9 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Led.KwarqsLed;
 import frc.robot.auto.Auto;
 import frc.robot.auto.HumanPlayerStationDetection;
-import frc.robot.constants.CameraConstants;
 import frc.robot.constants.SetPoints;
-import frc.robot.util.Camera;
 import frc.robot.util.NtHelper;
 import frc.robot.util.PhotonRunnable;
 import frc.robot.util.stateMachine.StateMachine;
@@ -448,7 +444,6 @@ int buttonindex = -1;
 
   @Override
   public void testInit() { //test innit
-    NtHelper.setDouble("/drivetrain/posicione", Math.PI / 2);
     m_drive.setBrake(false);
     m_drive.resetAngle();
     arm.resetTelescopeEncoder();
