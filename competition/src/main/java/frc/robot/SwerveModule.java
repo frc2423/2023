@@ -58,17 +58,7 @@ public class SwerveModule {
 
   // Massively correct Gains are for example purposes only - must be determined for your own robot!
   //private PIDController turningPIDController = new PIDController( 4, 0, 0);
-  private ProfiledPIDController turningPIDController = new ProfiledPIDController( 4, 0, 0.2, new TrapezoidProfile.Constraints(Math.PI * 6, Math.PI * 12));
-
-
-  // private final PIDController m_turningPIDController = new PIDController(
-  //     RobotBase.isSimulation() ? 23 : 2, // kp (new value: 2.7)
-  //     0.2, // (new value: 0)
-  //     0.06/* // (new value: .06)
-  //       * ,
-  //       * new TrapezoidProfile.Constraints( 
-  //       * kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration)
-  //       */);
+  private ProfiledPIDController turningPIDController = new ProfiledPIDController( RobotBase.isSimulation() ? 23 : 4, 0, 0.2, new TrapezoidProfile.Constraints(Math.PI * 6, Math.PI * 12));
 
   private double ks = RobotBase.isSimulation() ? 0.025 : .2;
   private double kv = RobotBase.isSimulation() ? 0.075 : 2.5;
@@ -80,13 +70,10 @@ public class SwerveModule {
   private double turnKs =  0.16;
   private double turnKv = 0.45;
 
-  private final SimpleMotorFeedforward crazyFeedforwardTesting = new SimpleMotorFeedforward(turnKs, turnKv); //AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+  private final SimpleMotorFeedforward turnFeedForward = new SimpleMotorFeedforward(turnKs, turnKv); //AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
   private final boolean invertDriveEncoderRate;
   private final boolean invertDriveEncoderDistance;
-
-  // private final SimpleMotorFeedforward m_turnFeedforward = new
-  // SimpleMotorFeedforward(1, 0.5);
 
   /**
    * Constructs a SwerveModule with a drive motor, turning motor, drive encoder
@@ -153,35 +140,24 @@ public class SwerveModule {
    * @param desiredState Desired state with speed and angle.
    */
   public void setDesiredState(SwerveModuleState desiredState) {
-    // TODO: Right now we are disabling optimizing the angle to get odometry
-    // working. We should
-    // maybe have a function that enables/disables optimization so that it can
-    // disabled in auto
-    // and enabled in teleop.
 
     // Optimize the reference state to avoid spinning further than 90 degrees
     SwerveModuleState state = SwerveModuleState.optimize(desiredState, new Rotation2d(turnEncoderDistance));
 
     // Calculate the drive output from the drive PID controller.
     final double driveOutput = m_drivePIDController.calculate(driveEncoderRate, state.speedMetersPerSecond);
-    // System.out.println("state.speedMetersPerSecond:" + state.speedMetersPerSecond);
 
     final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
 
     // Calculate the turning motor output from the turning PID controller.
-    final double turnOutput = turningPIDController.calculate(turnEncoderDistance, state.angle.getRadians());
 
-    final double turnFeedforward = 0;
     driveMotorVoltage = (driveOutput + driveFeedforward);
-    double velocity = turningPIDController.calculate(turnEncoderDistance, state.angle.getRadians());
-    turnMotorVoltage = crazyFeedforwardTesting.calculate(velocity);
-    // driveMotorVoltage = 0;
-    // turnMotorVoltage = 0;
-    
-    NtHelper.setDouble("/drive/" + name + "/actdistance", Math.toDegrees(MathUtil.angleModulus(turnEncoderDistance)));
-    NtHelper.setDouble("/drive/" + name + "/desdistance", Math.toDegrees(MathUtil.angleModulus(state.angle.getRadians())));
-    // NtHelper.setDouble("/drive/" + name + "/error", (Math.toDegrees(MathUtil.angleModulus(turnEncoderDistance)) - Math.toDegrees(MathUtil.angleModulus(state.angle.getRadians()))));
-    // NtHelper.setDouble("/drive/" + name + "/voltage", turnMotorVoltage);
+    double turnVelocity = turningPIDController.calculate(turnEncoderDistance, state.angle.getRadians());
+    var atTurnGoal = turningPIDController.atGoal();
+    turnMotorVoltage = turnFeedForward.calculate(turnVelocity);
+    if (atTurnGoal) {
+      turnMotorVoltage = 0;
+    }
   }
 
   public void resetPosition() {
@@ -239,13 +215,7 @@ public class SwerveModule {
       updateReal();
     }
   }
-  //urmom
-  public void feedforwardFunctionStuff(double posiyion) { //DDDDDDDDDDDDDDDDDDDDD 
-    double velocity = turningPIDController.calculate(turnEncoderDistance, posiyion);
-    turnMotorVoltage = crazyFeedforwardTesting.calculate(velocity);
-    NtHelper.setDouble("/drivetrain/velocity", velocity);
-    NtHelper.setDouble("/drivetrain/error", turningPIDController.getPositionError());
-  }
+
 
   public double getTurnEncoderRate() {
     return turnEncoderRate;
