@@ -59,8 +59,8 @@ public class SwerveModule {
   //Very monsterously massive correct Gains are for example purposes only - must be determined for your own robot!
   private ProfiledPIDController turningPIDController = new ProfiledPIDController( RobotBase.isSimulation() ? 23 : 4, 0, 0.2, new TrapezoidProfile.Constraints(Math.PI * 6, Math.PI * 12));
 
-  private double ks = RobotBase.isSimulation() ? 0.025 : .2;
-  private double kv = RobotBase.isSimulation() ? 0.075 : 2.5;
+  private double ks = RobotBase.isSimulation() ? 0.025 : .165;
+  private double kv = RobotBase.isSimulation() ? 0.075 : 2.7;
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ks, kv);
