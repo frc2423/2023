@@ -1,5 +1,12 @@
 package frc.robot;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
+
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
@@ -26,6 +33,55 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 
 public class Arm {
+
+    public enum Position  {
+        floor,
+        low,
+        mid,
+        high,
+        HP
+    }
+
+    public enum RobotPart {
+        shoulder,
+        telescope,
+        wrist
+    }
+
+    private static HashMap<Position, HashMap<RobotPart, Double>> setpoints = new HashMap<>();
+
+    static {
+        setpoints.put(Position.floor, new HashMap<>());
+        setpoints.put(Position.low, new HashMap<>());
+        setpoints.put(Position.mid, new HashMap<>());
+        setpoints.put(Position.high, new HashMap<>());
+        setpoints.put(Position.HP, new HashMap<>());
+
+    }
+
+    static {
+        setpoints.get(Position.floor).put(RobotPart.shoulder , 110.0);
+        setpoints.get(Position.floor).put(RobotPart.telescope , 10.0);
+        setpoints.get(Position.floor).put(RobotPart.wrist , 30.0);
+
+        setpoints.get(Position.low).put(RobotPart.shoulder , 90.0);
+        setpoints.get(Position.low).put(RobotPart.telescope , 10.0);
+        setpoints.get(Position.low).put(RobotPart.wrist , 30.0);
+
+        setpoints.get(Position.mid).put(RobotPart.shoulder , 90.0);
+        setpoints.get(Position.mid).put(RobotPart.telescope , 10.0);
+        setpoints.get(Position.mid).put(RobotPart.wrist , 30.0);
+
+        setpoints.get(Position.high).put(RobotPart.shoulder , 90.0);
+        setpoints.get(Position.high).put(RobotPart.telescope , 10.0);
+        setpoints.get(Position.high).put(RobotPart.wrist , 30.0);
+
+        setpoints.get(Position.HP).put(RobotPart.shoulder , 90.0);
+        setpoints.get(Position.HP).put(RobotPart.telescope , 10.0);
+        setpoints.get(Position.HP).put(RobotPart.wrist , 30.0);
+
+    }
+
     private NeoMotor telescopeMotor;
     private NeoMotor shoulderMotor;
     private NeoMotor beltoMotor;
@@ -186,14 +242,14 @@ public class Arm {
         shoulderEncoder.setPosition(0);
     }
 
-    public void goToSetpoint(double shoulderSetpoint , double wristSetpoint, boolean isCubes) {
+    public void setPosition(Position setpointValue, boolean isCubes) {
         //if the shoulder is less than 90 degrees keep moving the wrist, 
         //otherwise stop the shoulder and let the wrist finsh moving.
-        if (isCubes) {
-            //set arm to floor, set wrist to cube intake position
-        } else {
-            //else stuff
-        }
+        setShoulderSetpoint(shoulderSetpoint.plus(Rotation2d.fromDegrees(setpoints.get(setpointValue).get(RobotPart.shoulder))));
+        telescopeToSetpoint(setpoints.get(setpointValue).get(RobotPart.telescope));
+        wristToSetpoint(shoulderSetpoint.plus(Rotation2d.fromDegrees(setpoints.get(setpointValue).get(RobotPart.shoulder))));
+
+        //do if isCubes :>
     }
 
     public void getShoulderEncoderCANErrors() {
