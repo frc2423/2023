@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import frc.robot.constants.SetPointsButBetter;
 import frc.robot.util.NtHelper;
 import frc.robot.util.RateChecker;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
@@ -36,9 +37,13 @@ public class Arm {
 
     public enum Position  {
         floor,
+        floorCube,
         low,
+        lowCube,
         mid,
+        midCube,
         high,
+        highCube,
         HP
     }
 
@@ -52,33 +57,53 @@ public class Arm {
 
     static {
         setpoints.put(Position.floor, new HashMap<>());
+        setpoints.put(Position.floorCube, new HashMap<>());
         setpoints.put(Position.low, new HashMap<>());
+        setpoints.put(Position.lowCube, new HashMap<>());
         setpoints.put(Position.mid, new HashMap<>());
+        setpoints.put(Position.midCube, new HashMap<>());
         setpoints.put(Position.high, new HashMap<>());
+        setpoints.put(Position.highCube, new HashMap<>());
         setpoints.put(Position.HP, new HashMap<>());
 
     }
 
     static {
-        setpoints.get(Position.floor).put(RobotPart.shoulder , 110.0);
-        setpoints.get(Position.floor).put(RobotPart.telescope , 10.0);
-        setpoints.get(Position.floor).put(RobotPart.wrist , 30.0);
+        setpoints.get(Position.floor).put(RobotPart.shoulder , SetPointsButBetter.SHOULDER_FLOOR_ANGLE);
+        setpoints.get(Position.floor).put(RobotPart.telescope , SetPointsButBetter.TELESCOPE_FRONT_FLOOR_LENGTH);
+        setpoints.get(Position.floor).put(RobotPart.wrist , SetPointsButBetter.WRIST_FLOOR_ANGLE ); //DO STUFF
 
-        setpoints.get(Position.low).put(RobotPart.shoulder , 90.0);
-        setpoints.get(Position.low).put(RobotPart.telescope , 10.0);
-        setpoints.get(Position.low).put(RobotPart.wrist , 30.0);
+        setpoints.get(Position.floorCube).put(RobotPart.shoulder , SetPointsButBetter.SHOULDER_FLOOR_ANGLE); //WE DONT KNOW IF IT IS DIFFERENT YET
+        setpoints.get(Position.floorCube).put(RobotPart.telescope , SetPointsButBetter.TELESCOPE_FRONT_FLOOR_LENGTH);
+        setpoints.get(Position.floorCube).put(RobotPart.wrist , SetPointsButBetter.WRIST_FLOOR_ANGLE);
 
-        setpoints.get(Position.mid).put(RobotPart.shoulder , 90.0);
-        setpoints.get(Position.mid).put(RobotPart.telescope , 10.0);
-        setpoints.get(Position.mid).put(RobotPart.wrist , 30.0);
+        setpoints.get(Position.low).put(RobotPart.shoulder , SetPointsButBetter.SHOULDER_LOW_CONE_ANGLE);
+        setpoints.get(Position.low).put(RobotPart.telescope , SetPointsButBetter.TELESCOPE_LOW_CONE_LENGTH);
+        setpoints.get(Position.low).put(RobotPart.wrist , SetPointsButBetter.WRIST_LOW_CONE_ANGLE);
 
-        setpoints.get(Position.high).put(RobotPart.shoulder , 90.0);
-        setpoints.get(Position.high).put(RobotPart.telescope , 10.0);
-        setpoints.get(Position.high).put(RobotPart.wrist , 30.0);
+        setpoints.get(Position.lowCube).put(RobotPart.shoulder , SetPointsButBetter.SHOULDER_LOW_CUBE_ANGLE);
+        setpoints.get(Position.lowCube).put(RobotPart.telescope , SetPointsButBetter.TELESCOPE_LOW_CUBE_LENGTH);
+        setpoints.get(Position.lowCube).put(RobotPart.wrist , SetPointsButBetter.WRIST_LOW_CUBE_ANGLE);
 
-        setpoints.get(Position.HP).put(RobotPart.shoulder , 90.0);
-        setpoints.get(Position.HP).put(RobotPart.telescope , 10.0);
-        setpoints.get(Position.HP).put(RobotPart.wrist , 30.0);
+        setpoints.get(Position.mid).put(RobotPart.shoulder , SetPointsButBetter.SHOULDER_MID_CONE_ANGLE);
+        setpoints.get(Position.mid).put(RobotPart.telescope , SetPointsButBetter.TELESCOPE_HIGH_CONE_LENGTH);
+        setpoints.get(Position.mid).put(RobotPart.wrist , SetPointsButBetter.WRIST_HIGH_CONE_ANGLE);
+
+        setpoints.get(Position.midCube).put(RobotPart.shoulder , SetPointsButBetter.SHOULDER_MID_CUBE_ANGLE);
+        setpoints.get(Position.midCube).put(RobotPart.telescope , SetPointsButBetter.TELESCOPE_MID_CUBE_LENGTH);
+        setpoints.get(Position.midCube).put(RobotPart.wrist , SetPointsButBetter.WRIST_MID_CUBE_ANGLE);
+
+        setpoints.get(Position.high).put(RobotPart.shoulder , SetPointsButBetter.SHOULDER_HIGH_CONE_ANGLE);
+        setpoints.get(Position.high).put(RobotPart.telescope , SetPointsButBetter.TELESCOPE_HIGH_CONE_LENGTH);
+        setpoints.get(Position.high).put(RobotPart.wrist , SetPointsButBetter.WRIST_HIGH_CONE_ANGLE);
+
+        setpoints.get(Position.highCube).put(RobotPart.shoulder , SetPointsButBetter.SHOULDER_HIGH_CUBE_ANGLE);
+        setpoints.get(Position.highCube).put(RobotPart.telescope , SetPointsButBetter.TELESCOPE_HIGH_CUBE_LENGTH);
+        setpoints.get(Position.highCube).put(RobotPart.wrist , SetPointsButBetter.WRIST_HIGH_CUBE_ANGLE);
+
+        setpoints.get(Position.HP).put(RobotPart.shoulder , SetPointsButBetter.SHOULDER_HP_ANLGE);
+        setpoints.get(Position.HP).put(RobotPart.telescope , SetPointsButBetter.TELESCOPE_HP_LENGTH);
+        setpoints.get(Position.HP).put(RobotPart.wrist , SetPointsButBetter.WRIST_HP_ANGLE);
 
     }
 
@@ -115,6 +140,7 @@ public class Arm {
 
     private MechanismLigament2d shoulder;
     private MechanismLigament2d telescope;
+    private MechanismLigament2d wrist;
 
     private Rotation2d shoulderAngle = new Rotation2d(0);
     private Rotation2d wristAngle = new Rotation2d(0);
@@ -122,8 +148,8 @@ public class Arm {
     private double telescopeDist = 0;
 
     private final FlywheelSim telescopeSimMotor = new FlywheelSim(DCMotor.getNEO(1), 150.0 / 7.0, 0.004096955);
-
     private final FlywheelSim shoulderSimMotor = new FlywheelSim(DCMotor.getNEO(1), 6.75, 0.025);
+    private final FlywheelSim wristSimMotor = new FlywheelSim(DCMotor.getNEO(1), 6.75, 0.025);
 
     private boolean isSafeMode = true;
 
@@ -157,7 +183,9 @@ public class Arm {
                 new MechanismLigament2d("shoulder", Units.inchesToMeters(21), 0, 10, new Color8Bit(Color.kOrange)));
         telescope = shoulder.append(
                 new MechanismLigament2d("telescope", 0, 0, 6, new Color8Bit(Color.kGreen)));
-
+        wrist = telescope.append(
+                new MechanismLigament2d("wrist", 0, 0, 6, new Color8Bit(Color.kGreen)));
+    
         // post the mechanism to the dashboard
         SmartDashboard.putData("Mech2d", mech);
         shoulderSimMotor.setInput(0);
@@ -242,14 +270,13 @@ public class Arm {
         shoulderEncoder.setPosition(0);
     }
 
-    public void setPosition(Position setpointValue, boolean isCubes) {
+    public void setPosition(Position setpointValue) {
         //if the shoulder is less than 90 degrees keep moving the wrist, 
         //otherwise stop the shoulder and let the wrist finsh moving.
         setShoulderSetpoint(shoulderSetpoint.plus(Rotation2d.fromDegrees(setpoints.get(setpointValue).get(RobotPart.shoulder))));
         telescopeToSetpoint(setpoints.get(setpointValue).get(RobotPart.telescope));
         wristToSetpoint(shoulderSetpoint.plus(Rotation2d.fromDegrees(setpoints.get(setpointValue).get(RobotPart.shoulder))));
 
-        //do if isCubes :>
     }
 
     public void getShoulderEncoderCANErrors() {
@@ -354,6 +381,7 @@ public class Arm {
         // Move simulation forward dt seconds
         shoulderSimMotor.update(dtSeconds);
         telescopeSimMotor.update(dtSeconds);
+        wristSimMotor.update(dtSeconds);
         var encoderRateSign = 1;
 
         // Get state from simulation devices (telescopeDist and shoulderAngle)
@@ -361,10 +389,13 @@ public class Arm {
         telescopeDist += telescopeRate * 0.02;
         var shoulderRate = shoulderSimMotor.getAngularVelocityRadPerSec() * encoderRateSign;
         shoulderAngle = shoulderAngle.plus(Rotation2d.fromRadians(shoulderRate * 0.02));
+        var wristRate = wristSimMotor.getAngularVelocityRadPerSec() * encoderRateSign;
+        wristAngle = wristAngle.plus(Rotation2d.fromRadians(wristRate * 0.02));
 
         // mechanism2d :/
         telescope.setLength(telescopeDist / 25);
         shoulder.setAngle(-shoulderAngle.getDegrees() + 90);
+        wrist.setAngle(-shoulderAngle.getDegrees() + 90);
 
     }
 
