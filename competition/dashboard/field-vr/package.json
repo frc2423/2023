@@ -17,7 +17,7 @@
     "build": "tsc && vite build"
   },
   "dependencies": {
-    "@frc-web-components/fwc": "^1.5.0",
+    "@frc-web-components/fwc": "^1.7.0",
     "lit": "^2.0.2"
   },
   "devDependencies": {
