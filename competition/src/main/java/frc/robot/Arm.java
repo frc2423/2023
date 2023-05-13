@@ -377,6 +377,7 @@ public class Arm {
         // Update simulation inputs
         shoulderSimMotor.setInputVoltage(shoulderMotorPercent * RobotController.getBatteryVoltage());
         telescopeSimMotor.setInputVoltage(telescopeMotorPercent * RobotController.getBatteryVoltage());
+        wristSimMotor.setInputVoltage(telescopeMotorPercent * RobotController.getBatteryVoltage());
 
         // Move simulation forward dt seconds
         shoulderSimMotor.update(dtSeconds);
@@ -415,6 +416,7 @@ public class Arm {
     public void periodic() {
         telemtry();
         double shoulderMotorPercent = shoulderMotor.getPercent();
+        double wristMotorPercent = wristoMotor.getPercent();
         double telescopeMotorPercent = (telescopeVoltage / RobotController.getBatteryVoltage());
         telescopeMotorPercent = telescopePIDController.calculate(telescopeDist, telescopeSetPoint)
                 / RobotController.getBatteryVoltage();
@@ -460,7 +462,7 @@ public class Arm {
 
         if (Robot.isSimulation()) {
             NtHelper.setDouble("/sim/shoulderSetpoint", shoulderSetpoint.getDegrees());
-            simPeriodic(0.02, shoulderMotorPercent, telescopeMotorPercent);
+            simPeriodic(0.02, shoulderMotorPercent, telescopeMotorPercent, wristMotorPercent);
         } else {
             realPeriodic(shoulderMotorPercent, telescopeMotorPercent);
         }
