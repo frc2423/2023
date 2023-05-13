@@ -4,9 +4,6 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
-
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
@@ -44,7 +41,8 @@ public class Arm {
         midCube,
         high,
         highCube,
-        HP
+        HP,
+        up
     }
 
     public enum RobotPart {
@@ -65,7 +63,7 @@ public class Arm {
         setpoints.put(Position.high, new HashMap<>());
         setpoints.put(Position.highCube, new HashMap<>());
         setpoints.put(Position.HP, new HashMap<>());
-
+        setpoints.put(Position.up, new HashMap<>());
     }
 
     static {
@@ -105,6 +103,9 @@ public class Arm {
         setpoints.get(Position.HP).put(RobotPart.telescope , SetPointsButBetter.TELESCOPE_HP_LENGTH);
         setpoints.get(Position.HP).put(RobotPart.wrist , SetPointsButBetter.WRIST_HP_ANGLE);
 
+        setpoints.get(Position.up).put(RobotPart.shoulder , SetPointsButBetter.SHOULDER_UP_ANGLE);
+        setpoints.get(Position.up).put(RobotPart.telescope , SetPointsButBetter.TELESCOPE_UP_LENGTH);
+        setpoints.get(Position.up).put(RobotPart.wrist , SetPointsButBetter.WRIST_UP_ANGLE);
     }
 
     private NeoMotor telescopeMotor;
@@ -119,7 +120,7 @@ public class Arm {
     private double WRIST_MAXIMUM = 0; // calculate later :)
     private double TELESCOPE_MAXIMUM = 30;//97;
     private CANCoder shoulderEncoder = new CANCoder(25);
-    private CANCoder wristEncoder = new CANCoder();//set deviceNumber
+    private CANCoder wristEncoder = new CANCoder(56);//set deviceNumber
     CANCoderConfiguration _canCoderConfiguration = new CANCoderConfiguration();
     ProfiledPIDController shoulder_PID = new ProfiledPIDController((Robot.isSimulation()) ? .001 : .005, 0, 0, new TrapezoidProfile.Constraints(360, 420));//noice
     ProfiledPIDController wrist_PID = new ProfiledPIDController((Robot.isSimulation()) ? 0 : 0, 0, 0, new TrapezoidProfile.Constraints(0, 0));//PLEASE SET VALUES
@@ -162,6 +163,7 @@ public class Arm {
 
         shoulderMotor = new NeoMotor(15, true);
         // TODO: These conversion factors need to be fixed
+        wristoMotor = new NeoMotor(23, true);
         // shoulderMotor.setConversionFactor(TELESCOPE_CONVERSION_FACTOR);
         _canCoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
         _canCoderConfiguration.magnetOffsetDegrees = -135;
@@ -184,7 +186,7 @@ public class Arm {
         telescope = shoulder.append(
                 new MechanismLigament2d("telescope", 0, 0, 6, new Color8Bit(Color.kGreen)));
         wrist = telescope.append(
-                new MechanismLigament2d("wrist", 0, 0, 6, new Color8Bit(Color.kGreen)));
+                new MechanismLigament2d("wrist", Units.inchesToMeters(25), 0, 8, new Color8Bit(Color.kOrchid)));
     
         // post the mechanism to the dashboard
         SmartDashboard.putData("Mech2d", mech);
@@ -273,10 +275,9 @@ public class Arm {
     public void setPosition(Position setpointValue) {
         //if the shoulder is less than 90 degrees keep moving the wrist, 
         //otherwise stop the shoulder and let the wrist finsh moving.
-        setShoulderSetpoint(shoulderSetpoint.plus(Rotation2d.fromDegrees(setpoints.get(setpointValue).get(RobotPart.shoulder))));
         telescopeToSetpoint(setpoints.get(setpointValue).get(RobotPart.telescope));
-        wristToSetpoint(shoulderSetpoint.plus(Rotation2d.fromDegrees(setpoints.get(setpointValue).get(RobotPart.shoulder))));
-
+        setShoulderSetpoint(Rotation2d.fromDegrees(setpoints.get(setpointValue).get(RobotPart.shoulder)));
+        wristToSetpoint(Rotation2d.fromDegrees(setpoints.get(setpointValue).get(RobotPart.wrist)));
     }
 
     public void getShoulderEncoderCANErrors() {
@@ -373,11 +374,11 @@ public class Arm {
         return shoulder_PID.calculate(shoulderAngle.getDegrees(), angle.getDegrees());
     }
 
-    public void simPeriodic(double dtSeconds, double shoulderMotorPercent, double telescopeMotorPercent) {
+    public void simPeriodic(double dtSeconds, double shoulderMotorPercent, double telescopeMotorPercent, double wristMotorPercent) {
         // Update simulation inputs
         shoulderSimMotor.setInputVoltage(shoulderMotorPercent * RobotController.getBatteryVoltage());
         telescopeSimMotor.setInputVoltage(telescopeMotorPercent * RobotController.getBatteryVoltage());
-        wristSimMotor.setInputVoltage(telescopeMotorPercent * RobotController.getBatteryVoltage());
+        wristSimMotor.setInputVoltage(wristMotorPercent * RobotController.getBatteryVoltage());
 
         // Move simulation forward dt seconds
         shoulderSimMotor.update(dtSeconds);
@@ -396,7 +397,7 @@ public class Arm {
         // mechanism2d :/
         telescope.setLength(telescopeDist / 25);
         shoulder.setAngle(-shoulderAngle.getDegrees() + 90);
-        wrist.setAngle(-shoulderAngle.getDegrees() + 90);
+        wrist.setAngle(-wristAngle.getDegrees() + 90);
 
     }
 
@@ -456,7 +457,7 @@ public class Arm {
         }
 
         
-
+        NtHelper.setDouble("/robot/wristMotorPercent", wristMotorPercent);
         NtHelper.setDouble("/robot/telescopeMotorPercent", telescopeMotorPercent);
         NtHelper.setDouble("/robot/shoulderMotorPercent", shoulderMotorPercent);
 
@@ -493,5 +494,7 @@ public class Arm {
         NtHelper.setDouble("/arm/telescopeDistance", telescopeDist);
         NtHelper.setDouble("/arm/shoulderAngle", getShoulderAngle().getDegrees());
         NtHelper.setDouble("/arm/beltMotor", beltoMotor.getPercent());
+        NtHelper.setDouble("/arm/shoulderSetpoint", shoulderSetpoint.getDegrees());
+        NtHelper.setDouble("/arm/wristSetpoint", wristSetpoint.getDegrees());
     }
 }

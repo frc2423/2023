@@ -19,7 +19,7 @@ public class SetPointsButBetter {
     public final static double SHOULDER_HP_ANLGE = 74;
     //public final static double SHOULDER_BACK_HP_ANLGE = new Rotation2d(Units.degreesToRadians(-74));
 
-    public final static Rotation2d SHOULDER_UP_ANGLE = new Rotation2d();
+    public final static double SHOULDER_UP_ANGLE = 0;
     public final static double SHOULDER_FLOOR_ANGLE = 122;
     //public final static Rotation2d SHOULDER_BACK_FLOOR_ANGLE = new Rotation2d(Units.degreesToRadians(-119));
 
