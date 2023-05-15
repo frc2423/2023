@@ -468,7 +468,6 @@ int buttonindex = -1;
   }
 
   public void telemtry() {
-    arm.setPosition(Arm.Position.floorCube);
     NtHelper.setDouble("/dashboard/arm/angleMeasured", -arm.getShoulderAngle().getDegrees() + 90);
     NtHelper.setDouble("/dashboard/arm/telscopeLenMeasured", arm.getTelescopePosition() * 5);
     NtHelper.setDouble("/dashboard/arm/angleSetpoint", -arm.getShoulderSetpoint().getDegrees() + 90);

@@ -117,13 +117,13 @@ public class Arm {
     public static final double DISTANCE = 0;
     private double SHOULDER_MAXIMUM = 125; // calculate later :)
     private double TELESCOPE_MINIMUM = 0;
-    private double WRIST_MAXIMUM = 0; // calculate later :)
+    private double WRIST_MAXIMUM = 95; // calculate later :)
     private double TELESCOPE_MAXIMUM = 30;//97;
     private CANCoder shoulderEncoder = new CANCoder(25);
     private CANCoder wristEncoder = new CANCoder(56);//set deviceNumber
     CANCoderConfiguration _canCoderConfiguration = new CANCoderConfiguration();
     ProfiledPIDController shoulder_PID = new ProfiledPIDController((Robot.isSimulation()) ? .001 : .005, 0, 0, new TrapezoidProfile.Constraints(360, 420));//noice
-    ProfiledPIDController wrist_PID = new ProfiledPIDController((Robot.isSimulation()) ? 0 : 0, 0, 0, new TrapezoidProfile.Constraints(0, 0));//PLEASE SET VALUES
+    ProfiledPIDController wrist_PID = new ProfiledPIDController((Robot.isSimulation()) ? 0.001 : 0.005, 0, 0, new TrapezoidProfile.Constraints(0, 0));//PLEASE SET VALUES
 
     private double TELESCOPE_CONVERSION_FACTOR = 1; // gear ratio
     private double beltoSpeedo = 0.8;
@@ -134,6 +134,7 @@ public class Arm {
     public DoubleSolenoid gripper = new DoubleSolenoid(22, PneumaticsModuleType.REVPH, 1, 0);
     private double shoulderVoltage = 0;
     private double telescopeVoltage = 0;
+    private double wristVoltage = 0;
     private double telescopeSetPoint = 0;
     public static final double MAX_SHOULDER_VOLTAGE = 4;
     private Rotation2d shoulderSetpoint = new Rotation2d();
@@ -362,6 +363,15 @@ public class Arm {
         return wristEncoder.getAbsolutePosition();
     }
 
+    private void setWristVoltage(double voltage) {
+        wristVoltage = voltage;
+    }
+
+    private void setWristVelocity(double radiansPerSecond) {
+        double voltage = feedforward.calculate(getWristAngle().getRadians() + (Math.PI / 2), radiansPerSecond);
+        setWristVoltage(voltage);
+    }
+
     public Rotation2d getShoulderAngle() {
         return shoulderAngle;
     }
@@ -405,10 +415,11 @@ public class Arm {
         isSafeMode = safeMode;
     }
 
-    public void realPeriodic(double shoulderMotorPercent, double telescopeMotorPercent) {
+    public void realPeriodic(double shoulderMotorPercent, double telescopeMotorPercent, double wristoMotorPercent) {
         // Update real robot inputs
         shoulderMotor.setPercent(-shoulderMotorPercent);
         telescopeMotor.setPercent(telescopeMotorPercent);
+        wristoMotor.setPercent(-wristoMotorPercent);
 
         telescopeDist = telescopeMotor.getDistance();
         shoulderAngle = Rotation2d.fromDegrees(shoulderEncoder.getAbsolutePosition());
@@ -430,6 +441,9 @@ public class Arm {
             var voltage = MathUtil.clamp(shoulderVoltage, -MAX_SHOULDER_VOLTAGE, MAX_SHOULDER_VOLTAGE);
             shoulderMotorPercent = (voltage / RobotController.getBatteryVoltage());
         }
+
+        setWristVelocity(wristCalcPID(wristSetpoint));
+        wristMotorPercent = (wristVoltage / RobotController.getBatteryVoltage());
 
         if (telescopeMotorPercent < 0) {
             telescopeRateChecker.update(telescopeDist);
@@ -465,7 +479,7 @@ public class Arm {
             NtHelper.setDouble("/sim/shoulderSetpoint", shoulderSetpoint.getDegrees());
             simPeriodic(0.02, shoulderMotorPercent, telescopeMotorPercent, wristMotorPercent);
         } else {
-            realPeriodic(shoulderMotorPercent, telescopeMotorPercent);
+            realPeriodic(shoulderMotorPercent, telescopeMotorPercent, wristMotorPercent);
         }
     }
 
