@@ -372,9 +372,19 @@ public class Arm {
         setWristVoltage(voltage);
     }
 
+    public void wristForward() {
+        wristToSetpoint(wristSetpoint.plus(Rotation2d.fromDegrees(5)));
+    }
+
+    public void wristBack() {
+        wristToSetpoint(wristSetpoint.minus(Rotation2d.fromDegrees(5)));
+
+    }
+
     public Rotation2d getShoulderAngle() {
         return shoulderAngle;
     }
+
 
     public double getShoulderEncoderPosition() {
         return shoulderEncoder.getAbsolutePosition();

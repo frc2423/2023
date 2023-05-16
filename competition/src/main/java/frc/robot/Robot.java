@@ -389,6 +389,13 @@ int buttonindex = -1;
       arm.outtakeBelt();
     }
 
+    if(m_controller_right.getBackButton()){
+      if(m_controller_right.getYButton()){
+        arm.wristForward();
+      }else if(m_controller_right.getAButton()){
+        arm.wristBack();
+      }
+    }
     
      arm.isSafeMode(NtHelper.getBoolean("/robot/arm/telescopeoveride", true)); 
 
