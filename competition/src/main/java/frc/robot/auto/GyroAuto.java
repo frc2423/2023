@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Drivetrain;
 import frc.robot.Robot;
+import frc.robot.Arm.Position;
 import frc.robot.constants.ArmPosition;
 import frc.robot.constants.SetPoints;
 import frc.robot.util.LinearScale;
@@ -34,15 +35,12 @@ public class GyroAuto extends StateMachine {
     public void taxiRun(StateContext ctx) {
         position = NtHelper.getString("/dashboard/autoArm", "low"); //from nt
         if(position.equals(ArmPosition.HIGH)){
-            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_HIGH_CUBE_ANGLE);
-            Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_HIGH_CUBE_LENGTH);
+            Robot.arm.setPosition(Position.highCube);
         }
         else if(position.equals(ArmPosition.MID)){
-            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_CUBE_ANGLE);
-            Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_MID_CUBE_LENGTH);
+            Robot.arm.setPosition(Position.midCube);
         } else {
-            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_FLOOR_ANGLE);
-            Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_BACK_FLOOR_LENGTH);
+            Robot.arm.setPosition(Position.floorCube);
         }
          //CUBE (if uses cube this fine)
 

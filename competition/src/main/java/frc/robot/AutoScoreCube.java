@@ -18,6 +18,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.Arm.Position;
 import frc.robot.auto.Waypoints;
 import frc.robot.constants.SetPoints;
 import frc.robot.util.NtHelper;
@@ -135,33 +136,27 @@ public class AutoScoreCube extends StateMachine {
 
             // Set telescope and shoulder to position
             if (position.equals("high")) {
-                Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_HIGH_CUBE_ANGLE);
-                Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_HIGH_CUBE_LENGTH);
+                Robot.arm.setPosition(Position.highCube);
             }
 
             if (position.equals("mid")) {
-                Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_MID_CUBE_ANGLE);
-                Robot.arm.telescopeToSetpoint(0);
+                Robot.arm.setPosition(Position.midCube);
             }
 
             if (position.equals("low")) {
-                Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_FLOOR_ANGLE);
-                Robot.arm.telescopeToSetpoint(0);
+                Robot.arm.setPosition(Position.floorCube);
             }
         } else {
             if (position.equals("high")) {
-                Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_HIGH_CONE_ANGLE);
-                Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_HIGH_CONE_LENGTH);
+                Robot.arm.setPosition(Position.high);
             }
 
             if (position.equals("mid")) {
-                Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_MID_CONE_ANGLE);
-                Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_MID_CONE_LENGTH);
+                Robot.arm.setPosition(Position.mid);
             }
 
             if (position.equals("low")) {
-                Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_FLOOR_ANGLE);
-                Robot.arm.telescopeToSetpoint(0);
+                Robot.arm.setPosition(Position.floor);
             }
         }
     }
