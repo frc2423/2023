@@ -1,4 +1,21 @@
-- Organize code better (constants, sim, real)
-- Update devices to use the ones our robot uses (from code Cameron and Alexandra were writing)
-- Replace Odometry code with PoseEstimation code using PhotonVision
-- add deadband 
+- pipeline shifting X
+
+    - tuning pipelines
+
+- detecting game piece
+
+    - get position of the game piece
+
+    -move robot to game piece
+
+- when arm goes to floor, if camera detects gamepiece then rumble controller for a duration
+
+- driver can choose whether to hold a button to auto align(rotational and movement) the robot with the gamepiece, and pick it up
+
+- change intensity of controller rumble based on distance to the gamepiece. and stop once picked up
+
+- run belts on claw based on distance/alignment with the gamepiece
+
+- provide feedback for driver to align (with rumble)
+
+- toggleable 

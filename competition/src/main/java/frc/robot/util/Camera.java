@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import java.util.HashMap;
+
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -17,6 +19,18 @@ public class Camera {
     public PhotonCamera returnCamera(){
         return camera;
     }
+
+    public enum Pipeline {
+        CUBE,
+        CONE
+    }
+
+    public static HashMap<Pipeline ,Integer> Pipelinemap = new HashMap<>();
+    static {
+        Pipelinemap.put(Pipeline.CUBE,1);
+        Pipelinemap.put(Pipeline.CONE,2);
+    }
+
 
     public Camera(String name, Transform3d cameraToRobot) {
         camera = new PhotonCamera(name);
@@ -81,5 +95,9 @@ public class Camera {
             }
         }
         return null;
+    }
+
+    public void switchPipeline(Pipeline index){
+        camera.setPipelineIndex(Pipelinemap.get(index));
     }
 }
