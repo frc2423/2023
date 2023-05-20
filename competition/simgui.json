@@ -15,6 +15,12 @@
       "Shuffleboard": {
         "open": true
       },
+      "robot": {
+        "open": true
+      },
+      "swerve": {
+        "open": true
+      },
       "test": {
         "open": true
       }

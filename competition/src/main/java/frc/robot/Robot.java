@@ -65,6 +65,9 @@ public class Robot extends TimedRobot {
     NtHelper.setDouble("/dashboard/armSetpoint/buttonselected", 5);
     NtHelper.setString("/robot/dashboard/led", "green");
     NtHelper.setBoolean("/dashboard/gyroIsResetting", false);
+    NtHelper.setDouble("/test/LeftRumble", 0);
+    NtHelper.setDouble("/test/BothRumble", 0);
+    NtHelper.setDouble("/test/RightRumble", 0);
 
     NtHelper.listen("/dashboard/armSetpoint/buttonselected", (entry) -> {
       updateArmSetpoint();
@@ -404,7 +407,7 @@ int buttonindex = -1;
 
   @Override
   public void testPeriodic() {
-    m_controller.setRumble(RumbleType.kBothRumble, 1);
+    // m_controller.setRumble(RumbleType.kBothRumble, 0);
     double robotPosition = 0;
     if(robotPosition == -2){
       Rumble.setRumble(m_controller, Position.FAR_LEFT);

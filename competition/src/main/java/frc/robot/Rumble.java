@@ -19,20 +19,24 @@ public class Rumble {
     }
 
     public static void setRumble(XboxController controller, Position position){
-        NtHelper.setDouble("/test/LeftRumble", .25);
-        NtHelper.setDouble("/test/BothRumble", .25);
-        NtHelper.setDouble("/test/RightRumble", .25);
-        if(position.equals(Position.FAR_LEFT)){
-            controller.setRumble(RumbleType.kLeftRumble, .25);
-        } else if(position.equals(Position.LEFT)){
-            controller.setRumble(RumbleType.kLeftRumble, .75);
-        } else if(position.equals(Position.BIPARTISAN)){
-            controller.setRumble(RumbleType.kBothRumble, 1);
-        } else if(position.equals(Position.RIGHT)){
-            controller.setRumble(RumbleType.kRightRumble, .75);
-        }  else if(position.equals(Position.FAR_RIGHT)){
-            controller.setRumble(RumbleType.kRightRumble, .25);
-        } 
+        // Can't really discern difference between left/right rumble, focus on rumbling when it is centered next time
+        double NtLeftRumble = NtHelper.getDouble("/test/LeftRumble", 0);
+        double NtBothRumble = NtHelper.getDouble("/test/BothRumble", 0);
+        double NtRightRumble = NtHelper.getDouble("/test/RightRumble", 0);
+        NtHelper.getDouble("/test/BothRumble", 0);
+        NtHelper.getDouble("/test/RightRumble", 0);
+        controller.setRumble(RumbleType.kRightRumble, NtRightRumble);
+        // if(position.equals(Position.FAR_LEFT)){
+        //     controller.setRumble(RumbleType.kLeftRumble, NtLeftRumble);
+        // } else if(position.equals(Position.LEFT)){
+        //     controller.setRumble(RumbleType.kLeftRumble, .75);
+        // } else if(position.equals(Position.BIPARTISAN)){
+        //     controller.setRumble(RumbleType.kBothRumble, 1);
+        // } else if(position.equals(Position.RIGHT)){
+        //     controller.setRumble(RumbleType.kRightRumble, .75);
+        // }  else if(position.equals(Position.FAR_RIGHT)){
+        //     controller.setRumble(RumbleType.kRightRumble, .25);
+        // } 
             
     }
 
