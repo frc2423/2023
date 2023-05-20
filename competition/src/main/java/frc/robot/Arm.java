@@ -41,7 +41,7 @@ public class Arm {
     private double TELESCOPE_CONVERSION_FACTOR = 1; // gear ratio
     private double beltoSpeedo = 0.8;
     private double outtakeBeltoSpeedo = -1;
-    // Create a new ArmFeedforward with gains kS, kG, kV, and kA
+    // Create a new ArmFeedforward with gains kS, kG, kV, and kA   
     private final double kg = RobotBase.isSimulation() ? 0 : 0.39399;
     private ArmFeedforward feedforward = new ArmFeedforward(0.16623, kg, 17.022, 1.7561);
     public DoubleSolenoid gripper = new DoubleSolenoid(22, PneumaticsModuleType.REVPH, 1, 0);

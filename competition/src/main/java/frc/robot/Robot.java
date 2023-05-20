@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Led.KwarqsLed;
+import frc.robot.Rumble.Position;
 import frc.robot.auto.Auto;
 import frc.robot.auto.HumanPlayerStationDetection;
 import frc.robot.constants.SetPoints;
@@ -114,7 +115,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     
     telemtry();
-    if (!isTeleop()) {
+    if (isDisabled()) {
       arm.isSafeMode(!isTest());
       m_controller.setRumble(RumbleType.kBothRumble, 0);
     }
@@ -403,41 +404,55 @@ int buttonindex = -1;
 
   @Override
   public void testPeriodic() {
-    if (m_controller.getStartButton()) {
-      arm.resetShoulder();
-    }
-    NtHelper.setDouble("/test/shoulderPosition", arm.getShoulderEncoderPosition());
+    m_controller.setRumble(RumbleType.kBothRumble, 1);
+    double robotPosition = 0;
+    if(robotPosition == -2){
+      Rumble.setRumble(m_controller, Position.FAR_LEFT);
+  } else if(robotPosition == -1){
+    Rumble.setRumble(m_controller, Position.LEFT);
+  } else if(robotPosition == 0){
+    Rumble.setRumble(m_controller, Position.BIPARTISAN);
+  } else if(robotPosition == 1){
+    Rumble.setRumble(m_controller, Position.RIGHT);
+  }  else if(robotPosition == 2){
+    Rumble.setRumble(m_controller, Position.FAR_RIGHT);
+  } 
+    NtHelper.getDouble("/test/robotPosition", robotPosition);
+    // if (m_controller.getStartButton()) {
+    //   arm.resetShoulder();
+    // }
+    // NtHelper.setDouble("/test/shoulderPosition", arm.getShoulderEncoderPosition());
 
-    double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3
-    double manualAngle = NtHelper.getDouble("/test/angle", 0);
-    SwerveModuleState bloB = new SwerveModuleState(manualSpeed,
-         Rotation2d.fromDegrees(manualAngle));
+    // // double manualSpeed = NtHelper.getDouble("/test/speed", 0); // top speed is 3
+    // // double manualAngle = NtHelper.getDouble("/test/angle", 0);
+    // SwerveModuleState bloB = new SwerveModuleState(manualSpeed,
+    //      Rotation2d.fromDegrees(manualAngle));
 
-    double[] desiredStates = {
-        bloB.angle.getRadians(),
-        bloB.speedMetersPerSecond,
-        bloB.angle.getRadians(),
-        bloB.speedMetersPerSecond,
-        bloB.angle.getRadians(),
-        bloB.speedMetersPerSecond,
-        bloB.angle.getRadians(),
-        bloB.speedMetersPerSecond,
-    };
+    // double[] desiredStates = {
+    //     bloB.angle.getRadians(),
+    //     bloB.speedMetersPerSecond,
+    //     bloB.angle.getRadians(),
+    //     bloB.speedMetersPerSecond,
+    //     bloB.angle.getRadians(),
+    //     bloB.speedMetersPerSecond,
+    //     bloB.angle.getRadians(),
+    //     bloB.speedMetersPerSecond,
+    // };
 
-    NtHelper.setDoubleArray("/swerve/desiredStates", desiredStates);
+    // NtHelper.setDoubleArray("/swerve/desiredStates", desiredStates);
 
-    m_drive.m_frontLeft.setDesiredState(bloB);
-    m_drive.m_frontRight.setDesiredState(bloB);
-    m_drive.m_backLeft.setDesiredState(bloB);
-    m_drive.m_backRight.setDesiredState(bloB);
+    // m_drive.m_frontLeft.setDesiredState(bloB);
+    // m_drive.m_frontRight.setDesiredState(bloB);
+    // m_drive.m_backLeft.setDesiredState(bloB);
+    // m_drive.m_backRight.setDesiredState(bloB);
 
-    if (m_controller.getXButton()) {
-      arm.extend();
-    } else if (m_controller.getAButton()) { // double check this
-      arm.retract();
-    } else {
-      arm.stopTelescopeMotor();
-    }
+    // if (m_controller.getXButton()) {
+    //   arm.extend();
+    // } else if (m_controller.getAButton()) { // double check this
+    //   arm.retract();
+    // } else {
+    //   arm.stopTelescopeMotor();
+    // }
 
     
   }
