@@ -227,8 +227,6 @@ public class Robot extends TimedRobot {
     final double kMaxSpeed = 4;
     Robot.m_drive.addVisionMeasurement(photonEstimator.grabLatestEstimatedPose());
     resetGyroFromDashboard();
-    
-  
 
     if (m_controller.getStartButtonReleased()) {
       Robot.m_drive.setBrake(false);
