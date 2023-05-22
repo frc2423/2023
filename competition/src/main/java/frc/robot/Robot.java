@@ -274,9 +274,9 @@ public class Robot extends TimedRobot {
     }
     else {
       
-      boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
-      double maxSpeed = (isSlowMode ? 2 : kMaxSpeed);
-      double maxRotation = (isSlowMode ? Math.PI * 0.7 : Drivetrain.kMaxAngularSpeed);
+      // boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
+      double maxSpeed = kMaxSpeed;
+      double maxRotation = Drivetrain.kMaxAngularSpeed;
 
       double deadband = 0.2;
 
@@ -317,15 +317,15 @@ public class Robot extends TimedRobot {
 
 int buttonindex = -1;
 
-    boolean shiftUp = m_controller_right.getLeftTriggerAxis() > 0.2;
-    boolean shiftDown = m_controller_right.getRightTriggerAxis() > 0.2;
+    boolean shiftUp = m_controller.getLeftTriggerAxis() > 0.2;
+    boolean shiftDown = m_controller.getRightTriggerAxis() > 0.2;
     
     switch (m_controller.getPOV()) {
       case 180:
       buttonindex = 22;
       break;
     }
-    switch (m_controller_right.getPOV()) {
+    switch (m_controller.getPOV()) {
       case 0:
       buttonindex = 5;
       break;
