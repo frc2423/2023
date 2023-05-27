@@ -58,7 +58,7 @@ public class BasedAuto extends StateMachine {
 
     @State(name = "Spit")
     public void spit(StateContext ctx) {
-        Robot.arm.outtakeBeltCone();
+        Robot.arm.intakeBelt();
         if (ctx.getTime() > .5) {
             Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_UP_ANGLE);
             Robot.arm.beltStop();
