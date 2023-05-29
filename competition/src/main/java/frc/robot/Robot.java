@@ -305,6 +305,12 @@ public class Robot extends TimedRobot {
       }
     }
 
+    if (m_controller_right.getBackButton()) {
+      boolean cube = NtHelper.getBoolean("/dashboard/arm/isCubes", true);
+      NtHelper.setBoolean("/dashboard/arm/isCubes", !cube);
+      updateArmSetpoint();
+    }
+
     if (m_controller_right.getStartButton()) {
       arm.setOutakeSpeed(-0.3);
       if (Robot.arm.getShoulderAngle().getDegrees() < 0) {
@@ -315,6 +321,7 @@ public class Robot extends TimedRobot {
 
     }
 
+    
 int buttonindex = -1;
 
     boolean shiftUp = m_controller_right.getLeftTriggerAxis() > 0.2;
