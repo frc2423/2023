@@ -3,6 +3,7 @@ package frc.robot.auto;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Robot;
+import frc.robot.Arm.Position;
 import frc.robot.util.stateMachine.State;
 import frc.robot.util.stateMachine.StateContext;
 import frc.robot.util.stateMachine.StateMachine;
@@ -18,8 +19,7 @@ public class ScoreOnly extends StateMachine {
     public void taxiRun(StateContext ctx){
         var angle = -115; //-67;
         Robot.m_drive.drive(0, 0, 0, false);
-        Robot.arm.setShoulderSetpoint(new Rotation2d(Units.degreesToRadians(angle)));
-        Robot.arm.telescopeToSetpoint(0);
+        Robot.arm.setPosition(Position.floor);
         if (ctx.getTime() > 1) {
             setState("Spit");
         }

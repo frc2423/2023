@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Arm.Position;
 import frc.robot.Led.KwarqsLed;
 import frc.robot.auto.Auto;
 import frc.robot.auto.HumanPlayerStationDetection;
@@ -395,6 +396,13 @@ int buttonindex = -1;
       arm.outtakeBelt();
     }
 
+    if(m_controller_right.getBackButton()){
+      if(m_controller_right.getYButton()){
+        arm.wristForward();
+      }else if(m_controller_right.getAButton()){
+        arm.wristBack();
+      }
+    }
     
      arm.isSafeMode(NtHelper.getBoolean("/robot/arm/telescopeoveride", true)); 
 
@@ -446,11 +454,26 @@ int buttonindex = -1;
       arm.stopTelescopeMotor();
     }
 
+    double armNTPosition = NtHelper.getDouble("/test/whileArmThingPosition", 0);
     
+    if(armNTPosition == 1){
+      arm.setPosition(Position.floor);
+    } else if(armNTPosition == 2){
+      arm.setPosition(Position.low);
+    } else if(armNTPosition == 3){
+      arm.setPosition(Position.mid);
+    } else if(armNTPosition == 4){
+      arm.setPosition(Position.high);
+    } else if(armNTPosition == 4){
+      arm.setPosition(Position.HP);
+    } else if(armNTPosition == 0){
+      arm.setPosition(Position.up);
+    }
   }
 
   @Override
   public void testInit() { //test innit
+    NtHelper.setDouble("/test/whileArmThingPosition", 0);
     m_drive.setBrake(false);
     m_drive.resetAngle();
     arm.resetTelescopeEncoder();

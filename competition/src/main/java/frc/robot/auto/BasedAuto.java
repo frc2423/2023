@@ -4,6 +4,7 @@ import frc.robot.util.stateMachine.StateContext;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Robot;
+import frc.robot.Arm.Position;
 import frc.robot.constants.ArmPosition;
 import frc.robot.constants.SetPoints;
 import frc.robot.constants.StateConstants;
@@ -32,11 +33,9 @@ public class BasedAuto extends StateMachine {
         Robot.m_drive.m_backRight.setDesiredState(zeroState);
 
         if (position.equals(ArmPosition.MID)){
-            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_MID_CONE_ANGLE);
-            Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_MID_CONE_LENGTH);
+            Robot.arm.setPosition(Position.mid);
         } else {
-            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_FLOOR_ANGLE);
-            Robot.arm.telescopeToSetpoint(SetPoints.TELESCOPE_BACK_FLOOR_LENGTH);
+            Robot.arm.setPosition(Position.floor);
         }
 
         if (ctx.getTime() > 1)
@@ -60,7 +59,7 @@ public class BasedAuto extends StateMachine {
     public void spit(StateContext ctx) {
         Robot.arm.outtakeBeltCone();
         if (ctx.getTime() > .5) {
-            Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_UP_ANGLE);
+            Robot.arm.setPosition(Position.up);
             Robot.arm.beltStop();
         }
         if (ctx.getTime() > 1) {

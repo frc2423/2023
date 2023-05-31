@@ -5,7 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Robot;
 import frc.robot.util.stateMachine.State;
-import frc.robot.util.stateMachine.StateMachine;
+import frc.robot.util.stateMachine.StateMachine; //ignore this 
 
 public class BalanceAuto extends StateMachine{
     public BalanceAuto(){
