@@ -4,21 +4,19 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import frc.robot.util.NtHelper;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;                               
-import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
 
 public class SwerveModule {
@@ -57,10 +55,10 @@ public class SwerveModule {
   private final PIDController m_drivePIDController = new PIDController(0, 0, 0); // for sim use .5
 
   //Very monsterously massive correct Gains are for example purposes only - must be determined for your own robot!
-  private ProfiledPIDController turningPIDController = new ProfiledPIDController( RobotBase.isSimulation() ? 23 : 4, 0, 0.2, new TrapezoidProfile.Constraints(Math.PI * 6, Math.PI * 12));
+  private ProfiledPIDController turningPIDController = new ProfiledPIDController(RobotBase.isSimulation() ? 23 : 3, 12, 0.25, new TrapezoidProfile.Constraints(Math.PI * 12, Math.PI * 24));
 
-  private double ks = RobotBase.isSimulation() ? 0.025 : .165;
-  private double kv = RobotBase.isSimulation() ? 0.075 : 2.7;
+  private double ks = RobotBase.isSimulation() ? 0.025 : .2;
+  private double kv = RobotBase.isSimulation() ? 0.075 : 2.5;
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ks, kv);
@@ -149,11 +147,27 @@ public class SwerveModule {
     final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
 
     // Calculate the turning motor output from the turning PID controller.
-
+    int x = 0;
+    double turnVelocity_sqed = 0;
     driveMotorVoltage = (driveOutput + driveFeedforward);
     double turnVelocity = turningPIDController.calculate(turnEncoderDistance, state.angle.getRadians());
+    if (turnVelocity > 0 && turnVelocity < 1) {
+    turnVelocity_sqed = Math.pow(turnVelocity, 1);
+    x = 1;
+    } else {
+    x = 0;
+    }
+    if (turnVelocity > -1 && turnVelocity < 0) {
+    turnVelocity_sqed = -1 * (Math.pow(turnVelocity, 1));
+    x = -1;
+    } else {
+    x = 0;
+    }
     var atTurnGoal = turningPIDController.atGoal();
-    turnMotorVoltage = turnFeedForward.calculate(turnVelocity);
+    if (x == -1 || x == 1) {
+      turnVelocity = turnVelocity_sqed;
+    }
+    turnMotorVoltage = turnFeedForward.calculate(turnVelocity_sqed);
     if (atTurnGoal) {
       turnMotorVoltage = 0;
     }
