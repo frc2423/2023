@@ -55,7 +55,7 @@ public class SwerveModule {
   private final PIDController m_drivePIDController = new PIDController(0, 0, 0); // for sim use .5
 
   //Very monsterously massive correct Gains are for example purposes only - must be determined for your own robot!
-  private ProfiledPIDController turningPIDController = new ProfiledPIDController(RobotBase.isSimulation() ? 23 : 3, 12, 0.25, new TrapezoidProfile.Constraints(Math.PI * 12, Math.PI * 24));
+  private ProfiledPIDController turningPIDController = new ProfiledPIDController(RobotBase.isSimulation() ? 23 : 4, 12, 0.25, new TrapezoidProfile.Constraints(Math.PI * 12, Math.PI * 24));
 
   private double ks = RobotBase.isSimulation() ? 0.025 : .2;
   private double kv = RobotBase.isSimulation() ? 0.075 : 2.5;
