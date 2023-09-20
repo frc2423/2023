@@ -37,7 +37,8 @@ public class Arm {
     private double TELESCOPE_MAXIMUM = 30;//97;
     private CANCoder shoulderEncoder = new CANCoder(25);
     CANCoderConfiguration _canCoderConfiguration = new CANCoderConfiguration();
-    ProfiledPIDController shoulder_PID = new ProfiledPIDController((Robot.isSimulation()) ? .001 : .005, 0, 0, new TrapezoidProfile.Constraints(360, 420));//noice
+    private boolean isCatapult = true;
+    ProfiledPIDController shoulder_PID = new ProfiledPIDController((Robot.isSimulation()) ? .001 : .005, 0, 0, new TrapezoidProfile.Constraints((isCatapult) ? 1300 : 360, (isCatapult) ? 1500: 420));//noice
     private double TELESCOPE_CONVERSION_FACTOR = 1; // gear ratio
     private double beltoSpeedo = 0.8;
     private double outtakeBeltoSpeedo = -1;
