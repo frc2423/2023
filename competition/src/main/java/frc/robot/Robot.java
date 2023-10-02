@@ -240,6 +240,16 @@ public class Robot extends TimedRobot {
       Robot.m_drive.setBrake(true);
       autoScoreCube.setState(autoScoreCube.getDefaultState());
     }
+
+    if (m_controller.getRawButton(7)) {
+      arm.setOutakeSpeed(-0.3);
+      if (Robot.arm.getShoulderAngle().getDegrees() < 0) {
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_DUNK_ANGLE);
+      } else {
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_DUNK_ANGLE);
+      }
+      
+    }
     if (isAutoHumanPressed) {
       autoHuman.setState(autoHuman.getDefaultState());
       Robot.m_drive.setBrake(true);
