@@ -227,8 +227,6 @@ public class Robot extends TimedRobot {
     final double kMaxSpeed = 4;
     Robot.m_drive.addVisionMeasurement(photonEstimator.grabLatestEstimatedPose());
     resetGyroFromDashboard();
-    
-  
 
     if (m_controller.getStartButtonReleased()) {
       Robot.m_drive.setBrake(false);
@@ -241,6 +239,16 @@ public class Robot extends TimedRobot {
     if (m_controller.getBackButtonPressed()) {
       Robot.m_drive.setBrake(true);
       autoScoreCube.setState(autoScoreCube.getDefaultState());
+    }
+
+    if (m_controller.getRawButton(7) || m_controller_right.getRawButton(7)) {
+      arm.setOutakeSpeed(-0.3);
+      if (Robot.arm.getShoulderAngle().getDegrees() < 0) {
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_BACK_DUNK_ANGLE);
+      } else {
+        Robot.arm.setShoulderSetpoint(SetPoints.SHOULDER_FRONT_DUNK_ANGLE);
+      }
+
     }
     if (isAutoHumanPressed) {
       autoHuman.setState(autoHuman.getDefaultState());
@@ -274,9 +282,9 @@ public class Robot extends TimedRobot {
     }
     else {
       
-      boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
-      double maxSpeed = (isSlowMode ? 2 : kMaxSpeed);
-      double maxRotation = (isSlowMode ? Math.PI * 0.7 : Drivetrain.kMaxAngularSpeed);
+      // boolean isSlowMode = m_controller.getLeftTriggerAxis() > 0.2;
+      double maxSpeed = kMaxSpeed;
+      double maxRotation = Drivetrain.kMaxAngularSpeed;
 
       double deadband = 0.2;
 
@@ -324,10 +332,46 @@ public class Robot extends TimedRobot {
     
 int buttonindex = -1;
 
-    boolean shiftUp = m_controller_right.getLeftTriggerAxis() > 0.2;
-    boolean shiftDown = m_controller_right.getRightTriggerAxis() > 0.2;
+    boolean shiftUp = m_controller.getLeftTriggerAxis() > 0.2 || m_controller_right.getLeftTriggerAxis() > 0.2;
+    boolean shiftDown = m_controller.getRightTriggerAxis() > 0.2 || m_controller_right.getRightTriggerAxis() > 0.2;
     
     switch (m_controller.getPOV()) {
+      case 180:
+      buttonindex = 22;
+      break;
+    }
+    switch (m_controller.getPOV()) {
+      case 0:
+      buttonindex = 5;
+      break;
+      case 90:
+      if (shiftUp) {
+        buttonindex = 3;
+      } else if (shiftDown) {
+        buttonindex = 1;
+      } else {
+        buttonindex = 2;
+      }
+      break;
+      case 180:
+      if(shiftUp) {
+        buttonindex = 20; //back hp
+      } else if(shiftDown) {
+        buttonindex = 21; //front hp
+      }
+      break;
+      case 270:
+      if (shiftUp) {
+        buttonindex = 7;
+      } else if (shiftDown) {
+        buttonindex = 9;
+      } else {
+        buttonindex = 8;
+      }
+      break;
+    }
+
+    switch (m_controller_right.getPOV()) {
       case 180:
       buttonindex = 22;
       break;
