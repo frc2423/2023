@@ -1,0 +1,34 @@
+<html>
+<title></title>
+<style>
+    .name {
+        color: rgb(2, 108, 237);
+        font-size: 40px;
+    }
+</style>
+<head>
+
+</head>
+<body>
+    <div class="name">Hi! <h5>Yay!</h5><br>IT'S A PARTY!!!!!!!!!!!!!!!! :D</div>
+<script>
+var colors = ["red", "orange", "yellow", "green", "blue", "purple", "violet"];
+  var currentIndex = 0;
+  var toggleButton = document.querySelector(".name");
+  console.log(toggleButton);
+  toggleButton.style.color="orange";
+  setInterval(() => {
+    if (currentIndex != 7) {
+        currentIndex = currentIndex + 1;
+        toggleButton.style.color=colors[currentIndex];
+        document.body.style.background=colors[currentIndex + 1];
+    } else {
+        currentIndex = 0;
+        toggleButton.style.color=colors[currentIndex];
+        document.body.style.background=colors[currentIndex];
+    }
+  }, 3000);
+</script>
+</body>
+</html>
+
